@@ -42,7 +42,7 @@
   * Callable 함수를 작성하기 위한 functions.https Backnd Api [참고: functions.https 문서] https://firebase.google.com/docs/reference/functions/providers_https_?authuser=0
 
 * 공부자료
-  * [처음 시작하는 방법](https://firebase.google.com/docs/functions/get-started)
+  * [처음 시작하는 방법](https://firebase.google.com/docs/functions/get-started). 이 문서를 보고 설정을 하면 됩니다.
 
 ### 클라이언트엔드
 
