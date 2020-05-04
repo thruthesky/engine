@@ -10,9 +10,30 @@
 ## 프로젝트 계획
 
 * Backend 와 Clientend 코드를 완전히 분리하며
-* 최대한 많은 작업을 Backend 에서 합니다. 이를 통해서, 플러터 뿐만아니라 Angular/Ionic 이나 다른 프론트엔드에서도 쉽게 활용을 할 수 있게 됩니다.
-* Realtime update 가 필요없는 부분은 철저히 Restful Api 로 작업을 합니다. 그리고 사실상 회원관리 및 게시판 CRUD 에서는 Realtime update 가 필요 없습니다.
-  괜히 Realtime update 로 시도하다가 이도저도 아닌 엉망진창이 됩니다.
+* 최대한 많은 작업을 Backend 에서 합니다.
+  * 이를 통해서, 플러터 뿐만아니라 Angular/Ionic 이나 다른 프론트엔드에서도 쉽게 활용을 할 수 있게 됩니다.
+* Realtime update 가 필요없는 부분은 철저히 Restful Api 로 작업을 합니다.
+  * 사실 전 세계의 모든 홈페이지에서 회원관리 및 게시판 CRUD 를 하고 있지만 Realtime update 는 사용하고 있지 않습니다.
+  * 괜히 Realtime update 로 시도하다가 이도저도 아닌 엉망진창이 됩니다.
+
+#### 백엔드
+
+* 명칭: EnginF
+* [Github repository](https://github.com/thruthesky/enginf)
+
+* 많은 코드와 로직을 Functions 에 넣는다.
+  * Deassemble 해킹을 통한 로직을 감출 수 있으며
+  * 클라이언트에서 문제가 보이는 경우, 서버에 수정을 하면 모든 클라이언트에 적용된다.
+
+* 백엔드에서 자체적인 테스트를 완료한다.
+
+
+#### 클라이언트엔드
+
+* 명칭: ClientF
+* [Github repository](https://github.com/thruthesky/enginf)
+* 
+* 플러터로 작업을 한다.
 
 ## 해야 할 일
 
