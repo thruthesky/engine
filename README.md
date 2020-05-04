@@ -16,6 +16,10 @@
   * 사실 전 세계의 모든 홈페이지에서 회원관리 및 게시판 CRUD 를 하고 있지만 Realtime update 는 사용하고 있지 않습니다.
   * 괜히 Realtime update 로 시도하다가 이도저도 아닌 엉망진창이 됩니다.
 
+## 해야 할 일
+
+* [Git Issues 참고](https://github.com/thruthesky/enginf/issues)
+
 #### 백엔드
 
 * 명칭: EnginF
@@ -24,7 +28,6 @@
   * Deassemble 해킹을 통한 로직을 감출 수 있으며
   * 클라이언트에서 문제가 보이는 경우, 서버에 수정을 하면 모든 클라이언트에 적용된다.
 * 백엔드에서 자체적인 테스트를 완료한다.
-
 
 #### 클라이언트엔드
 
