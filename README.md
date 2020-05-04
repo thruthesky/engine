@@ -19,20 +19,17 @@
 #### 백엔드
 
 * 명칭: EnginF
-* [Github repository](https://github.com/thruthesky/enginf)
-
+* Repository: [EnginF Github repository](https://github.com/thruthesky/enginf)
 * 많은 코드와 로직을 Functions 에 넣는다.
   * Deassemble 해킹을 통한 로직을 감출 수 있으며
   * 클라이언트에서 문제가 보이는 경우, 서버에 수정을 하면 모든 클라이언트에 적용된다.
-
 * 백엔드에서 자체적인 테스트를 완료한다.
 
 
 #### 클라이언트엔드
 
 * 명칭: ClientF
-* [Github repository](https://github.com/thruthesky/enginf)
-* 
+* Repository: [ClientF Github repository](https://github.com/thruthesky/enginf)
 * 플러터로 작업을 한다.
 
 ## 해야 할 일
