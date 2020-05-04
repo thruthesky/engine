@@ -20,7 +20,7 @@
 
 * [Git Issues 참고](https://github.com/thruthesky/enginf/issues)
 
-#### 백엔드
+### 백엔드
 
 * 명칭: EnginF
 * Repository: [EnginF Github repository](https://github.com/thruthesky/enginf)
@@ -29,7 +29,22 @@
   * 클라이언트에서 문제가 보이는 경우, 서버에 수정을 하면 모든 클라이언트에 적용된다.
 * 백엔드에서 자체적인 테스트를 완료한다.
 
-#### 클라이언트엔드
+
+#### Firebsae Cloud Functions
+
+* Firebase Cloud Funtions 를 통해서 작업하므로, 그에 대한 설정이 필요하다.
+* 먼저 Firebase 프로젝트를 생성한다.
+  * 그러면 어떻게 시작하는지 문서를 자연스럽게 찾을 수 있다. [참고: Firestore Guideline](https://firebase.google.com/docs/functions/?authuser=0#implementation_paths)
+
+* 앱에서 Functions 를 실행하기 위해서는 Callbale 함수를 호출하는 것과 HTTP Restful API 접속 방법 두 가지가 있어 보인다.
+  * 본 프로젝트에서는 callable 함수를 바로 사용한다.
+  * [참고: Firebase Cloud Functions - Callbale](https://firebase.google.com/docs/functions/callable)
+  * Callable 함수를 작성하기 위한 functions.https Backnd Api [참고: functions.https 문서] https://firebase.google.com/docs/reference/functions/providers_https_?authuser=0
+
+* 공부자료
+  * [처음 시작하는 방법](https://firebase.google.com/docs/functions/get-started)
+
+### 클라이언트엔드
 
 * 명칭: ClientF
 * Repository: [ClientF Github repository](https://github.com/thruthesky/enginf)
@@ -43,7 +58,13 @@
 
 ## 플러터 스터디 참여 방법
 
-[카카오톡 채팅](https://open.kakao.com/o/g20m41Mb)
+* [카카오톡 채팅 단체톡방](https://open.kakao.com/o/g20m41Mb)
+
+## Github 작업 참여 방법
+
+* 먼저, 멤버로 초대 요청을 해 주세요.
+* 멤버로 초대되면, 자신의 branch 를 만들고, 그 branch 에서 작업을 해 주세요. master branch 에서 작업하지 마세요.
+* 자신의 업무가 끝나면 프로젝트 관리자에게 merge 요청을 해 주세요. 즉, 자신이 한 작업을 관리자 허가없이 master merge 하지 말아주세요.
 
 ## 동영상 강좌 - 왕초보를 위한 플러터 동영상 강좌 모음
 
@@ -73,9 +94,3 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-
-
-
-## 단어장 앱
-
-* [WORD.md](WORD.md)
