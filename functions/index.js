@@ -1,12 +1,11 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
 /// Firebase Database 및 기타 Resource 에 접속하기 위해서는 Admin SDK 가 필요하다.
 /// 서버에서 실행이 되므로 Service Key 가 필요 없다. (단, 로컬에서 테스트 할 때에는 필요하다.)
 const admin = require("firebase-admin");
 admin.initializeApp();
 // Saves a message to the Firebase Realtime Database but sanitizes the text by removing swearwords.
-exports.addMessage3 = functions.https.onCall(async (data, context) => {
+exports.addMessage = functions.https.onCall(async (data, context) => {
     /// 값 읽기
     const text = data.text;
     /// 값이 올바르지 않으면, 에러 출력
@@ -32,4 +31,5 @@ exports.addMessage3 = functions.https.onCall(async (data, context) => {
     });
     // [END_EXCLUDE]
 });
-//# sourceMappingURL=index.js.map
+
+
