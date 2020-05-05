@@ -21,3 +21,4 @@ describe('Interface', () => {
         assert.equal(added.name, newUser.name);
     });
 });
+
