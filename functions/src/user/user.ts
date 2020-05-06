@@ -15,7 +15,7 @@ export class User {
      * 
      */
     async register(data: any) {
-        if ( !data ) throw new Error( INPUT_NOT_PROVIDED );
+        if (!data) throw new Error(INPUT_NOT_PROVIDED);
         if (data.email === void 0) throw new Error(EMAIL_NOT_PROVIDED);
         if (data.password === void 0) throw new Error(PASSWORD_NOT_PROVIDED);
 
@@ -23,12 +23,18 @@ export class User {
             const created = await admin().auth().createUser({
                 email: data.email,
                 password: data.password,
+                displayName: data.displayName,
+                phoneNumber: data.phoneNumber,
+                photoURL: data.photoURL,
                 emailVerified: false,
             });
 
             delete data.password;
-            await this.userDoc(created.uid).set(data);
+            delete data.displayName;
+            delete data.phoneNumber;
+            delete data.photoURL;
 
+            await this.userDoc(created.uid).set(data);
             data.uid = created.uid;
             return data;
         } catch (e) {
@@ -44,9 +50,19 @@ export class User {
      * @param data
      * 
      * @todo - user verification.
+     * @todo - input validation. no password. no disabled option.
      */
     async update(data: any) {
         try {
+            await admin().auth().updateUser(data.uid, {
+                displayName: data.displayName,
+                phoneNumber: data.phoneNumber,
+                photoURL: data.photoURL,
+                emailVerified: false
+            });
+            delete data.displayName;
+            delete data.phoneNumber;
+            delete data.photoURL;
             await this.userDoc(data.uid).update(data);
             const userData = await this.data(data.uid);
             userData.uid = data.uid;
@@ -65,8 +81,8 @@ export class User {
         try {
             await admin().auth().deleteUser(uid);
             await this.userDoc(uid).delete();
-            return uid;        
-        } catch(e) {
+            return uid;
+        } catch (e) {
             throw new Error(e.code);
         }
     }
@@ -74,11 +90,21 @@ export class User {
     userDoc(uid: string) {
         return admin().firestore().collection('user').doc(uid);
     }
+    /// Returns user data from Firestore & from Auth information.
     async data(uid: string) {
         try {
+            const gotUser = await admin().auth().getUser(uid);
             const snapshot = await this.userDoc(uid).get();
             if (snapshot.exists) {
-                return snapshot.data() ?? {};
+                let data = snapshot.data();
+                if (data === void 0) data = {};
+                data.email = gotUser.email;
+                data.uid = gotUser.uid;
+                data.displayName = gotUser.displayName;
+                data.phoneNumber = gotUser.phoneNumber;
+                data.photoURL = gotUser.photoURL;
+
+                return data;
             } else {
                 throw new Error(USER_NOT_EXIST);
             }

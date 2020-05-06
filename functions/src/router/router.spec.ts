@@ -5,33 +5,60 @@ import { WRONG_CLASS_NAME, WRONG_METHOD_NAME } from '../defines';
 import { User } from '../user/user';
 
 describe('Router', () => {
-    it('Router parsing test', () => {
+
+    it('Router parsing test with empty route', async () => {
+        let router = new Router(null as any);
+        try {
+            await router.run();
+        } catch (e) {
+            assert.equal(e.message, WRONG_CLASS_NAME);
+        }
+        router = new Router('');
+        try {
+            await router.run();
+        } catch (e) {
+            assert.equal(e.message, WRONG_CLASS_NAME);
+        }
+        router = new Router(undefined as any);
+        try {
+            await router.run();
+        } catch (e) {
+            assert.equal(e.message, WRONG_CLASS_NAME);
+        }
+    })
+
+    it('Router parsing test with wrong class name.', async () => {
         const router = new Router('wrong.func');
-        assert.equal(router.className, 'wrong');
-        assert.equal(router.methodName, 'func');
+        try {
+            await router.run();
+        } catch (e) {
+            assert.equal(e.message, WRONG_CLASS_NAME);
+            assert.equal(router.className, 'wrong');
+            assert.equal(router.methodName, 'func');
+        }
     })
 
-    it('Wrong class & method test', () => {
-        let router = new Router('wrong.func');
-        let error = router.run();
-        assert.equal(error.message, WRONG_CLASS_NAME);
+    it('Router parsing test with wrong method name.', async () => {
+        const router = new Router('user.func');
 
-        router = new Router('user.func');
-        error = router.run();
-        assert.equal(error.message, WRONG_METHOD_NAME);
+        try {
+            await router.run();
+        } catch (e) {
+            assert.equal(e.message, WRONG_METHOD_NAME);
+        }
     })
 
-    it('Call User::version()', () => {
+    it('Call User::version()', async () => {
 
         const router = new Router('user.version');
 
-        const user = new User();
-        assert.equal(router.className, 'user');
-        assert.equal(router.methodName, 'version');
 
-        const re = router.run({ name: 'abc' });
+        const user = new User();
+
+        const re = await router.run({ name: 'abc' });
         assert.equal(re.version, user.version().version);
         assert.equal(re.name, 'abc');
+
     })
 
 

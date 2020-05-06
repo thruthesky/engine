@@ -118,3 +118,40 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## 프로토콜
+
+
+
+* `route` property 에는 `클래스명.함수명` 과 같이 기록을 한다. 예) `user.register`
+* `data` property 에는 route 로 전달하는 데이터이다. 예를 들어 `user.register` 를 호출하면 `data`에는 회원 메일 주소나 비밀번호 등을 입력하면 된다.
+
+기본 에러 예제)
+
+* route 값에 아무런 데이터를 전달하지 않으면, `wrong-class-name` 에러가 나타난다.
+* route 값에 함수명이 잘못되면 `wrong-method-name` 에러가 나타난다.
+
+이 처럼 각 route 호출 시 관련된 에러 값을 받을 수 있다.
+
+
+### 회원 관리
+
+#### 회원 가입
+
+* route: user.register
+* 회원 가입을 하면 기본적으로 Auth 에 계정이 생성되며, Firestore `user` collection 에 UID 를 키로 추가된 값이 저장 됨
+* data 에는 email 과 password 는 필수이며 나머지는 얼마든지 추가로 저장 가능.
+* `password`, `displayName`, `phoneNumber`, `photoURL` 은 Firestore 에 저장되지 않고 Auth 에만 저장된다. 그래서 클라이언트에서 Auth 로그인을 하면 Email, displayName, phoneNUmber 를 바로 사용 할 수 있다.
+* `phoneNumber`는 중복 가입 안되고, 전화번호 형식이 틀리면 에러가 발생한다.
+* `phoneNumber`에는 맨 앞 + 기호는 사용 가능하나 중간에 하이픈(-)은 사라진다. 예) `+82-10-1234-5678` 과 같으면 Auth 에 저장 후 값을 불러들이면, `+821012345678`와 같이 변경 된다.
+
+* 에러코드
+
+코드 | 설명
+--- | ---
+input-data-is-not-provided | 회원 가입 정보를 전달하지 않은 경우
+email-is-not-provided | 이메일 주소를 입력하지 않은 경우
+password-is-not-provided | 비밀번호를 입력하지 않은 경우
+auth/email-already-exists | 동일한 메일 주소가 이미 가입되어져 있는 경우
+auth/invalid-phone-number | 전화번호가 잘못된 경우
+auth/phone-number-already-exists | 전화번호가 이미 등록되어져 있는 경우
+

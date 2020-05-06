@@ -9,15 +9,12 @@ interface ClassContainer {
 export class Router {
 
     classContainer: ClassContainer = {};
-    className: string;
-    methodName: string;
+    className = '';
+    methodName = '';
     route: string;
     constructor(route: string) {
         this.classContainer['user'] = new User();
-        this.route = route;
-        const arr = route.split('.');
-        this.className = arr[0];
-        this.methodName = arr[1];
+        this.route = route ?? '';
     }
 
     /**
@@ -29,13 +26,17 @@ export class Router {
      */
     run(data?: any): any {
 
+        const arr = this.route.split('.');
+        this.className = arr[0];
+        this.methodName = arr[1];
+
         if (this.classContainer[this.className] === void 0) {
             // console.log(`class does not exists - ${this.className}`);
-            return new Error(WRONG_CLASS_NAME);
+            throw new Error(WRONG_CLASS_NAME);
         }
         if (this.classContainer[this.className][this.methodName] === void 0) {
             // console.log(`method does not exists - ${this.className}.${this.methodName}`);
-            return new Error(WRONG_METHOD_NAME);
+            throw new Error(WRONG_METHOD_NAME);
         }
 
         return this.classContainer[this.className][this.methodName](data);

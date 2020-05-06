@@ -2,6 +2,9 @@
 import { Router } from '../router/router';
 import * as assert from 'assert';
 import { AUTH_EMAIL_ALREADY_EXISTS, USER_NOT_EXIST, EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED } from '../defines';
+// import { User } from './user';
+import { getRandomInt } from '../helper';
+import { admin } from '../init.firebase';
 // import { WRONG_CLASS_NAME, WRONG_METHOD_NAME } from '../defines';
 // import { User } from './user';
 
@@ -11,8 +14,9 @@ const email = `abc${id}@test.com`;
 const password = `12345ax,*~A`;
 let uid: string;
 
-describe('User', () => {
-    it('Register input test', async() => {
+describe('User', function () {
+    this.timeout(10000);
+    it('Register input test', async () => {
         let router = new Router('user.register');
         try {
             const req = {
@@ -23,7 +27,6 @@ describe('User', () => {
         } catch (e) {
             assert.equal(e.message, EMAIL_NOT_PROVIDED);
         }
-
 
 
         router = new Router('user.register');
@@ -102,7 +105,60 @@ describe('User', () => {
         } catch (e) {
             assert.equal(e.message, USER_NOT_EXIST);
         }
-    })
+    });
+
+    it('User displayName & phoneNumber update', async () => {
+        const newEmail = `new${email}`;
+        const router = new Router('user.register');
+        try {
+            const req = {
+                email: newEmail,
+                password: password,
+                displayName: 'displayName',
+                photoURL: 'https://this.ismy.com/photo.jpg',
+                phoneNumber: '+82-10-' + getRandomInt(1000, 9999) + '-' + getRandomInt(1000, 9999),
+                name: 'David'
+            };
+            const back = Object.assign({}, req); /// backup since it will be deleted by call-by-reference
+            const createdUser = await router.run(req);
+            assert.equal(createdUser.email, req.email);
+            uid = createdUser.uid;
+
+            const gotUser = await admin().auth().getUser(uid);
+            assert.equal(gotUser.email, req.email);
+            assert.equal(gotUser.displayName, back.displayName);
+            assert.equal(gotUser.phoneNumber, back.phoneNumber.split('-').join(''));
+            assert.equal(gotUser.photoURL, back.photoURL);
+
+            const updateReq = {
+                uid: uid,
+                displayName: 'newDisplayName',
+                phoneNumber: '+82-10-' + getRandomInt(1000, 9999) + '-' + getRandomInt(1000, 9999),
+                photoURL: 'https://thisis.newphoto.com/url.jpg',
+                name: 'newName',
+            };
+
+
+            const updateReqBack = Object.assign({}, updateReq); /// backup since it will be deleted by call-by-reference
+            const newRouter = new Router('user.update');
+            const updatedUser = await newRouter.run(updateReq);
+
+            assert.equal(updatedUser.email, req.email);
+            assert.equal(updatedUser.displayName, updateReqBack.displayName);
+            assert.equal(updatedUser.phoneNumber, updateReqBack.phoneNumber.split('-').join(''));
+            assert.equal(updatedUser.photoURL, updateReqBack.photoURL);
+
+
+            // console.log(gotUser);
+
+            // const user = new User();
+            // const data = await user.data(uid);
+            // console.log(data);
+
+        } catch (e) {
+            assert.fail(e.message);
+        }
+    });
 });
 
 
