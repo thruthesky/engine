@@ -35,7 +35,7 @@
 
 * [Git Issues 참고](https://github.com/thruthesky/enginf/issues)
 
-### 백엔드
+## 백엔드
 
 * 명칭: EnginF
 * Repository: [EnginF Github repository](https://github.com/thruthesky/enginf)
@@ -45,7 +45,7 @@
 * 백엔드에서 자체적인 테스트를 완료한다.
 
 
-#### Firebsae Cloud Functions
+### Firebsae Cloud Functions
 
 * Firebase Cloud Funtions 를 통해서 작업하므로, 그에 대한 설정이 필요하다.
 * 먼저 Firebase 프로젝트를 생성한다.
@@ -59,7 +59,16 @@
 * 공부자료
   * [처음 시작하는 방법](https://firebase.google.com/docs/functions/get-started). 이 문서를 보고 설정을 하면 됩니다.
 
-### 클라이언트엔드
+
+### 백엔드 테스트하기
+
+* Emulator 를 실행하고 Shell 로 들어가서 아래와 같이 코딩하면 된다.
+
+```
+router({route: 'user.version'})
+```
+
+## 클라이언트엔드
 
 * 명칭: ClientF
 * Repository: [ClientF Github repository](https://github.com/thruthesky/enginf)

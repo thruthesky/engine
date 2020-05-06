@@ -1,7 +1,7 @@
 
 import { Router } from '../router/router';
 import * as assert from 'assert';
-import { AUTH_EMAIL_ALREADY_EXISTS, USER_NOT_EXIST } from '../defines';
+import { AUTH_EMAIL_ALREADY_EXISTS, USER_NOT_EXIST, EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED } from '../defines';
 // import { WRONG_CLASS_NAME, WRONG_METHOD_NAME } from '../defines';
 // import { User } from './user';
 
@@ -12,6 +12,32 @@ const password = `12345ax,*~A`;
 let uid: string;
 
 describe('User', () => {
+    it('Register input test', async() => {
+        let router = new Router('user.register');
+        try {
+            const req = {
+                name: 'David'
+            };
+            await router.run(req);
+            assert.fail();
+        } catch (e) {
+            assert.equal(e.message, EMAIL_NOT_PROVIDED);
+        }
+
+
+
+        router = new Router('user.register');
+        try {
+            const req = {
+                email: 'this@email.com',
+                name: 'David'
+            };
+            await router.run(req);
+            assert.fail();
+        } catch (e) {
+            assert.equal(e.message, PASSWORD_NOT_PROVIDED);
+        }
+    });
     it('Register', async () => {
         const router = new Router('user.register');
         try {

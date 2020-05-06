@@ -1,8 +1,14 @@
-// import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions';
+import { Router } from './router/router';
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+
+exports.router = functions.https.onCall(async (params, context) => {
+
+    try {
+        const router = new Router(params.route);
+        return await router.run(params.data);
+    } catch (e) {
+        return e.message;
+    }
+
+});

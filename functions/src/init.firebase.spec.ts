@@ -7,8 +7,8 @@ describe('Firebase initialization', () => {
             const name = 'name3';
             const doc = admin().firestore().collection('test').doc(name);
             await doc.set({ name: 'test abc' });
-            const snapshot = await doc.get();
-            if (snapshot.exists) {
+            const snapshotTestName = await doc.get();
+            if (snapshotTestName.exists) {
                 await doc.delete();
                 const snapshot = await doc.get();
                 if (snapshot.exists) {

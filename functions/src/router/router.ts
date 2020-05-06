@@ -11,18 +11,18 @@ export class Router {
     classContainer: ClassContainer = {};
     className: string;
     methodName: string;
-    action: string;
-    constructor(action: string) {
+    route: string;
+    constructor(route: string) {
         this.classContainer['user'] = new User();
-        this.action = action;
-        const arr = action.split('.');
+        this.route = route;
+        const arr = route.split('.');
         this.className = arr[0];
         this.methodName = arr[1];
     }
 
     /**
      * Runs the class & method.
-     * @param data data to pass to the action method.
+     * @param data data to pass to the route method.
      * @example see `user.spect.ts`
      * @note It can be called with `await`
      *      `const deletedUser = await routerData.run(uid);`
@@ -43,8 +43,8 @@ export class Router {
 
 
 
-    // if ( action === 'user' ) {
-    //     user[action](data);
+    // if ( route === 'user' ) {
+    //     user[route](data);
     // }
 }
 
