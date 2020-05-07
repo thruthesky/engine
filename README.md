@@ -125,12 +125,13 @@ samples, guidance on mobile development, and a full API reference.
 * `route` property 에는 `클래스명.함수명` 과 같이 기록을 한다. 예) `user.register`
 * `data` property 에는 route 로 전달하는 데이터이다. 예를 들어 `user.register` 를 호출하면 `data`에는 회원 메일 주소나 비밀번호 등을 입력하면 된다.
 
+* 프로토콜에서 에러가 나는 경우 `문자열`이 리턴된다. 에러가 나지 않고 성공하면 `문자열`이 아닌 값이 리턴된다. 즉, 리턴 값이 문자열이면 무조건 에러이다.
+
 기본 에러 예제)
 
 * route 값에 아무런 데이터를 전달하지 않으면, `wrong-class-name` 에러가 나타난다.
 * route 값에 함수명이 잘못되면 `wrong-method-name` 에러가 나타난다.
 
-이 처럼 각 route 호출 시 관련된 에러 값을 받을 수 있다.
 
 
 ### 회원 관리

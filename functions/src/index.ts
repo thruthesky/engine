@@ -8,6 +8,7 @@ exports.router = functions.https.onCall(async (params, context) => {
         const router = new Router(params.route);
         return await router.run(params.data);
     } catch (e) {
+        console.error(e);
         return e.message;
     }
 

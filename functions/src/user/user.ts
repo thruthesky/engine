@@ -20,6 +20,7 @@ export class User {
         if (data.password === void 0) throw new Error(PASSWORD_NOT_PROVIDED);
 
         try {
+            console.log('User::register() => await admin().auth().createUser(...)');
             const created = await admin().auth().createUser({
                 email: data.email,
                 password: data.password,
@@ -34,6 +35,7 @@ export class User {
             delete data.phoneNumber;
             delete data.photoURL;
 
+            console.log('User::register() => await this.userDoc()');
             await this.userDoc(created.uid).set(data);
             data.uid = created.uid;
             return data;
@@ -91,6 +93,7 @@ export class User {
         return admin().firestore().collection('user').doc(uid);
     }
     /// Returns user data from Firestore & from Auth information.
+    /// @example {'route': 'user.data', 'data': '....UID....'}
     async data(uid: string) {
         try {
             const gotUser = await admin().auth().getUser(uid);
