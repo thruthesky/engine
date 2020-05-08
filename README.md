@@ -45,6 +45,11 @@
 6. 테스트를 하려면 `## 테스트 항목`을 참고하세요.
 
 
+### Typedoc 설치
+
+npm install --global typedoc
+npm i -g typescript
+typedoc --out docs src
 
 
 
@@ -133,6 +138,8 @@ samples, guidance on mobile development, and a full API reference.
 * `router.run()` 에서 값이 없어도 되고, 문자열이어도 되고, 객체이어도 된다. 실제 라우터에서 필요로 하는 값을 전달하면 된다.
 
 * 에러메시지에서 'engin/...' 으로 시작하는 것은 EngineF 에서 자체적으로 발생하는 에러 메시지이다. 'auth/...' 로 시작하는 에러는 Firebase Admin SDK 의 Auth 에서 발생하는 에러이다.
+
+* 카테고리, 게시 글, 코멘트 등 게시판과 관련 된 라우터는 
 
 ### 에러 핸들링
 
@@ -231,4 +238,4 @@ auth/phone-number-already-exists | 전화번호가 이미 등록되어져 있는
 
 ## 함수 설명
 
-* 
+* docs 폴더를 참고한다.

@@ -10,6 +10,7 @@ import { EnginSettings } from '../settings';
 describe('Helper', function () {
     this.timeout(10000);
     it('isAdmin', async () => {
+        System.auth.email = undefined as any;
         assert.equal(isAdmin(), false);
         System.auth.email = EnginSettings.adminEmails[0];
         assert.equal(isAdmin(), true);

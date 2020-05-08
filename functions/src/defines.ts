@@ -13,7 +13,11 @@ export const PASSWORD_NOT_PROVIDED = 'engin/password-is-not-provided';
 export const PERMISSION_DEFINED = 'engin/permission-denied';
 
 
+export const INPUT_IS_EMPTY = 'engin/input-is-empty';
+export const ID_IS_EMPTY = 'engin/id-is-empty';
+export const TITLE_IS_EMPTY = 'engin/title-is-empty';
+
 export interface UserAuth {
-    email: string | undefined;
-    uid: string | undefined;
+    email: string;
+    uid: string;
 };

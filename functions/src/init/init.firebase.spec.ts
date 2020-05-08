@@ -1,7 +1,8 @@
 import { admin } from "./init.firebase";
 import * as assert from 'assert';
 
-describe('Firebase initialization', () => {
+describe('Firebase initialization', function () {
+    this.timeout(10000);
     it('Test set/delete on Firestore', async () => {
         try {
             const name = 'name3';
