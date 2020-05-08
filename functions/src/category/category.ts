@@ -20,6 +20,9 @@ interface CategoryData {
     updated: number;
 }
 
+/**
+ * @note all method of Category class returns `WriteResult` object.
+ */
 export class Category {
 
     /**

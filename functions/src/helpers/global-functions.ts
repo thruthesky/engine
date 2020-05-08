@@ -26,7 +26,13 @@ export function categoryDoc(id: string) {
     return admin().firestore().collection('category').doc(id);
 }
 
+export function postCol() {
+    return admin().firestore().collection('post');
+}
 
+export function categoryPostRelationDoc(postId: string) {
+    return admin().firestore().collection('category-post-relation').doc(postId);
+}
 
 
 /**
@@ -39,4 +45,8 @@ export function categoryDoc(id: string) {
  */
 export function isAdmin(): boolean {
     return EnginSettings.adminEmails.includes(System.auth.email);
+}
+
+export function isLoggedIn(): boolean {
+    return !!System.auth.email;
 }
