@@ -2,9 +2,8 @@
 
 본 Git Repo 는 온라인 스터디를 위한 것입니다. 스터디 참여 방법과 한글로 된 강좌 및 자료를 정리해 놓았습니다.
 
-## 프로젝트 정보
-
 * 프로젝트 명: EngineF
+* Git Repo: [EnginF Github repository](https://github.com/thruthesky/enginf)
 * 프로젝트 설명: 
   * 플러터 공개 프로젝트입니다.
   * Firebase 를 기반으로 하는 완전한 회원 정보 관리 및 게시판 관리(게시판 CRUD, 글 CRUD, 코멘트 CRUD, 파일 업로드 CRUD, 검색) 기능을 만드는 것입니다. 이러한 기능을 완료하면 사실상 Firebase 에서 못할 것이 없다는 증명을 하는 것입니다.
@@ -35,14 +34,21 @@
 
 * [Git Issues 참고](https://github.com/thruthesky/enginf/issues)
 
-## 백엔드
 
-* 명칭: EnginF
-* Repository: [EnginF Github repository](https://github.com/thruthesky/enginf)
-* 많은 코드와 로직을 Functions 에 넣는다.
-  * Deassemble 해킹을 통한 로직을 감출 수 있으며
-  * 클라이언트에서 문제가 보이는 경우, 서버에 수정을 하면 모든 클라이언트에 적용된다.
-* 백엔드에서 자체적인 테스트를 완료한다.
+## 설치
+
+1. Firebase 에서 프로젝트를 생성합니다.
+2. Git 에서 Enginf 를 clone 합니다.
+3. `.firebase.rc` 에 프로젝트 아이디를 수정합니다.
+4. `settings.ts` 를 열어서, `adminEmails` 배열에 관리자 메일 주소를 추가합니다.
+5. Clould Functions 를 publish 합니다.
+6. 테스트를 하려면 `## 테스트 항목`을 참고하세요.
+
+
+
+
+
+## 백엔드
 
 
 ### Firebsae Cloud Functions
@@ -118,6 +124,48 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+
+## 개발자 가이드
+
+* 모든 router 는 반드시 Promise 를 리턴해야 한다.
+* 소스코드에서는 `Enginf` 보다는 그냥 `Engin`이라는 용어를 쓴다. 예) EnginfSettings 대신 EnginSettings 라고 쓴다.
+
+* `router.run()` 에서 값이 없어도 되고, 문자열이어도 되고, 객체이어도 된다. 실제 라우터에서 필요로 하는 값을 전달하면 된다.
+
+* 에러메시지에서 'engin/...' 으로 시작하는 것은 EngineF 에서 자체적으로 발생하는 에러 메시지이다. 'auth/...' 로 시작하는 에러는 Firebase Admin SDK 의 Auth 에서 발생하는 에러이다.
+
+### 에러 핸들링
+
+* Admin SDK 의 경우 에러 코드가 `.code` 속성에 들어가 있다. 하지만 자바스크립트의 `Error 객체`의 코드는 `.message` 에 들어가 있다.
+  * 따라서 Admin SDK 의 Exception 의 `.code` 를 자바스크립트의 `.message` 로 넣어서 throw 해야 한ㄷ.
+``` typescript
+try {
+    await admin().auth().updateUser(data.uid, {
+        displayName: data.displayName,
+        ...
+    });
+    ...
+    await userDoc(data.uid).update(data);
+    const userData = await this.data(data.uid);
+    return data.uid;
+} catch (e) {
+    throw new Error(e.code); // 여기! Exception 의 .code 를 new Error(e.code) 로 전달하여 Error 객체의 .message 로 변환한다.
+}
+```
+
+예제) 가능한 re-throw 를 그냥 throw e 와 같이 한다.
+
+``` typescript
+try {
+    if (!data) throw new Error(INPUT_NOT_PROVIDED);
+    if (data.email === void 0) throw new Error(EMAIL_NOT_PROVIDED);
+    if (data.password === void 0) throw new Error(PASSWORD_NOT_PROVIDED);
+} catch (e) {
+    throw e;    // 여기! 에러 코드를 변환해야하지 않는다면, 그냥 Error 객체를 던질 것.
+    throw new Error(e.message); // 여기! 이렇게 하지 말 것
+}
+```
+
 ## 프로토콜
 
 
@@ -156,3 +204,31 @@ auth/email-already-exists | 동일한 메일 주소가 이미 가입되어져 �
 auth/invalid-phone-number | 전화번호가 잘못된 경우
 auth/phone-number-already-exists | 전화번호가 이미 등록되어져 있는 경우
 
+
+## 폴더 및 파일 구조
+
+* `init.firebase.ts` 는 파이어베이스를 Admin SDK 로 초기화 한다.
+* `helper.ts` 는 도움이 되는 클래스를 모아 놓았다.
+* `defines.ts` 는 각종 변수 및 자료를 정의 해 놓았다.
+* `index.ts` 는 Functions 시작 함수이다.
+
+### 라우팅
+
+* functions/src 아래에는 여러 폴더가 있는데, 각각의 폴더는 `router`이다.
+  * router 에 있는 클래스에는 router 에 꼭 필요한 메소드만 담아야 한다. 다른 함수, 변수, 데이터를 담지 않도록 주의한다.
+  * 라우팅에 꼭 필요 없는 것들은 `helper.ts` 클래스로 모은다.
+
+
+
+## 테스트
+
+* 테스트를 위해서는 관리자 아이디와 사용자 아이디를 Email 로 가입을 해야한다.
+* 관리자 아이디는 email 로 `EnginSettings.adminEmails` 에 Email 을 추가한다.
+* 그리고 관리자 UID 와 테스트 사용자 UID 를 `TestSettings.adminUID` 와 `TestSettings.testUserUID`에 추가를 해야 한다.
+* 관리자 인지 아닌지는 `isAdmin()` 으로 검사한다. 
+
+
+
+## 함수 설명
+
+* 

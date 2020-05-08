@@ -1,5 +1,7 @@
 import { User } from '../user/user';
 import { WRONG_CLASS_NAME, WRONG_METHOD_NAME } from '../defines';
+import { System } from '../system/system';
+import { Category } from '../category/category';
 
 
 interface ClassContainer {
@@ -14,17 +16,20 @@ export class Router {
     route: string;
     constructor(route: string) {
         this.classContainer['user'] = new User();
+        this.classContainer['system'] = new System();
+        this.classContainer['category'] = new Category();
         this.route = route ?? '';
     }
 
     /**
      * Runs the class & method.
      * @param data data to pass to the route method.
+     * @param uid is the user's UID and this is trustable since it is automatically set by `Cloud Functions`.
      * @example see `user.spect.ts`
      * @note It can be called with `await`
      *      `const deletedUser = await routerData.run(uid);`
      */
-    run(data?: any): any {
+    async run(data?: any): Promise<any> {
 
         const arr = this.route.split('.');
         this.className = arr[0];
@@ -40,6 +45,7 @@ export class Router {
         }
 
         return this.classContainer[this.className][this.methodName](data);
+
     }
 
 

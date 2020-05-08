@@ -1,5 +1,6 @@
-import { admin } from "../init.firebase";
+import { admin } from "../init/init.firebase";
 import { USER_NOT_EXIST, EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED } from "../defines";
+import { userDoc } from "../helpers/global-functions";
 
 
 export class User {
@@ -15,12 +16,18 @@ export class User {
      * 
      */
     async register(data: any) {
-        if (!data) throw new Error(INPUT_NOT_PROVIDED);
-        if (data.email === void 0) throw new Error(EMAIL_NOT_PROVIDED);
-        if (data.password === void 0) throw new Error(PASSWORD_NOT_PROVIDED);
 
         try {
-            console.log('User::register() => await admin().auth().createUser(...)');
+            if (!data) throw new Error(INPUT_NOT_PROVIDED);
+            if (data.email === void 0) throw new Error(EMAIL_NOT_PROVIDED);
+            if (data.password === void 0) throw new Error(PASSWORD_NOT_PROVIDED);
+        } catch (e) {
+            throw e;
+        }
+
+        try {
+
+            // console.log('User::register() => await admin().auth().createUser(...)');
             const created = await admin().auth().createUser({
                 email: data.email,
                 password: data.password,
@@ -35,8 +42,8 @@ export class User {
             delete data.phoneNumber;
             delete data.photoURL;
 
-            console.log('User::register() => await this.userDoc()');
-            await this.userDoc(created.uid).set(data);
+            // console.log('User::register() => await userDoc()');
+            await userDoc(created.uid).set(data);
             data.uid = created.uid;
             return data;
         } catch (e) {
@@ -65,7 +72,7 @@ export class User {
             delete data.displayName;
             delete data.phoneNumber;
             delete data.photoURL;
-            await this.userDoc(data.uid).update(data);
+            await userDoc(data.uid).update(data);
             const userData = await this.data(data.uid);
             userData.uid = data.uid;
             return userData;
@@ -82,22 +89,19 @@ export class User {
     async delete(uid: string) {
         try {
             await admin().auth().deleteUser(uid);
-            await this.userDoc(uid).delete();
+            await userDoc(uid).delete();
             return uid;
         } catch (e) {
             throw new Error(e.code);
         }
     }
 
-    userDoc(uid: string) {
-        return admin().firestore().collection('user').doc(uid);
-    }
     /// Returns user data from Firestore & from Auth information.
     /// @example {'route': 'user.data', 'data': '....UID....'}
     async data(uid: string) {
         try {
             const gotUser = await admin().auth().getUser(uid);
-            const snapshot = await this.userDoc(uid).get();
+            const snapshot = await userDoc(uid).get();
             if (snapshot.exists) {
                 let data = snapshot.data();
                 if (data === void 0) data = {};

@@ -3,8 +3,8 @@ import { Router } from '../router/router';
 import * as assert from 'assert';
 import { AUTH_EMAIL_ALREADY_EXISTS, USER_NOT_EXIST, EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED } from '../defines';
 // import { User } from './user';
-import { getRandomInt } from '../helper';
-import { admin } from '../init.firebase';
+import { admin } from '../init/init.firebase';
+import { getRandomInt } from '../helpers/global-functions';
 // import { WRONG_CLASS_NAME, WRONG_METHOD_NAME } from '../defines';
 // import { User } from './user';
 
@@ -23,11 +23,10 @@ describe('User', function () {
                 name: 'David'
             };
             await router.run(req);
-            assert.fail();
+            assert.fail('must be thrown');
         } catch (e) {
             assert.equal(e.message, EMAIL_NOT_PROVIDED);
         }
-
 
         router = new Router('user.register');
         try {
