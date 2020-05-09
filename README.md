@@ -37,8 +37,18 @@
 
 ## 설치
 
+### 요약
+
+1. 파이어베이스 프로젝트를 만들고, (DB 생성, 사용자 추가)
+2. 벡앤드 소스 코드를 clone 한 다음,
+3. Functions 로 Deploy.
+
+
+### 설치
+
 1. Firebase 에서 프로젝트를 생성합니다.
    1. Firebase Clould Firestore 데이터베이스를 생성합니다.
+   2. Authentication > Sign-in Method > Email/Password Enable 합니다.
 2. `firebase-tools` 를 설치하고, firebase 에 로그인을 합니다.
    1. `# npm install -g firebase-tools`
 3. Git 에서 Enginf 를 clone 합니다.
@@ -47,9 +57,10 @@
    3. `$ npm i`
 4. `.firebase.rc` 를 열어서 `projects` > `default` 에 본인의 파이어베이스 프로젝트 아이디를 수정(또는 입력)합니다.
 5. `functions/src/settings.ts` 를 열어서, `adminEmails` 배열에 관리자 메일 주소를 추가합니다.
-6. Clould Functions 를 publish 합니다.
+6.  Clould Functions 를 publish 합니다.
    1. `$ firebase deploy --only functions`
 7. 테스트를 하려면 `## 테스트 항목`을 참고하세요.
+
 
 
 ### Typedoc 설치
@@ -108,20 +119,12 @@ router({route: 'user.version'})
 * 멤버로 초대되면, 자신의 branch 를 만들고, 그 branch 에서 작업을 해 주세요. master branch 에서 작업하지 마세요.
 * 자신의 업무가 끝나면 프로젝트 관리자에게 merge 요청을 해 주세요. 즉, 자신이 한 작업을 관리자 허가없이 master merge 하지 말아주세요.
 
-## 동영상 강좌 - 왕초보를 위한 플러터 동영상 강좌 모음
+## 파이어베이스 Function 코딩 정보
 
-* [오준석의 생존코딩 - 입문편](https://www.youtube.com/watch?v=lRbZsBvG9Ig&list=PLxTmPHxRH3VUueVvEnrP8qxHAP5x9XAPv)
-* [오준석의 생존코딩 - 중급편](https://www.youtube.com/watch?v=ei8TX-uqP6E&list=PLxTmPHxRH3VWLY-eyQuV1C_IbIQlCXEhe)
-* [코딩셰프의 Flutter 동영상 강좌](https://www.youtube.com/channel/UC_2ge45JCuJH1z6VYt4iCgQ)
-* [더코딩파파의 FLutter 동영상 강좌](https://www.youtube.com/channel/UCUH2DSbsNUz2sW3kBNn4ibw)
-
-## 레이아웃 강좌
-
-* [Flutter로 개발하기(27) - 레이아웃 위젯 목록](https://bsscco.github.io/posts/flutter-layout-widgets/)
-
-## 기타 강좌 - 미 분류
-
-* [Dart 와 플러터 강좌](https://bsscco.github.io/posts/)
+* [https://firebase.google.com/docs/functions?hl=ko](https://firebase.google.com/docs/functions) 모든 정보는 이곳에서 확인 가능
+* [파이어베이스 Functions 공식 예제(영문)](https://github.com/firebase/functions-samples)
+* [한글: Functions](https://mrbinggrae.tistory.com/8)
+* [한글: Functions](https://developer-jp.tistory.com/25)
 
 ## Flutter 영문 기본 자료
 
