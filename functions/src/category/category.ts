@@ -1,5 +1,3 @@
-// import { admin } from "../init.firebase";
-// import { USER_NOT_EXIST, EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED } from "../defines";
 
 
 import { WriteResult } from '@google-cloud/firestore';

@@ -6,8 +6,6 @@ export const USER_CREATE_FAILED = 'engin/user-create-failed';
 
 /// Firebase Auth 에 사용자가 존재하지 않는 경우 에러 메시지
 export const AUTH_USER_NOT_FOUND = 'auth/user-not-found';
-/// Firebase Auth 에는 존재하지만, Firestore 에 존재하지 않는 경우 에러 메시지
-export const USER_NOT_EXIST = 'engin/user-not-exist';
 
 export const AUTH_EMAIL_ALREADY_EXISTS = 'auth/email-already-exists';
 export const AUTH_INVALID_PHONE_NUMBER = 'auth/invalid-phone-number';

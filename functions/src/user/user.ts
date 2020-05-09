@@ -1,5 +1,5 @@
 import { admin } from "../init/init.firebase";
-import { EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED, USER_NOT_EXIST } from "../defines";
+import { EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED } from "../defines";
 import { userDoc } from "../helpers/global-functions";
 
 
@@ -99,10 +99,17 @@ export class User {
         const gotUser = await admin().auth().getUser(uid);
 
         const snapshot = await userDoc(uid).get();
+
+        let data;
+        /**
+         * If there is no document for the user in Firestore, just pass Auth data.
+         * If user is created on Firebase console, then the user does not have `user` doc in Firestore.
+         */
         if (!snapshot.exists) {
-            throw new Error(USER_NOT_EXIST);
+            data = {};
+        } else {
+            data = snapshot.data();
         }
-        let data = snapshot.data();
         if (data === void 0) data = {};
         data.email = gotUser.email;
         data.uid = gotUser.uid;
