@@ -160,6 +160,7 @@ try {
 }
 ```
 
+
 예제) 가능한 re-throw 를 그냥 throw e 와 같이 한다.
 
 ``` typescript
@@ -172,6 +173,11 @@ try {
     throw new Error(e.message); // 여기! 이렇게 하지 말 것
 }
 ```
+
+### 에러코드
+
+* defines.ts 를 참고한다.
+* 
 
 ## 프로토콜
 

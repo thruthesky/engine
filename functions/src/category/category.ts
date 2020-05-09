@@ -41,8 +41,8 @@ export class Category {
         try {
             if (!isAdmin()) throw new Error(PERMISSION_DEFINED);
             if (!data) throw new Error(INPUT_IS_EMPTY);
-            if (data.id == void 0) throw new Error(ID_IS_EMPTY);
-            if (data.title == void 0) throw new Error(TITLE_IS_EMPTY);
+            if (data.id === void 0) throw new Error(ID_IS_EMPTY);
+            if (data.title === void 0) throw new Error(TITLE_IS_EMPTY);
         } catch (e) {
             throw e;
         }
@@ -71,8 +71,8 @@ export class Category {
         try {
             if (!isAdmin()) throw new Error(PERMISSION_DEFINED);
             if (!data) throw new Error(INPUT_IS_EMPTY);
-            if (data.id == void 0) throw new Error(ID_IS_EMPTY);
-            if (data.title == void 0) throw new Error(TITLE_IS_EMPTY);
+            if (data.id === void 0) throw new Error(ID_IS_EMPTY);
+            if (data.title === void 0) throw new Error(TITLE_IS_EMPTY);
         } catch (e) {
             throw e;
         }
@@ -98,7 +98,7 @@ export class Category {
         try {
             if (!isAdmin()) throw new Error(PERMISSION_DEFINED);
             if (!data) throw new Error(INPUT_IS_EMPTY);
-            if (data.id == void 0) throw new Error(ID_IS_EMPTY);
+            if (data.id === void 0) throw new Error(ID_IS_EMPTY);
         } catch (e) {
             throw e;
         }

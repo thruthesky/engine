@@ -1,5 +1,5 @@
 import { admin } from "../init/init.firebase";
-import { EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED, AUTH_USER_NOT_FOUND } from "../defines";
+import { EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED, USER_NOT_EXIST } from "../defines";
 import { userDoc } from "../helpers/global-functions";
 
 
@@ -97,20 +97,21 @@ export class User {
      */
     async data(uid: string) {
         const gotUser = await admin().auth().getUser(uid);
-        const snapshot = await userDoc(uid).get();
-        if (snapshot.exists) {
-            let data = snapshot.data();
-            if (data === void 0) data = {};
-            data.email = gotUser.email;
-            data.uid = gotUser.uid;
-            data.displayName = gotUser.displayName;
-            data.phoneNumber = gotUser.phoneNumber;
-            data.photoURL = gotUser.photoURL;
 
-            return data;
-        } else {
-            throw new Error(AUTH_USER_NOT_FOUND);
+        const snapshot = await userDoc(uid).get();
+        if (!snapshot.exists) {
+            throw new Error(USER_NOT_EXIST);
         }
+        let data = snapshot.data();
+        if (data === void 0) data = {};
+        data.email = gotUser.email;
+        data.uid = gotUser.uid;
+        data.displayName = gotUser.displayName;
+        data.phoneNumber = gotUser.phoneNumber;
+        data.photoURL = gotUser.photoURL;
+
+        return data;
+
     }
 
     /**

@@ -31,6 +31,8 @@ export class Router {
      * @example see `user.spect.ts`
      * @note It can be called with `await`
      *      `const deletedUser = await routerData.run(uid);`
+     * 
+     * /// 여기서 부터 다시 작업 할 것: https://docs.google.com/document/d/1xNDf6hYyBXWrYhBb4y5gV84MhNgKFdiBE0BYT97GpzE/edit#heading=h.ctbgsg1k56ws
      */
     async run(data?: any): Promise<any> {
 

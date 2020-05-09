@@ -1,5 +1,5 @@
 export const EnginSettings = {
-    adminEmails: ['thruthesky@gmail.com', 'abc@gmail.com'],
+    adminEmails: ['thruthesky@gmail.com', 'admin@engin.com'],
 };
 
 
