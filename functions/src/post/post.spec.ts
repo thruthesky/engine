@@ -27,7 +27,7 @@ describe('Post', function () {
     });
 
     it('Create success', async () => {
-        await forceUserLoginByEmail(TestSettings.testUserUID);
+        await forceUserLoginByEmail(TestSettings.testUserEmail);
         System.auth.email
         try {
             const route = new Router('post.create');

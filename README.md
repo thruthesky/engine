@@ -38,11 +38,16 @@
 ## 설치
 
 1. Firebase 에서 프로젝트를 생성합니다.
-2. Git 에서 Enginf 를 clone 합니다.
-3. `.firebase.rc` 에 프로젝트 아이디를 수정합니다.
-4. `settings.ts` 를 열어서, `adminEmails` 배열에 관리자 메일 주소를 추가합니다.
-5. Clould Functions 를 publish 합니다.
-6. 테스트를 하려면 `## 테스트 항목`을 참고하세요.
+2. `firebase-tools` 를 설치하고, firebase 에 로그인을 합니다.
+3. Git 에서 Enginf 를 clone 합니다.
+   1. `$ git clone https://github.com/thruthesky/enginf`
+   2. `$ cd enginf/functions`
+   3. `$ npm i`
+4. `.firebase.rc` 를 열어서 `projects` > `default` 에 본인의 파이어베이스 프로젝트 아이디를 수정(또는 입력)합니다.
+5. `functions/src/settings.ts` 를 열어서, `adminEmails` 배열에 관리자 메일 주소를 추가합니다.
+6. Clould Functions 를 publish 합니다.
+   1. `$ firebase deploy --only functions`
+7. 테스트를 하려면 `## 테스트 항목`을 참고하세요.
 
 
 ### Typedoc 설치
@@ -235,11 +240,13 @@ auth/phone-number-already-exists | 전화번호가 이미 등록되어져 있는
 
 ## 테스트
 
-* 테스트를 위해서는 관리자 아이디와 사용자 아이디를 Email 로 가입을 해야한다.
-* 관리자 아이디는 email 로 `EnginSettings.adminEmails` 에 Email 을 추가한다.
-* 그리고 관리자 UID 와 테스트 사용자 UID 를 `TestSettings.adminUID` 와 `TestSettings.testUserUID`에 추가를 해야 한다.
-* 관리자 인지 아닌지는 `isAdmin()` 으로 검사한다. 
+* 테스트를 위해서는 관리자 아이디를 Auth 페이지에서 Email 추가를 하고, settings.ts 에 설정을 하면 된다.
 
+* 아래와 같이 실행하면 된다.
+```
+$ cd functions
+$ npm run test
+```
 
 
 ## 함수 설명

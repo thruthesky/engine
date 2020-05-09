@@ -8,5 +8,5 @@ export const EnginSettings = {
 
 
 export const TestSettings = {
-    testUserUID: 'user10@gmail.com',
+    testUserEmail: 'user10@gmail.com',
 };
