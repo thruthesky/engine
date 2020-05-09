@@ -240,8 +240,19 @@ auth/phone-number-already-exists | 전화번호가 이미 등록되어져 있는
 
 ## 테스트
 
-* 테스트를 위해서는 관리자 아이디를 Auth 페이지에서 Email 추가를 하고, settings.ts 에 관리자 추가를 한다.
-* 그리고 임시 사용자를 Auth 가입하고 `TestSettings.testUserEmail`에 기록하면 된다.
+* 테스트를 위해서는 관리자 아이디를 설정하는 것에 추가로 임시 사용자를 Auth 가입하고 `TestSettings.testUserEmail`에 기록해야 한다.
+
+예제) settings.ts 설정 예
+
+```
+export const EnginSettings = {
+    adminEmails: ['admin@gmail.com', '...'],
+};
+export const TestSettings = {
+    testUserEmail: 'user10@gmail.com',
+};
+```
+
 * 아래와 같이 실행하면 된다.
 ```
 $ cd functions
