@@ -40,6 +40,7 @@
 1. Firebase 에서 프로젝트를 생성합니다.
    1. Firebase Clould Firestore 데이터베이스를 생성합니다.
 2. `firebase-tools` 를 설치하고, firebase 에 로그인을 합니다.
+   1. `# npm install -g firebase-tools`
 3. Git 에서 Enginf 를 clone 합니다.
    1. `$ git clone https://github.com/thruthesky/enginf`
    2. `$ cd enginf/functions`
