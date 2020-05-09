@@ -86,7 +86,8 @@ export function forceUserLogout() {
 }
 
 
-export async function setCategoryPostRelation(postId: string, category: string) {
+export async function setCategoryPostRelation(category: string, postId: string) {
+
     try {
         if (postId === void 0) throw new Error(POST_ID_IS_UNDEFINED);
         if (category === void 0) throw new Error(CATEGORY_IS_UNDEFINED);

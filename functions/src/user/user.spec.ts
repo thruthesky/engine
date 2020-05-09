@@ -1,7 +1,7 @@
 
 import { Router } from '../router/router';
 import * as assert from 'assert';
-import { AUTH_EMAIL_ALREADY_EXISTS, USER_NOT_EXIST, EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED } from '../defines';
+import { AUTH_EMAIL_ALREADY_EXISTS, EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, AUTH_USER_NOT_FOUND } from '../defines';
 // import { User } from './user';
 import { admin } from '../init/init.firebase';
 import { getRandomInt } from '../helpers/global-functions';
@@ -51,6 +51,7 @@ describe('User', function () {
             const createdUser = await router.run(req);
             assert.equal(createdUser.email, req.email);
             uid = createdUser.uid;
+            // trace('register: uid', uid);
         } catch (e) {
             assert.fail(e.message);
         }
@@ -81,12 +82,13 @@ describe('User', function () {
                 name: 'Updated name',
                 birthday: '1973-10-16'
             };
+            // console.log(req);
             const updatedUser = await router.run(req);
             // console.log(`User create success. UID: ${updatedUser.uid}`);
             assert.equal(updatedUser.uid, req.uid);
             assert.equal(updatedUser.name, req.name);
         } catch (e) {
-            assert.equal(e.message, AUTH_EMAIL_ALREADY_EXISTS);
+            assert.fail('Must success');
         }
     });
 
@@ -102,7 +104,7 @@ describe('User', function () {
             const deletedUser = await routerData.run(uid);
             assert.fail('Code should not come here: ', deletedUser);
         } catch (e) {
-            assert.equal(e.message, USER_NOT_EXIST);
+            assert.equal(e.message, AUTH_USER_NOT_FOUND);
         }
     });
 

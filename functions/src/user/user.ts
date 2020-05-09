@@ -1,5 +1,5 @@
 import { admin } from "../init/init.firebase";
-import { USER_NOT_EXIST, EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED } from "../defines";
+import { EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED, AUTH_USER_NOT_FOUND } from "../defines";
 import { userDoc } from "../helpers/global-functions";
 
 
@@ -72,7 +72,7 @@ export class User {
 
         // console.log(data);
         await userDoc(uid).update(data);
-        const userData = await this.data(data.uid);
+        const userData = await this.data(uid);
         userData.uid = data.uid;
         return userData;
     }
@@ -83,13 +83,9 @@ export class User {
      * @param uid user uid
      */
     async delete(uid: string) {
-        try {
-            await admin().auth().deleteUser(uid);
-            await userDoc(uid).delete();
-            return { uid: uid };
-        } catch (e) {
-            throw new Error(e.code);
-        }
+        await admin().auth().deleteUser(uid);
+        await userDoc(uid).delete();
+        return { uid: uid };
     }
 
     /// Returns user data from Firestore & from Auth information.
@@ -113,7 +109,7 @@ export class User {
 
             return data;
         } else {
-            throw new Error(USER_NOT_EXIST);
+            throw new Error(AUTH_USER_NOT_FOUND);
         }
     }
 
