@@ -9,6 +9,7 @@ import { Settings } from "../helpers/global-functions";
 export class System {
 
     static auth: UserAuth = {} as any;
+    static debug = false;
 
     /**
      * Returns admin emails in array.

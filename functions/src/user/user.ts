@@ -16,40 +16,31 @@ export class User {
      * 
      */
     async register(data: any) {
+        if (!data) throw new Error(INPUT_NOT_PROVIDED);
+        if (data.email === void 0) throw new Error(EMAIL_NOT_PROVIDED);
+        if (data.password === void 0) throw new Error(PASSWORD_NOT_PROVIDED);
 
-        try {
-            if (!data) throw new Error(INPUT_NOT_PROVIDED);
-            if (data.email === void 0) throw new Error(EMAIL_NOT_PROVIDED);
-            if (data.password === void 0) throw new Error(PASSWORD_NOT_PROVIDED);
-        } catch (e) {
-            throw e;
-        }
+        // console.log('User::register() => await admin().auth().createUser(...)');
+        const created = await admin().auth().createUser({
+            email: data.email,
+            password: data.password,
+            displayName: data.displayName,
+            phoneNumber: data.phoneNumber,
+            photoURL: data.photoURL,
+            emailVerified: false,
+        });
 
-        try {
+        delete data.password;
+        delete data.displayName;
+        delete data.phoneNumber;
+        delete data.photoURL;
 
-            // console.log('User::register() => await admin().auth().createUser(...)');
-            const created = await admin().auth().createUser({
-                email: data.email,
-                password: data.password,
-                displayName: data.displayName,
-                phoneNumber: data.phoneNumber,
-                photoURL: data.photoURL,
-                emailVerified: false,
-            });
+        data.created = (new Date).getTime();
 
-            delete data.password;
-            delete data.displayName;
-            delete data.phoneNumber;
-            delete data.photoURL;
-
-            // console.log('User::register() => await userDoc()');
-            await userDoc(created.uid).set(data);
-            data.uid = created.uid;
-            return data;
-        } catch (e) {
-            throw new Error(e.code);
-        }
-
+        // console.log('User::register() => await userDoc()');
+        await userDoc(created.uid).set(data);
+        data.uid = created.uid;
+        return data;
     }
 
     /**
@@ -60,25 +51,30 @@ export class User {
      * 
      * @todo - user verification.
      * @todo - input validation. no password. no disabled option.
+     * @todo Only admin can get other user's uid. Normal users can get only their own information. Normal users don't need to pass UID.
+     * 
      */
     async update(data: any) {
-        try {
-            await admin().auth().updateUser(data.uid, {
-                displayName: data.displayName,
-                phoneNumber: data.phoneNumber,
-                photoURL: data.photoURL,
-                emailVerified: false
-            });
-            delete data.displayName;
-            delete data.phoneNumber;
-            delete data.photoURL;
-            await userDoc(data.uid).update(data);
-            const userData = await this.data(data.uid);
-            userData.uid = data.uid;
-            return userData;
-        } catch (e) {
-            throw new Error(e.code);
-        }
+        const uid = data.uid;
+        delete data.uid;
+        await admin().auth().updateUser(uid, {
+            displayName: data.displayName,
+            phoneNumber: data.phoneNumber,
+            photoURL: data.photoURL,
+            emailVerified: false
+        });
+        delete data.displayName;
+        delete data.phoneNumber;
+        delete data.photoURL;
+
+
+        data.updated = (new Date).getTime();
+
+        // console.log(data);
+        await userDoc(uid).update(data);
+        const userData = await this.data(data.uid);
+        userData.uid = data.uid;
+        return userData;
     }
 
 
@@ -90,7 +86,7 @@ export class User {
         try {
             await admin().auth().deleteUser(uid);
             await userDoc(uid).delete();
-            return uid;
+            return { uid: uid };
         } catch (e) {
             throw new Error(e.code);
         }
@@ -98,24 +94,25 @@ export class User {
 
     /// Returns user data from Firestore & from Auth information.
     /// @example {'route': 'user.data', 'data': '....UID....'}
+    /**
+     * Returns user information
+     * @param uid User uid to get information
+     * @todo Only admin can get other user's uid. Normal users can get only their own information. Normal users don't need to pass UID.
+     */
     async data(uid: string) {
-        try {
-            const gotUser = await admin().auth().getUser(uid);
-            const snapshot = await userDoc(uid).get();
-            if (snapshot.exists) {
-                let data = snapshot.data();
-                if (data === void 0) data = {};
-                data.email = gotUser.email;
-                data.uid = gotUser.uid;
-                data.displayName = gotUser.displayName;
-                data.phoneNumber = gotUser.phoneNumber;
-                data.photoURL = gotUser.photoURL;
+        const gotUser = await admin().auth().getUser(uid);
+        const snapshot = await userDoc(uid).get();
+        if (snapshot.exists) {
+            let data = snapshot.data();
+            if (data === void 0) data = {};
+            data.email = gotUser.email;
+            data.uid = gotUser.uid;
+            data.displayName = gotUser.displayName;
+            data.phoneNumber = gotUser.phoneNumber;
+            data.photoURL = gotUser.photoURL;
 
-                return data;
-            } else {
-                throw new Error(USER_NOT_EXIST);
-            }
-        } catch (e) {
+            return data;
+        } else {
             throw new Error(USER_NOT_EXIST);
         }
     }

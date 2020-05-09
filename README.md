@@ -135,7 +135,7 @@ samples, guidance on mobile development, and a full API reference.
 * 모든 router 는 반드시 Promise 를 리턴해야 한다.
 * 소스코드에서는 `Enginf` 보다는 그냥 `Engin`이라는 용어를 쓴다. 예) EnginfSettings 대신 EnginSettings 라고 쓴다.
 
-* `router.run()` 에서 값이 없어도 되고, 문자열이어도 되고, 객체이어도 된다. 실제 라우터에서 필요로 하는 값을 전달하면 된다.
+* `router.run()` 에서 입력 값이 없어도 되고, 문자열이어도 되고, 객체이어도 된다. 실제 라우터에서 필요로 하는 값을 전달하면 된다.
 
 * 에러메시지에서 'engin/...' 으로 시작하는 것은 EngineF 에서 자체적으로 발생하는 에러 메시지이다. 'auth/...' 로 시작하는 에러는 Firebase Admin SDK 의 Auth 에서 발생하는 에러이다.
 
@@ -180,7 +180,7 @@ try {
 * `route` property 에는 `클래스명.함수명` 과 같이 기록을 한다. 예) `user.register`
 * `data` property 에는 route 로 전달하는 데이터이다. 예를 들어 `user.register` 를 호출하면 `data`에는 회원 메일 주소나 비밀번호 등을 입력하면 된다.
 
-* 프로토콜에서 에러가 나는 경우 `문자열`이 리턴된다. 에러가 나지 않고 성공하면 `문자열`이 아닌 값이 리턴된다. 즉, 리턴 값이 문자열이면 무조건 에러이다.
+* `Router.run()` 프로토콜에서 성공하면 반드시 Object 가 리턴된다. 에러이면 '문자열'이 리턴된다. 즉, 리턴 값이 문자열이면 무조건 에러이다.
 
 기본 에러 예제)
 

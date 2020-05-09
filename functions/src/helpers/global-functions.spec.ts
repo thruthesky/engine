@@ -1,14 +1,16 @@
-// import { Router } from "../router/router";
+
 import * as assert from 'assert';
-// import { Settings } from "../helper";
-// import { PERMISSION_DEFINED } from "../defines";
-import { isAdmin } from "./global-functions";
+import {
+    isAdmin,
+} from "./global-functions";
 import { System } from '../system/system';
 import { EnginSettings } from '../settings';
-// import { System } from "../system/system";
-
-describe('Helper', function () {
+describe('Helpers > Global functions', function () {
     this.timeout(10000);
+
+
+
+
     it('isAdmin', async () => {
         System.auth.email = undefined as any;
         assert.equal(isAdmin(), false);

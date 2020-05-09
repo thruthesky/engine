@@ -8,7 +8,9 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "mocha --require ts-node/register --watch --watch-files src, src/**/*.ts"
+    "test": "mocha --require ts-node/register --watch --watch-files src, src/**/*.ts",
+    "test:global-functions": "mocha --require ts-node/register --watch --watch-files src, src/helpers/global-functions.spec.ts",
+    "test:error": "mocha --require ts-node/register --watch --watch-files src, src/test/error.spec.ts"
   },
   "engines": {
     "node": "8"

@@ -1,7 +1,9 @@
 import { User } from '../user/user';
-import { WRONG_CLASS_NAME, WRONG_METHOD_NAME } from '../defines';
+import { WRONG_CLASS_NAME, WRONG_METHOD_NAME, RESULT_IS_NOT_OBJECT } from '../defines';
 import { System } from '../system/system';
 import { Category } from '../category/category';
+import { Post } from '../post/post';
+import { convertFirebaseErrorIntoJavascriptError } from '../helpers/global-functions';
 
 
 interface ClassContainer {
@@ -18,6 +20,7 @@ export class Router {
         this.classContainer['user'] = new User();
         this.classContainer['system'] = new System();
         this.classContainer['category'] = new Category();
+        this.classContainer['post'] = new Post();
         this.route = route ?? '';
     }
 
@@ -35,24 +38,25 @@ export class Router {
         this.className = arr[0];
         this.methodName = arr[1];
 
-        if (this.classContainer[this.className] === void 0) {
-            // console.log(`class does not exists - ${this.className}`);
-            throw new Error(WRONG_CLASS_NAME);
-        }
-        if (this.classContainer[this.className][this.methodName] === void 0) {
-            // console.log(`method does not exists - ${this.className}.${this.methodName}`);
-            throw new Error(WRONG_METHOD_NAME);
-        }
+        try {
 
-        return this.classContainer[this.className][this.methodName](data);
+            if (this.classContainer[this.className] === void 0) {
+                throw new Error(WRONG_CLASS_NAME);
+            }
+            if (this.classContainer[this.className][this.methodName] === void 0) {
+                throw new Error(WRONG_METHOD_NAME);
+            }
 
+            const re = await this.classContainer[this.className][this.methodName](data);
+            if (typeof re !== 'object') {
+                throw new Error(RESULT_IS_NOT_OBJECT);
+            }
+            return re;
+
+        } catch (e) {
+            throw convertFirebaseErrorIntoJavascriptError(e);
+        }
     }
-
-
-
-    // if ( route === 'user' ) {
-    //     user[route](data);
-    // }
 }
 
 

@@ -3,7 +3,7 @@
 
 
 import { PERMISSION_DEFINED, INPUT_IS_EMPTY } from '../defines';
-import { isLoggedIn, postCol, categoryPostRelationDoc } from '../helpers/global-functions';
+import { isLoggedIn, postCol, trace, setCategoryPostRelation } from '../helpers/global-functions';
 import { System } from '../system/system';
 
 
@@ -39,7 +39,8 @@ export class Post {
      * 
      * /// 여기서 부터... 게시글 생성 테스트 & 게시글 수정 & 테스트 & 게시글 삭제 & 테스트
      */
-    async create(data: PostData): Promise<string> {
+    async create(data: PostData): Promise<object> {
+        // trace('Post::create() begin', data);
         try {
             if (!isLoggedIn()) throw new Error(PERMISSION_DEFINED);
             if (!data) throw new Error(INPUT_IS_EMPTY);
@@ -47,19 +48,26 @@ export class Post {
             throw e;
         }
 
+        trace('Post::create() validation pass');
+
         try {
             const category = data.category;
             delete data.category;
-            data.uid = System.auth.email;
+            data.uid = System.auth.uid;
             data.created = (new Date).getTime();
 
-            const doc = await postCol().add(data);
+            // trace('Post doc data', data);
+            const post = await postCol().add(data);
+            trace('doc.id', post.id);
 
-            await categoryPostRelationDoc(doc.id).set({ category: category });
+            const re = await setCategoryPostRelation(category, post.id);
 
-            return doc.id;
+
+            trace('categoryPostRelationDoc()', re);
+            return { id: post.id };
 
         } catch (e) {
+            trace('Post::create() firestore error', e.code);
             throw new Error(e.code);
         }
     }
