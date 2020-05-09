@@ -4,7 +4,6 @@ import { System } from './system/system';
 
 
 
- /// 여기서 부터 다시 작업 할 것: https://docs.google.com/document/d/1xNDf6hYyBXWrYhBb4y5gV84MhNgKFdiBE0BYT97GpzE/edit#heading=h.ctbgsg1k56ws
 exports.router = functions.https.onCall(async (params, context) => {
 
     try {
@@ -13,8 +12,14 @@ exports.router = functions.https.onCall(async (params, context) => {
         const router = new Router(params.route);
         return await router.run(params.data);
     } catch (e) {
-        console.error(e);
+        // console.error(e);
         return e.message;
     }
 
+});
+
+
+exports.throwHttpsError = functions.https.onCall(async (params, context) => {
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
+        'one arguments "text" containing the message text to add.');
 });

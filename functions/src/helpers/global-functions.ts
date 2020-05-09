@@ -113,14 +113,21 @@ export function isFirebaseAuthError(e: any): boolean {
  */
 export function convertFirebaseErrorIntoJavascriptError(e: any) {
     if (e instanceof Error) {
+
+        
+
+        /// auth/...
         if (isFirebaseAuthError(e)) {
             return new Error((e as any).code);
         }
 
-        /// Make long error string into short error code.
+        /// If it is firebase error(mostly Firestore error), the message is very long.
+        /// Make long error string into short error code if it's firebase error.
         let code = '';
         if (e.message.indexOf(`Cannot use "undefined" as a Firestore value`) > -1) code = UNDEFINED_FIELD_VALUE;
         if (code !== '') return new Error(code);
+
+        /// If it's not firebase error, just return.
         return e;
     }
     return e;
