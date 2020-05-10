@@ -7,10 +7,6 @@ import { System } from '../system/system';
 import { EnginSettings } from '../settings';
 describe('Helpers > Global functions', function () {
     this.timeout(10000);
-
-
-
-
     it('isAdmin', async () => {
         System.auth.email = undefined as any;
         assert.equal(isAdmin(), false);

@@ -14,70 +14,55 @@ import { EnginSettings } from "../settings";
 describe('Category', function () {
     this.timeout(10000);
     it('Admin check', async () => {
-        try {
-            const route = new Router('category.create');
-            await route.run();
-        } catch (e) {
-            assert.equal(e.message, PERMISSION_DEFINED);
-        }
+        const route = new Router('category.create');
+        const re = await route.run();
+        assert.equal(re.code, PERMISSION_DEFINED);
     });
 
     it('Empty input', async () => {
 
         System.auth.email = EnginSettings.adminEmails[0];
-        try {
-            const route = new Router('category.create');
-            await route.run();
-        } catch (e) {
-            assert.equal(e.message, INPUT_IS_EMPTY);
-        }
+        const route = new Router('category.create');
+        const re = await route.run();
+        assert.equal(re.code, INPUT_IS_EMPTY);
     });
 
     it('Id check', async () => {
-        try {
-            const route = new Router('category.create');
-            await route.run({ description: 'yo' });
-        } catch (e) {
-            assert.equal(e.message, ID_IS_EMPTY);
-        }
+
+        const route = new Router('category.create');
+        const re = await route.run({ description: 'yo' });
+
+        assert.equal(re.code, ID_IS_EMPTY);
+
     });
     it('Title check', async () => {
-        try {
-            const route = new Router('category.create');
-            await route.run({ id: 'apple', description: 'yo' });
-        } catch (e) {
-            assert.equal(e.message, TITLE_IS_EMPTY);
-        }
+
+        const route = new Router('category.create');
+        const re = await route.run({ id: 'apple', description: 'yo' });
+        assert.equal(re.code, TITLE_IS_EMPTY);
+
     });
 
     it('Create a category', async () => {
-        try {
-            const route = new Router('category.create');
-            const re: WriteResult = await route.run({ id: 'apple', title: 'apple', description: 'yo' });
-            assert.equal(typeof re.writeTime.seconds === 'number', true);
-        } catch (e) {
-            assert.fail();
-        }
+
+        const route = new Router('category.create');
+        const re: WriteResult = await route.run({ id: 'apple', title: 'apple', description: 'yo' });
+        assert.equal(typeof re.writeTime.seconds === 'number', true);
+
     });
 
     it('Update the category', async () => {
-        try {
-            const route = new Router('category.update');
-            const re: WriteResult = await route.run({ id: 'apple', title: 'title updated', description: 'description updated' });
-            assert.equal(typeof re.writeTime.seconds === 'number', true);
-        } catch (e) {
-            assert.fail(e.message);
-        }
+        const route = new Router('category.update');
+        const re: WriteResult = await route.run({ id: 'apple', title: 'title updated', description: 'description updated' });
+        assert.equal(typeof re.writeTime.seconds === 'number', true);
+
     });
 
     it('Delete the category', async () => {
-        try {
-            const route = new Router('category.delete');
-            const re: WriteResult = await route.run({ id: 'apple', title: 'title updated', description: 'description updated' });
-            assert.equal(typeof re.writeTime.seconds === 'number', true);
-        } catch (e) {
-            assert.fail(e.message);
-        }
+        const route = new Router('category.delete');
+        const re: WriteResult = await route.run({ id: 'apple', title: 'title updated', description: 'description updated' });
+        assert.equal(typeof re.writeTime.seconds === 'number', true);
+
     });
 
 

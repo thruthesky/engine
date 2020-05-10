@@ -1,9 +1,11 @@
 import { User } from '../user/user';
-import { WRONG_CLASS_NAME, WRONG_METHOD_NAME, RESULT_IS_NOT_OBJECT } from '../defines';
+import { WRONG_METHOD_NAME, RESULT_IS_NOT_OBJECT, WRONG_CLASS_NAME } from '../defines';
 import { System } from '../system/system';
 import { Category } from '../category/category';
 import { Post } from '../post/post';
-import { convertFirebaseErrorIntoJavascriptError } from '../helpers/global-functions';
+import { error, returnError } from '../helpers/global-functions';
+// import * as functions from 'firebase-functions';
+// import { convertFirebaseErrorIntoJavascriptError } from '../helpers/global-functions';
 
 
 interface ClassContainer {
@@ -39,28 +41,27 @@ export class Router {
      */
     async run(data?: any): Promise<any> {
 
-        const arr = this.route.split('.');
-        this.className = arr[0];
-        this.methodName = arr[1];
 
         try {
-
+            const arr = this.route.split('.');
+            this.className = arr[0];
+            this.methodName = arr[1];
             if (this.classContainer[this.className] === void 0) {
-                throw new Error(WRONG_CLASS_NAME);
+                throw error(WRONG_CLASS_NAME, 'Typo error on class name? or the class not not registered?');
             }
             if (this.classContainer[this.className][this.methodName] === void 0) {
-                throw new Error(WRONG_METHOD_NAME);
+                throw error(WRONG_METHOD_NAME, 'Type error on method name? or the method does not exist in the class?');
             }
 
             const re = await this.classContainer[this.className][this.methodName](data);
             if (typeof re !== 'object') {
-                throw new Error(RESULT_IS_NOT_OBJECT);
+                throw error(RESULT_IS_NOT_OBJECT);
             }
             return re;
-
         } catch (e) {
-            throw convertFirebaseErrorIntoJavascriptError(e);
+            return returnError(e);
         }
+
     }
 }
 

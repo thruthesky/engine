@@ -153,35 +153,35 @@ samples, guidance on mobile development, and a full API reference.
 
 ### 에러 핸들링
 
-* Admin SDK 의 경우 에러 코드가 `.code` 속성에 들어가 있다. 하지만 자바스크립트의 `Error 객체`의 코드는 `.message` 에 들어가 있다.
-  * 따라서 Admin SDK 의 Exception 의 `.code` 를 자바스크립트의 `.message` 로 넣어서 throw 해야 한ㄷ.
-``` typescript
-try {
-    await admin().auth().updateUser(data.uid, {
-        displayName: data.displayName,
-        ...
-    });
-    ...
-    await userDoc(data.uid).update(data);
-    const userData = await this.data(data.uid);
-    return data.uid;
-} catch (e) {
-    throw new Error(e.code); // 여기! Exception 의 .code 를 new Error(e.code) 로 전달하여 Error 객체의 .message 로 변환한다.
+* 에러 핸들링이 쉽지 않다.
+* Cloud Functions 는 `functions.https.HttpError` 클래스를 사용하고, Firebase Admin SDK Auth 에서는 `FirebaseuAuthError` 클래스를 사용한다. 그리고 일반적인 자바스크립트는 `Error` 클래스를 사용한다. 다른 기능 (Firestore 등) 에서는 또 다른 에러 클래스를 사용 할 수 있다.
+* 그래서 에러 핸들링을 하는 방법은 `Enginf` 에서 코딩을 할 때, 그냥 자연스럽게 해당 에러를 throw 한다.
+  * 즉, `Enginf` 에서는 `Functions` 관련 에러이면 그냥 그 에러를 던진다. 예를 들어 Validation 에 실패를 하면 `throw new Error()` 보다는 `throw new funtions.https.HttpError()` 를 던진다.
+  * 그리고 Admin SDK Auth 에서 에러가 나는 것도 그냥 자연스럽게 상위로 던져지게 한다.
+  * Firestore 에서도 마찬가지로 에러가 나면 그냥 상위로 던져지게 한다.
+* 그리고 `router.run()`에서 이런 각종 에러 클래스를 취합해서 `에러 객체`를 만들어 리턴한다.
+
+예제) 다음은 에러 객체 예제이다.
+
+```
+{
+  error: true,
+  code: '에러코드',
+  message: '에러메시지'
 }
 ```
 
+즉, Firestore 에러 이건, Firebase Auth 에러 이건, Functions 에러 이건, 그냥 Javascript 에러이건 결과적으로는 위 형태로 클라이언트로 리턴된다.
 
-예제) 가능한 re-throw 를 그냥 throw e 와 같이 한다.
+주의 할 것은 클라이언트로 `throw` 하지만 `return` 한다는 것이다. 즉, 클라이언트에서는 try {} catch {} 할 필요가 없이 리턴된 값에서 .error 속성이 있으면 에러로 인식하면 되는 것이다.
 
-``` typescript
-try {
-    if (!data) throw new Error(INPUT_NOT_PROVIDED);
-    if (data.email === void 0) throw new Error(EMAIL_NOT_PROVIDED);
-    if (data.password === void 0) throw new Error(PASSWORD_NOT_PROVIDED);
-} catch (e) {
-    throw e;    // 여기! 에러 코드를 변환해야하지 않는다면, 그냥 Error 객체를 던질 것.
-    throw new Error(e.message); // 여기! 이렇게 하지 말 것
-}
+또는 클라이언트에서 꼭 try {} catch {} 가 필요하면 아래의 예제와 같이 클라이언트에서 trhow 를 하면 된다.
+
+예제)
+
+``` dart
+var re = await ....functions.cal();
+if ( re.error ) throw re;
 ```
 
 ### 에러코드

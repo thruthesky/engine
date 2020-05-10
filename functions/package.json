@@ -10,7 +10,11 @@
     "logs": "firebase functions:log",
     "test": "mocha --require ts-node/register --watch --watch-files src, src/**/*.ts",
     "test:global-functions": "mocha --require ts-node/register --watch --watch-files src, src/helpers/global-functions.spec.ts",
-    "test:error": "mocha --require ts-node/register --watch --watch-files src, src/test/error.spec.ts"
+    "test:error": "mocha --require ts-node/register --watch --watch-files src, src/test/error.spec.ts",
+    "test:router": "mocha --require ts-node/register --watch --watch-files src, src/router/router.spec.ts",
+    "test:user": "mocha --require ts-node/register --watch --watch-files src, src/user/user.spec.ts",
+    "test:category": "mocha --require ts-node/register --watch --watch-files src, src/category/category.spec.ts",
+    "test:post": "mocha --require ts-node/register --watch --watch-files src, src/post/post.spec.ts"
   },
   "engines": {
     "node": "8"

@@ -18,24 +18,19 @@ describe('Post', function () {
     forceUserLogout();
     System.debug = true;
     it('Create permission denied', async () => {
-        try {
-            const route = new Router('post.create');
-            await route.run({});
-        } catch (e) {
-            assert.equal(e.message, PERMISSION_DEFINED);
-        }
+
+        const route = new Router('post.create');
+        const re = await route.run({});
+        assert.equal(re.code, PERMISSION_DEFINED);
+
     });
 
     it('Create success', async () => {
         await forceUserLoginByEmail(TestSettings.testUserEmail);
         System.auth.email
-        try {
-            const route = new Router('post.create');
-            await route.run({ category: 'apple' });
-            // trace(re);
-        } catch (e) {
-            // trace(e);
-            assert.fail(e.message);
-        }
+
+        const route = new Router('post.create');
+        const re = await route.run({ category: 'apple' });
+        assert.equal(re?.code === void 0, true);
     });
 });

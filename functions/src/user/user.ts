@@ -1,6 +1,6 @@
 import { admin } from "../init/init.firebase";
 import { EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED } from "../defines";
-import { userDoc } from "../helpers/global-functions";
+import { userDoc, error } from "../helpers/global-functions";
 
 
 export class User {
@@ -16,9 +16,9 @@ export class User {
      * 
      */
     async register(data: any) {
-        if (!data) throw new Error(INPUT_NOT_PROVIDED);
-        if (data.email === void 0) throw new Error(EMAIL_NOT_PROVIDED);
-        if (data.password === void 0) throw new Error(PASSWORD_NOT_PROVIDED);
+        if (!data) throw error(INPUT_NOT_PROVIDED);
+        if (data.email === void 0) throw error(EMAIL_NOT_PROVIDED);
+        if (data.password === void 0) throw error(PASSWORD_NOT_PROVIDED);
 
         // console.log('User::register() => await admin().auth().createUser(...)');
         const created = await admin().auth().createUser({

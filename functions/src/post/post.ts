@@ -1,6 +1,6 @@
 
 import { PERMISSION_DEFINED, INPUT_IS_EMPTY } from '../defines';
-import { isLoggedIn, postCol, setCategoryPostRelation } from '../helpers/global-functions';
+import { isLoggedIn, postCol, setCategoryPostRelation, error } from '../helpers/global-functions';
 import { System } from '../system/system';
 
 
@@ -37,8 +37,8 @@ export class Post {
      * /// 여기서 부터... 게시글 생성 테스트 & 게시글 수정 & 테스트 & 게시글 삭제 & 테스트
      */
     async create(data: PostData): Promise<object> {
-        if (!isLoggedIn()) throw new Error(PERMISSION_DEFINED);
-        if (!data) throw new Error(INPUT_IS_EMPTY);
+        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!data) throw error(INPUT_IS_EMPTY);
 
 
         // trace('Post::create() validation pass');

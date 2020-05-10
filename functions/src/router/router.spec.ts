@@ -3,6 +3,7 @@ import { Router } from './router';
 import * as assert from 'assert';
 import { WRONG_CLASS_NAME, WRONG_METHOD_NAME } from '../defines';
 import { User } from '../user/user';
+import { details } from '../helpers/global-functions';
 
 describe('Router', () => {
 
@@ -11,19 +12,19 @@ describe('Router', () => {
         try {
             await router.run();
         } catch (e) {
-            assert.equal(e.message, WRONG_CLASS_NAME);
+            assert.equal(details(e).code, WRONG_CLASS_NAME);
         }
         router = new Router('');
         try {
             await router.run();
         } catch (e) {
-            assert.equal(e.message, WRONG_CLASS_NAME);
+            assert.equal(details(e).code, WRONG_CLASS_NAME);
         }
         router = new Router(undefined as any);
         try {
             await router.run();
         } catch (e) {
-            assert.equal(e.message, WRONG_CLASS_NAME);
+            assert.equal(details(e).code, WRONG_CLASS_NAME);
         }
     })
 
@@ -32,7 +33,7 @@ describe('Router', () => {
         try {
             await router.run();
         } catch (e) {
-            assert.equal(e.message, WRONG_CLASS_NAME);
+            assert.equal(details(e).code, WRONG_CLASS_NAME);
             assert.equal(router.className, 'wrong');
             assert.equal(router.methodName, 'func');
         }
@@ -40,24 +41,24 @@ describe('Router', () => {
 
     it('Router parsing test with wrong method name.', async () => {
         const router = new Router('user.func');
-
         try {
             await router.run();
         } catch (e) {
-            assert.equal(e.message, WRONG_METHOD_NAME);
+            assert.equal(details(e).code, WRONG_METHOD_NAME);
         }
     })
 
     it('Call User::version()', async () => {
 
-        const router = new Router('user.version');
-
-
-        const user = new User();
-
-        const re = await router.run({ name: 'abc' });
-        assert.equal(re.version, user.version().version);
-        assert.equal(re.name, 'abc');
+        try {
+            const router = new Router('user.version');
+            const user = new User();
+            const re = await router.run({ name: 'abc' });
+            assert.equal(re.version, user.version().version);
+            assert.equal(re.name, 'abc');
+        } catch (e) {
+            assert.fail("Expect success on version call");
+        }
 
     })
 

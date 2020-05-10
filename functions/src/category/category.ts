@@ -3,7 +3,7 @@
 import { WriteResult } from '@google-cloud/firestore';
 
 import { PERMISSION_DEFINED, TITLE_IS_EMPTY, INPUT_IS_EMPTY, ID_IS_EMPTY } from '../defines';
-import { isAdmin, categoryDoc } from '../helpers/global-functions';
+import { isAdmin, categoryDoc, error } from '../helpers/global-functions';
 
 
 
@@ -36,25 +36,19 @@ export class Category {
      * 
      */
     async create(data: CategoryData): Promise<WriteResult> {
-        try {
-            if (!isAdmin()) throw new Error(PERMISSION_DEFINED);
-            if (!data) throw new Error(INPUT_IS_EMPTY);
-            if (data.id === void 0) throw new Error(ID_IS_EMPTY);
-            if (data.title === void 0) throw new Error(TITLE_IS_EMPTY);
-        } catch (e) {
-            throw e;
-        }
+        if (!isAdmin()) throw error(PERMISSION_DEFINED);
+        if (!data) throw error(INPUT_IS_EMPTY);
+        if (data.id === void 0) throw error(ID_IS_EMPTY);
+        if (data.title === void 0) throw error(TITLE_IS_EMPTY);
 
-        try {
-            const id = data.id;
-            delete data.id;
 
-            data.created = (new Date).getTime();
+        const id = data.id;
+        delete data.id;
 
-            return categoryDoc(id).set(data);
-        } catch (e) {
-            throw new Error(e.code);
-        }
+        data.created = (new Date).getTime();
+
+        return categoryDoc(id).set(data);
+
     }
 
 
@@ -66,23 +60,18 @@ export class Category {
      * @warning `id` is not saved.
      */
     async update(data: CategoryData): Promise<WriteResult> {
-        try {
-            if (!isAdmin()) throw new Error(PERMISSION_DEFINED);
-            if (!data) throw new Error(INPUT_IS_EMPTY);
-            if (data.id === void 0) throw new Error(ID_IS_EMPTY);
-            if (data.title === void 0) throw new Error(TITLE_IS_EMPTY);
-        } catch (e) {
-            throw e;
-        }
 
-        try {
-            const id = data.id;
-            delete data.id;
-            data.updated = (new Date).getTime();
-            return categoryDoc(id).update(data);
-        } catch (e) {
-            throw new Error(e.code);
-        }
+        if (!isAdmin()) throw error(PERMISSION_DEFINED);
+        if (!data) throw error(INPUT_IS_EMPTY);
+        if (data.id === void 0) throw error(ID_IS_EMPTY);
+        if (data.title === void 0) throw error(TITLE_IS_EMPTY);
+
+
+        const id = data.id;
+        delete data.id;
+        data.updated = (new Date).getTime();
+        return categoryDoc(id).update(data);
+
     }
 
     /**
@@ -93,19 +82,14 @@ export class Category {
      * @warning `id` is not saved.
      */
     async delete(data: CategoryData): Promise<WriteResult> {
-        try {
-            if (!isAdmin()) throw new Error(PERMISSION_DEFINED);
-            if (!data) throw new Error(INPUT_IS_EMPTY);
-            if (data.id === void 0) throw new Error(ID_IS_EMPTY);
-        } catch (e) {
-            throw e;
-        }
 
-        try {
-            return categoryDoc(data.id).delete();
-        } catch (e) {
-            throw new Error(e.code);
-        }
+        if (!isAdmin()) throw error(PERMISSION_DEFINED);
+        if (!data) throw error(INPUT_IS_EMPTY);
+        if (data.id === void 0) throw error(ID_IS_EMPTY);
+
+
+        return categoryDoc(data.id).delete();
+
     }
 }
 
