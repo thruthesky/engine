@@ -48,6 +48,7 @@ describe('Error tests', function () {
             const router = new Router('user.update');
             await router.run({ uid: System.auth.uid, name: undefined });
         } catch (e) {
+            // console.log(e);
             assert.equal(e.message, UNDEFINED_FIELD_VALUE);
         }
     });

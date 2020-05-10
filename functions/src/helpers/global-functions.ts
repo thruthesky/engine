@@ -100,7 +100,7 @@ export async function setCategoryPostRelation(category: string, postId: string) 
 
 export function isFirebaseAuthError(e: any): boolean {
     if (!e) return false;
-    if (e.code !== void 0) {
+    if (e.code !== void 0 && typeof e.code === 'string') {
         return e.code.indexOf('auth/') === 0; // Admin SDK Auth Error
     }
     return false;
@@ -114,7 +114,7 @@ export function isFirebaseAuthError(e: any): boolean {
 export function convertFirebaseErrorIntoJavascriptError(e: any) {
     if (e instanceof Error) {
 
-        
+
 
         /// auth/...
         if (isFirebaseAuthError(e)) {

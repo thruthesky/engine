@@ -70,7 +70,16 @@ export class User {
 
         data.updated = (new Date).getTime();
 
-        // console.log(data);
+        /**
+         * If a user is created on Firebase console, the user has no `user` doc in Firestore.
+         */
+        const u = await this.data(uid);
+        if (u.created === void 0) {
+            await userDoc(uid).set({
+                created: (new Date).getTime(),
+            });
+        }
+
         await userDoc(uid).update(data);
         const userData = await this.data(uid);
         userData.uid = data.uid;
@@ -93,6 +102,7 @@ export class User {
     /**
      * Returns user information
      * @param uid User uid to get information
+     * @note When there is no user doc in `Firebase`, it just return with `auth` data.
      * @todo Only admin can get other user's uid. Normal users can get only their own information. Normal users don't need to pass UID.
      */
     async data(uid: string) {
@@ -100,12 +110,16 @@ export class User {
 
         const snapshot = await userDoc(uid).get();
 
-        let data;
+
         /**
          * If there is no document for the user in Firestore, just pass Auth data.
          * If user is created on Firebase console, then the user does not have `user` doc in Firestore.
          */
+        let data;
         if (!snapshot.exists) {
+            /**
+             * If there is no user doc, then `create` property is undefined.
+             */
             data = {};
         } else {
             data = snapshot.data();
