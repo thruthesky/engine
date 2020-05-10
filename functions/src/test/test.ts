@@ -17,6 +17,14 @@ export class Test {
      * @warning Don't do validation here.
      */
     async docCreate(data: any) {
+
+        data.created = (new Date).getTime();
         return await admin().firestore().collection('test').doc(data.key).set(data);
+    }
+
+    async docGet(key: string) {
+        const snapshot = await admin().firestore().collection('test').doc(key).get();
+        const data = snapshot.data();
+        return data;
     }
 }

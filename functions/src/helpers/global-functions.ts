@@ -26,6 +26,9 @@ export function userDoc(uid: string) {
 export function categoryDoc(id: string) {
     return admin().firestore().collection('category').doc(id);
 }
+export function categoryCol() {
+    return admin().firestore().collection('category');
+}
 
 export function postCol() {
     return admin().firestore().collection('post');
