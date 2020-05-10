@@ -163,7 +163,7 @@ samples, guidance on mobile development, and a full API reference.
 
 예제) 다음은 에러 객체 예제이다.
 
-```
+``` json
 {
   error: true,
   code: '에러코드',

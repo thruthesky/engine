@@ -1,8 +1,7 @@
-import * as functions from 'firebase-functions';
+
 import { Router } from '../router/router';
 
 import * as assert from 'assert';
-import { details } from '../helpers/global-functions';
 import { WRONG_CLASS_NAME } from '../defines';
 
 
@@ -10,14 +9,16 @@ describe('Error tests', function () {
     this.timeout(10000);
 
     it('Wrong class test', async () => {
-        try {
+    
             const router = new Router('worng-class');
-            await router.run();
-        } catch (e) {
-            assert.equal(e instanceof functions.https.HttpsError, true);
-            assert.equal(details(e).code, WRONG_CLASS_NAME);
-        }
+            const e = await router.run();
+            assert.equal(e instanceof Object, true);
+            assert.equal(e.code, WRONG_CLASS_NAME);
+            
     });
+
+
+
 
     // it('Firebase email-already-exists teset', async () => {
     //     try {

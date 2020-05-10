@@ -21,6 +21,7 @@ export class User {
         if (data.password === void 0) throw error(PASSWORD_NOT_PROVIDED);
 
         // console.log('User::register() => await admin().auth().createUser(...)');
+        // console.log('register data: ', data);
         const created = await admin().auth().createUser({
             email: data.email,
             password: data.password,

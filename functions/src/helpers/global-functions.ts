@@ -143,14 +143,16 @@ export function convertFirebaseErrorIntoJavascriptError(e: any) {
  * @param fcode functions.https.HttpError code
  * @param fmessage description of funtions.https.HttpError code
  */
-export function error(code: string, message = '', fcode?: FunctionsErrorCode, fmessage?: string) {
-    const details = {
+export function error(code: string, message = '', _fcode?: FunctionsErrorCode, _fmessage?: string) {
+    const _details = {
         code: code,
         message: message,
     }
-    if (fcode === void 0) fcode = 'unknown';
-    if (fmessage === void 0) fmessage = message;
-    return new functions.https.HttpsError(fcode as any, fmessage, details);
+    var fcode = _fcode;
+    var fmessage: any = _fmessage;
+    if (_fcode === void 0) fcode = 'unknown';
+    if (_fmessage === void 0) fmessage = message;
+    return new functions.https.HttpsError(fcode as any, fmessage, _details);
 }
 
 
@@ -173,8 +175,23 @@ export function details(e: functions.https.HttpsError): any {
  * 
  * 
  * @param e Error
+ * 
+ * 
+ * @note Javascript error message will be delivered as in `.code` property.
+ *  - For instance, "Cannot read property 'key' of undefined" is a Javascript error which is originallly in `message` property of Error.
+ *      And it is delivered { error: : true, code: "Cannot read property 'key' of undefined", message: null } to Client.
+ *  - Firestore looks like it throws an Exception just as the same way of normal Javascript Error class.
+ *      For instance, `Error.message` has "Value for argument "documentPath" is not a valid resource path. Path must be a non-empty string." is a Firestore error.
+ *      And this does not check the patterns of error message and customise it.
+ *      It lets the firestore error message delivered to client just as it is.
+ *  - Form validation is needed whereever needed.
+ *      For instance, user create of Firebase Auth does not throw any error when email and password and other values are empty.
+ *      It only throws error when the values are invalid.
+ *      So, checking the email is provided or not is needed.
  */
 export function returnError(e: any) {
+
+    // console.log(e);
     const data = {
         error: true,
         code: null,

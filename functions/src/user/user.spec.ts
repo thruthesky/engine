@@ -22,6 +22,7 @@ describe('User', function () {
             name: 'David'
         };
         const re = await router.run(req);
+        // console.log(re);
         if (re.code !== EMAIL_NOT_PROVIDED) assert.fail('User > Register without email > Must be failed', re);
     });
 
