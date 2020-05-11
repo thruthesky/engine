@@ -151,6 +151,10 @@ samples, guidance on mobile development, and a full API reference.
 
 * 카테고리, 게시 글, 코멘트 등 게시판과 관련 된 라우터는 
 
+* `Router.run` 의 data 파라메타 변수에 Generic Type 을 사용한다. 적절하게 사용하면 된다. 다만, 리턴 타입은 Generic 으로 하지 않는다.
+  * 리턴 값의 경우 리턴 값을 저장하는 변수에 타입 적용을 하면 된다.
+
+
 ### 에러 핸들링
 
 * 에러 핸들링이 쉽지 않다.

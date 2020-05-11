@@ -27,6 +27,7 @@ export const ID_IS_EMPTY = 'engin/id-is-empty';
 export const TITLE_IS_EMPTY = 'engin/title-is-empty';
 
 export const POST_ID_IS_UNDEFINED = 'engin/post-id-is-undefined';
+export const POST_NOT_EXISTS = 'engin/post-not-exists';
 export const CATEGORY_IS_UNDEFINED = 'engin/category-is-undefined';
 export const CATEGORY_ALREADY_EXISTS = 'engin/category-already-exists';
 export const CATEGORY_NOT_EXISTS = 'engin/category-not-exists';

@@ -42,7 +42,7 @@ export class Router {
      *  Since the error handling is dirty.
      *  On VSCode, the `.call()` always caught with `Break on Uncaught Excpetions` option even if it handles properlty.
      */
-    async run(data?: any): Promise<any> {
+    async run<T>(data?: T): Promise<any> {
 
 
         try {

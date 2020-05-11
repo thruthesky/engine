@@ -1,7 +1,7 @@
 import { admin } from "../init/init.firebase";
 import { EnginSettings } from '../settings';
 import { System } from "../system/system";
-import { POST_ID_IS_UNDEFINED, CATEGORY_IS_UNDEFINED, UNDEFINED_FIELD_VALUE } from "../defines";
+import { UNDEFINED_FIELD_VALUE } from "../defines";
 import * as functions from 'firebase-functions';
 import { FunctionsErrorCode } from "firebase-functions/lib/providers/https";
 
@@ -34,9 +34,13 @@ export function postCol() {
     return admin().firestore().collection('post');
 }
 
-export function categoryPostRelationDoc(postId: string) {
-    return admin().firestore().collection('category-post-relation').doc(postId);
+export function postDoc(id: string) {
+    return admin().firestore().collection('post').doc(id);
 }
+
+// export function categoryPostRelationDoc(postId: string) {
+//     return admin().firestore().collection('category-post-relation').doc(postId);
+// }
 
 
 /**
@@ -115,16 +119,16 @@ export function setAdminLogin() {
  * @param category category
  * @param postId post
  */
-export async function setCategoryPostRelation(category: string, postId: string) {
+// export async function setCategoryPostRelation(category: string, postId: string) {
 
-    try {
-        if (postId === void 0) throw error(POST_ID_IS_UNDEFINED);
-        if (category === void 0) throw error(CATEGORY_IS_UNDEFINED);
-        await categoryPostRelationDoc(postId).set({ category: category });
-    } catch (e) {
-        throw e;
-    }
-}
+//     try {
+//         if (postId === void 0) throw error(POST_ID_IS_UNDEFINED);
+//         if (category === void 0) throw error(CATEGORY_IS_UNDEFINED);
+//         await categoryPostRelationDoc(postId).set({ category: category });
+//     } catch (e) {
+//         throw e;
+//     }
+// }
 
 
 export function isFirebaseAuthError(e: any): boolean {

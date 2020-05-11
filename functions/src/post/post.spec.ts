@@ -6,6 +6,9 @@ import { PERMISSION_DEFINED, CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT }
 import { System } from "../system/system";
 import { TestSettings } from "../settings";
 import { forceUserLoginByEmail, forceUserLogout, setAdminLogin } from "../helpers/global-functions";
+import { CategoryDatas, CategoryData } from "../category/category.interfaces";
+import { PostData } from './post.interfaces';
+
 // import { WriteResult } from "@google-cloud/firestore";
 // import { System } from "../system/system";
 // import { EnginSettings } from "../settings";
@@ -62,16 +65,18 @@ describe('Post', function () {
         // ===========> Create a category
         setAdminLogin();
         const routerCategory = new Router('category.create');
-        let re: any = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
-        assert.equal(typeof re.writeTime.seconds === 'number', true);
+        let re: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
+        assert.equal(typeof re.id === 'string', true);
+        assert.equal(re.id, tempCategory.id);
 
 
         await forceUserLoginByEmail(TestSettings.testUserEmail);
         System.auth.email
         const route = new Router('post.create');
-        re = await route.run({ categories: [tempCategory.id, 'non-existing-category-id'] });
+        re = await route.run({ categories: [tempCategory.id, 'non-existing-category-id-xx'] });
+
         assert.equal(re.code, CATEGORY_NOT_EXISTS);
-        assert.equal(re.message, 'non-existing-category-id');
+        assert.equal(re.message, 'non-existing-category-id-xx');
     });
 
 
@@ -80,17 +85,18 @@ describe('Post', function () {
         // ===========> Create another category
         setAdminLogin();
         const routerCategory = new Router('category.create');
-        let re: any = await routerCategory.run({ id: tempCategory.id + 'another', title: tempCategory.title });
-        assert.equal(typeof re.writeTime.seconds === 'number', true);
+        const re: CategoryData = await routerCategory.run({ id: tempCategory.id + 'another', title: tempCategory.title });
+        assert.equal(typeof re.id === 'string', true);
+        assert.equal(re.id == tempCategory.id + 'another', true);
 
 
         await forceUserLoginByEmail(TestSettings.testUserEmail);
         System.auth.email
         const route = new Router('post.create');
-        re = await route.run({ categories: [tempCategory.id, tempCategory.id + 'another'] });
+        const post: PostData = await route.run<PostData>({ categories: [tempCategory.id, tempCategory.id + 'another'], });
         // console.log('re', re);
-        assert.equal(re?.code === void 0, true);
-        assert.equal(typeof re?.id === 'string', true);
+        assert.equal(typeof post.id === 'string', true);
+        assert.equal(typeof post.id === 'string', true);
     });
 
 

@@ -7,6 +7,7 @@ import * as assert from 'assert';
 import { PERMISSION_DEFINED, TITLE_IS_EMPTY, INPUT_IS_EMPTY, ID_IS_EMPTY, CATEGORY_ALREADY_EXISTS } from "../defines";
 import { System } from "../system/system";
 import { EnginSettings } from "../settings";
+import { CategoryData } from './category.interfaces';
 // import { System } from "../system/system";
 
 
@@ -59,8 +60,11 @@ describe('Category', function () {
 
     it('Create a category', async () => {
         const route = new Router('category.create');
-        const re: WriteResult = await route.run({ id: categoryId, title: 'apple', description: 'yo' });
-        assert.equal(typeof re.writeTime.seconds === 'number', true);
+        const re: CategoryData = await route.run({ id: categoryId, title: 'apple', description: 'yo' });
+        // assert.equal(typeof re.writeTime.seconds === 'number', true);
+        // console.log(re);
+        assert.equal(re.id, categoryId);
+        assert.equal(re.title, 'apple');
     });
 
     it('Create category that is already exists.', async () => {
@@ -71,9 +75,11 @@ describe('Category', function () {
 
     it('Update the category', async () => {
         const route = new Router('category.update');
-        const re: WriteResult = await route.run({ id: categoryId, title: 'title updated', description: 'description updated' });
-        assert.equal(typeof re.writeTime.seconds === 'number', true);
+        const re: CategoryData = await route.run<CategoryData>({ id: categoryId, title: 'title updated', description: 'description updated' });
+        // assert.equal(typeof re.writeTime.seconds === 'number', true);
 
+        assert.equal(re.id, categoryId);
+        assert.equal(re.title, 'title updated');
     });
 
 
@@ -91,7 +97,6 @@ describe('Category', function () {
         assert.equal(found, true);
         assert.equal(Object.keys(re).length > 0, true);
     })
-
 
     it('Delete the category', async () => {
         const route = new Router('category.delete');

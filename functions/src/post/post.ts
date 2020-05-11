@@ -1,45 +1,23 @@
 
-import { PERMISSION_DEFINED, INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS, INVALID_INPUT, MISSING_INPUT } from '../defines';
-import { isLoggedIn, postCol, error } from '../helpers/global-functions';
+import { PERMISSION_DEFINED, INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS } from '../defines';
+import { isLoggedIn, postCol, error, postDoc } from '../helpers/global-functions';
 import { System } from '../system/system';
 import { Category } from '../category/category';
 import { Query } from '@google-cloud/firestore';
-
-
-/**
- * `category` is not saved in post doc. It's saved in the relation.
- */
-interface PostData {
-    categories: string[];
-    uid: string;
-    title: string;
-    content: string;
-    created: number;
-    updated: number;
-    ip: string;
-    userAgent: string;
-    view: number;
-    like: number;
-    dislike: number;
-}
+import { PostData } from './post.interfaces';
 
 export class Post {
 
     /**
-     * Create a category
-     *
+     * Create a post
      * `data` can have more properties to save as user information.
-     * 
-     * @param data object
-     * 
+     * @param data object data to create a post
+     * @return PostData of the post
      * @example open `user.spec.ts` to see more examples.
-     * 
      * @warning Category IDs are saved in an Arrray.
-     * 
      */
-    async create(data: PostData): Promise<object> {
+    async create(data: PostData): Promise<PostData> {
 
-        // console.log('postData: ', data);
         if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
         if (!data) throw error(INPUT_IS_EMPTY);
         if (data.categories === void 0) throw error(MISSING_INPUT, 'categories');
@@ -48,37 +26,73 @@ export class Post {
             throw error(INVALID_INPUT, 'categories');
         }
 
+        const categoryObj = new Category();
+        for (const id of data.categories) {
+            const categoryData = await categoryObj.data(id);
+            if (!categoryData) throw error(CATEGORY_NOT_EXISTS, id);
+        }
+        data.uid = System.auth.uid;
+        data.created = (new Date).getTime();
+
+        const post = await postCol().add(data);
+        // return { id: post.id };
+        return await this.data(post.id);
+    }
+
+    /**
+     * Update a post
+     * `data` can have more properties to save as user information.
+     * @param data object data to update the post
+     *  - data[id] is the post document id.
+     *  - data[categoris] is the categories of the post.
+     * @return the post data
+     * @example open `user.spec.ts` to see more examples.
+     * @warning Category IDs are saved in an Arrray.
+     * @attention
+     *      - It does not save `id`.
+     *      - It does not change `uid`.
+     */
+    async update(data: PostData): Promise<PostData> {
+
+        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!data) throw error(INPUT_IS_EMPTY);
+        if (data.id === void 0) throw error(MISSING_INPUT, 'id');
+
+        const p = await this.data(data.id);
+        if (!p) throw error(POST_NOT_EXISTS);
+
+        if (!Array.isArray(data.categories)) {
+            throw error(INVALID_INPUT, 'categories');
+        }
 
         const categoryObj = new Category();
-
-
-
         for (const id of data.categories) {
             const categoryData = await categoryObj.data(id);
             if (!categoryData) throw error(CATEGORY_NOT_EXISTS, id);
         }
 
+        // data.uid = System.auth.uid;
 
-
-        // trace('Post::create() validation pass');
-
-        data.uid = System.auth.uid;
         data.created = (new Date).getTime();
 
-
-
-        // trace('Post doc data', data);
         const post = await postCol().add(data);
-        // trace('doc.id', post.id);
+        // return { id: post.id };
 
-        // await setCategoryPostRelation(category, post.id);
-
-
-        // trace('categoryPostRelationDoc()', re);
-        return { id: post.id };
-
+        return await this.data(post.id);
     }
 
+    /**
+     * Returns post data
+     * @param id post document key
+     * @attention `id` is added to returned post data
+     */
+    async data(id: string) {
+        const snapshot = await postDoc(id).get();
+        const data: any = snapshot.data();
+        if (!data) return data;
+        data.id = id;
+        return data;
+    }
 
     /**
      * Returns posts
@@ -89,17 +103,14 @@ export class Post {
         if (!data) {
             snapshots = await postCol().get();
         } else {
-
             const ref = postCol();
             let query: Query = ref; // Save `ref` to `query`
-
             /// category
             if (data.categories !== void 0) {
                 if (!Array.isArray(data.categories)) throw error(INVALID_INPUT, 'categories');
                 // query where and save result to query
                 query = query.where('categories', 'array-contains-any', data.categories);
             }
-
             snapshots = await query.get();
         }
 

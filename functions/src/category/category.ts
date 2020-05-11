@@ -4,23 +4,7 @@ import { WriteResult } from '@google-cloud/firestore';
 
 import { PERMISSION_DEFINED, TITLE_IS_EMPTY, INPUT_IS_EMPTY, ID_IS_EMPTY, CATEGORY_ALREADY_EXISTS } from '../defines';
 import { isAdmin, categoryDoc, error, categoryCol } from '../helpers/global-functions';
-
-
-
-/**
- * @param id is the key of documenation and must folllow the standard limitation at https://firebase.google.com/docs/firestore/quotas#limits
- */
-interface CategoryData {
-    id: string;
-    title: string;
-    description: string;
-    created: number;
-    updated: number;
-}
-
-interface CategoryDatas {
-    [id: string]: CategoryData;
-}
+import { CategoryData, CategoryDatas } from './category.interfaces';
 
 
 /**
@@ -33,14 +17,13 @@ export class Category {
      *
      * `data` can have more properties to save as user information.
      * 
-     * @param data object
-     * 
-     * @example open `user.spec.ts` to see more examples.
-     * 
+     * @param data object data to create a category
+     * @return `CategoryData` of the created category.
+     * @example open `category.spec.ts` to see more examples.
      * @warning `id` is not saved.
      * 
      */
-    async create(data: CategoryData): Promise<WriteResult> {
+    async create(data: CategoryData): Promise<CategoryData> {
 
         if (!isAdmin()) throw error(PERMISSION_DEFINED);
         if (!data) throw error(INPUT_IS_EMPTY);
@@ -56,29 +39,29 @@ export class Category {
 
         data.created = (new Date).getTime();
 
-        return categoryDoc(id).set(data);
-
+        await categoryDoc(id).set(data);
+        return await this.data(id);
     }
-
 
     /**
      * Update category data.
-     * @param data Category data to update
+     * @param data object data to update a category
      *  `data[id]` is a mendatory property to update the category information.
-     * 
+     *
+     * @return `CategoryData` of the created category.
      * @warning `id` is not saved on the document and cannot be changed.
      */
-    async update(data: CategoryData): Promise<WriteResult> {
+    async update(data: CategoryData): Promise<CategoryData> {
 
         if (!isAdmin()) throw error(PERMISSION_DEFINED);
         if (!data) throw error(INPUT_IS_EMPTY);
         if (!data.id) throw error(ID_IS_EMPTY);
 
-
         const id = data.id;
         delete data.id;
         data.updated = (new Date).getTime();
-        return categoryDoc(id).update(data);
+        await categoryDoc(id).update(data);
+        return await this.data(id);
 
     }
 
@@ -88,6 +71,7 @@ export class Category {
      *  `data[id]` is a mendatory property to update the category information.
      * 
      * @warning `id` is not saved.
+     * @return WriteResult
      */
     async delete(data: CategoryData): Promise<WriteResult> {
 
@@ -95,9 +79,7 @@ export class Category {
         if (!data) throw error(INPUT_IS_EMPTY);
         if (data.id === void 0) throw error(ID_IS_EMPTY);
 
-
         return categoryDoc(data.id).delete();
-
     }
 
     /**
@@ -109,7 +91,7 @@ export class Category {
     async data(id: string) {
         const snapshot = await categoryDoc(id).get();
         const data: any = snapshot.data();
-        if ( ! data ) return data;
+        if (!data) return data;
         data.id = id;
         return data;
     }
