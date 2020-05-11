@@ -87,7 +87,7 @@ describe('Post', function () {
         const routerCategory = new Router('category.create');
         const re: CategoryData = await routerCategory.run({ id: tempCategory.id + 'another', title: tempCategory.title });
         assert.equal(typeof re.id === 'string', true);
-        assert.equal(re.id == tempCategory.id + 'another', true);
+        assert.equal(re.id === tempCategory.id + 'another', true);
 
 
         await forceUserLoginByEmail(TestSettings.testUserEmail);
@@ -109,7 +109,7 @@ describe('Post', function () {
 
     it('search category with empty string', async () => {
         const router = new Router('post.list');
-        let re = await router.run({ categories: '' });
+        const re = await router.run({ categories: '' });
         assert.equal(re.code, INVALID_INPUT);
         assert.equal(re.message, 'categories');
     });
@@ -117,7 +117,7 @@ describe('Post', function () {
 
     it('Get posts with a category', async () => {
         const router = new Router('post.list');
-        let re = await router.run({ categories: [tempCategory.id, tempCategory.id + 'another'] });
+        const re = await router.run({ categories: [tempCategory.id, tempCategory.id + 'another'] });
         assert.equal(re.length == 1, true);
     });
 

@@ -1,7 +1,7 @@
 import { admin } from "../init/init.firebase";
 import { EnginSettings } from '../settings';
 import { System } from "../system/system";
-import { UNDEFINED_FIELD_VALUE } from "../defines";
+// import { UNDEFINED_FIELD_VALUE } from "../defines";
 import * as functions from 'firebase-functions';
 import { FunctionsErrorCode } from "firebase-functions/lib/providers/https";
 
@@ -130,14 +130,17 @@ export function setAdminLogin() {
 //     }
 // }
 
-
-export function isFirebaseAuthError(e: any): boolean {
-    if (!e) return false;
-    if (e.code !== void 0 && typeof e.code === 'string') {
-        return e.code.indexOf('auth/') === 0; // Admin SDK Auth Error
-    }
-    return false;
-}
+/**
+ * Returns 
+ * @param e error object
+ */
+// export function isFirebaseAuthError(e: any): boolean {
+//     if (!e) return false;
+//     if (e.code !== void 0 && typeof e.code === 'string') {
+//         return e.code.indexOf('auth/') === 0; // Admin SDK Auth Error
+//     }
+//     return false;
+// }
 
 
 /**
@@ -145,27 +148,27 @@ export function isFirebaseAuthError(e: any): boolean {
  * This converts Firebase error into javascript error.
  * @param e Error object
  */
-export function convertFirebaseErrorIntoJavascriptError(e: any) {
-    if (e instanceof Error) {
+// export function convertFirebaseErrorIntoJavascriptError(e: any) {
+//     if (e instanceof Error) {
 
 
 
-        /// auth/...
-        if (isFirebaseAuthError(e)) {
-            return new Error((e as any).code);
-        }
+//         /// auth/...
+//         if (isFirebaseAuthError(e)) {
+//             return new Error((e as any).code);
+//         }
 
-        /// If it is firebase error(mostly Firestore error), the message is very long.
-        /// Make long error string into short error code if it's firebase error.
-        let code = '';
-        if (e.message.indexOf(`Cannot use "undefined" as a Firestore value`) > -1) code = UNDEFINED_FIELD_VALUE;
-        if (code !== '') return new Error(code);
+//         /// If it is firebase error(mostly Firestore error), the message is very long.
+//         /// Make long error string into short error code if it's firebase error.
+//         let code = '';
+//         if (e.message.indexOf(`Cannot use "undefined" as a Firestore value`) > -1) code = UNDEFINED_FIELD_VALUE;
+//         if (code !== '') return new Error(code);
 
-        /// If it's not firebase error, just return.
-        return e;
-    }
-    return e;
-}
+//         /// If it's not firebase error, just return.
+//         return e;
+//     }
+//     return e;
+// }
 
 
 /**
@@ -180,8 +183,8 @@ export function error(code: string, message = '', _fcode?: FunctionsErrorCode, _
         code: code,
         message: message,
     }
-    var fcode = _fcode;
-    var fmessage: any = _fmessage;
+    let fcode = _fcode;
+    let fmessage: any = _fmessage;
     if (_fcode === void 0) fcode = 'unknown';
     if (_fmessage === void 0) fmessage = message;
     return new functions.https.HttpsError(fcode as any, fmessage, _details);
