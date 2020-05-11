@@ -91,7 +91,7 @@ describe('Post', function () {
 
 
         await forceUserLoginByEmail(TestSettings.testUserEmail);
-        System.auth.email
+        // System.auth.email
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id, tempCategory.id + 'another'], });
         // console.log('re', re);
@@ -100,9 +100,26 @@ describe('Post', function () {
     });
 
 
+
+    it('Update a post', async () => {
+
+        /// create a post
+        await forceUserLoginByEmail(TestSettings.testUserEmail);
+        const route = new Router('post.create');
+        const post: PostData = await route.run<PostData>({ categories: [tempCategory.id], title: 'hi' });
+        assert.equal(typeof post.id === 'string', true);
+        assert.equal(post.title, 'hi');
+
+        const updateRouter = new Router('post.update');
+        const updated: PostData = await updateRouter.run<PostData>({ id: post.id, title: 'yo' });
+        assert.equal(typeof post.id === 'string', true);
+        assert.equal(updated.title, 'yo');
+        assert.equal(post.id, updated.id);
+    });
+
     it('Get posts', async () => {
         const router = new Router('post.list');
-        let re = await router.run();
+        const re = await router.run();
         assert.equal(re.length > 0, true);
     });
 
@@ -118,7 +135,7 @@ describe('Post', function () {
     it('Get posts with a category', async () => {
         const router = new Router('post.list');
         const re = await router.run({ categories: [tempCategory.id, tempCategory.id + 'another'] });
-        assert.equal(re.length == 1, true);
+        assert.equal(re.length === 2, true);
     });
 
 });

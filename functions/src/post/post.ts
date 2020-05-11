@@ -44,7 +44,7 @@ export class Post {
      * `data` can have more properties to save as user information.
      * @param data object data to update the post
      *  - data[id] is the post document id.
-     *  - data[categoris] is the categories of the post.
+     *  - data[categoris] is the categories of the post. It is optional. If it's undefined, then it does not touch categories.
      * @return the post data
      * @example open `user.spec.ts` to see more examples.
      * @warning Category IDs are saved in an Arrray.
@@ -61,24 +61,31 @@ export class Post {
         const p = await this.data(data.id);
         if (!p) throw error(POST_NOT_EXISTS);
 
-        if (!Array.isArray(data.categories)) {
-            throw error(INVALID_INPUT, 'categories');
+        if (data.categories !== void 0) {
+            if (!Array.isArray(data.categories)) {
+                throw error(INVALID_INPUT, 'categories');
+            }
         }
 
-        const categoryObj = new Category();
-        for (const id of data.categories) {
-            const categoryData = await categoryObj.data(id);
-            if (!categoryData) throw error(CATEGORY_NOT_EXISTS, id);
+        if (data.categories !== void 0) {
+            const categoryObj = new Category();
+            for (const _id of data.categories) {
+                const categoryData = await categoryObj.data(_id);
+                if (!categoryData) throw error(CATEGORY_NOT_EXISTS, _id);
+            }
         }
-
         // data.uid = System.auth.uid;
 
         data.created = (new Date).getTime();
 
-        const post = await postCol().add(data);
+        const id: string = data.id;
+        delete data.id;
+        await postDoc(id).update(data);
+
+        // const post = await postCol().add(data);
         // return { id: post.id };
 
-        return await this.data(post.id);
+        return await this.data(id);
     }
 
     /**
@@ -96,6 +103,8 @@ export class Post {
 
     /**
      * Returns posts
+     * 
+     * @attention each post has its push key as id.
      */
     async list(data?: any): Promise<Array<any>> {
         let snapshots;
@@ -114,9 +123,12 @@ export class Post {
             snapshots = await query.get();
         }
 
-        const posts: any[] = [];
+        const posts: PostData[] = [];
         snapshots.forEach((doc) => {
-            posts.push(doc.data());
+
+            const post: PostData = doc.data();
+            post.id = doc.id;
+            posts.push(post);
         });
         return posts;
     }

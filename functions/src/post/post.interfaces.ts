@@ -5,7 +5,7 @@
  */
 export interface PostData {
     id?: string;
-    categories: string[];
+    categories?: string[];
     uid?: string;
     title?: string;
     content?: string;
