@@ -1,14 +1,16 @@
 
-import { PERMISSION_DEFINED, INPUT_IS_EMPTY } from '../defines';
-import { isLoggedIn, postCol, setCategoryPostRelation, error } from '../helpers/global-functions';
+import { PERMISSION_DEFINED, INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS, INVALID_INPUT, MISSING_INPUT } from '../defines';
+import { isLoggedIn, postCol, error } from '../helpers/global-functions';
 import { System } from '../system/system';
+import { Category } from '../category/category';
+import { Query } from '@google-cloud/firestore';
 
 
 /**
  * `category` is not saved in post doc. It's saved in the relation.
  */
 interface PostData {
-    category: string;
+    categories: string[];
     uid: string;
     title: string;
     content: string;
@@ -32,32 +34,80 @@ export class Post {
      * 
      * @example open `user.spec.ts` to see more examples.
      * 
-     * @warning `id` is not saved.
+     * @warning Category IDs are saved in an Arrray.
      * 
-     * /// 여기서 부터... 게시글 생성 테스트 & 게시글 수정 & 테스트 & 게시글 삭제 & 테스트
      */
     async create(data: PostData): Promise<object> {
+
+        // console.log('postData: ', data);
         if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
         if (!data) throw error(INPUT_IS_EMPTY);
+        if (data.categories === void 0) throw error(MISSING_INPUT, 'categories');
+
+        if (!Array.isArray(data.categories)) {
+            throw error(INVALID_INPUT, 'categories');
+        }
+
+
+        const categoryObj = new Category();
+
+
+
+        for (const id of data.categories) {
+            const categoryData = await categoryObj.data(id);
+            if (!categoryData) throw error(CATEGORY_NOT_EXISTS, id);
+        }
+
 
 
         // trace('Post::create() validation pass');
 
-        const category = data.category;
-        delete data.category;
         data.uid = System.auth.uid;
         data.created = (new Date).getTime();
+
+
 
         // trace('Post doc data', data);
         const post = await postCol().add(data);
         // trace('doc.id', post.id);
 
-        await setCategoryPostRelation(category, post.id);
+        // await setCategoryPostRelation(category, post.id);
 
 
         // trace('categoryPostRelationDoc()', re);
         return { id: post.id };
 
+    }
+
+
+    /**
+     * Returns posts
+     */
+    async list(data?: any): Promise<Array<any>> {
+        let snapshots;
+
+        if (!data) {
+            snapshots = await postCol().get();
+        } else {
+
+            const ref = postCol();
+            let query: Query = ref; // Save `ref` to `query`
+
+            /// category
+            if (data.categories !== void 0) {
+                if (!Array.isArray(data.categories)) throw error(INVALID_INPUT, 'categories');
+                // query where and save result to query
+                query = query.where('categories', 'array-contains-any', data.categories);
+            }
+
+            snapshots = await query.get();
+        }
+
+        const posts: any[] = [];
+        snapshots.forEach((doc) => {
+            posts.push(doc.data());
+        });
+        return posts;
     }
 
 }

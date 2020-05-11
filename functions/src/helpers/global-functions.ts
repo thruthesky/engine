@@ -61,7 +61,8 @@ export function trace(msg: any, extra?: any) {
 
 
 /**
- * Let the user login by email.
+ * Let the user login by email based on the Firebase `Auth`.
+ * When the Engin needs 'UID' but you only know 'email address', you can use this method.
  * @warning Use this method only for testing purpose.
  * @todo block this method not to be used in production. Or move it to test lirbrary.
  * @param email user email
@@ -74,6 +75,7 @@ export function trace(msg: any, extra?: any) {
  *  } catch (e) {
  *      assert.equal(e.message, UNDEFINED_FIELD_VALUE);
  *  }
+ * @note `System.auth.uid` & `System.auth.email` can be set directly without accessing Firebase Auth.
  */
 export async function forceUserLoginByEmail(email: string) {
     try {
@@ -89,7 +91,30 @@ export function forceUserLogout() {
     System.auth.email = null as any;
 }
 
+/**
+ * Sets the email address as logged in.
+ * @warning This must used only on unit testing.
+ * @param email Email address
+ */
+export function setAuthEmail(email: string) {
+    System.auth.email = email;
+}
 
+/**
+ * Admin logs in.
+ * @arning This must be used on unit testing only.
+ */
+export function setAdminLogin() {
+    setAuthEmail(EnginSettings.adminEmails[0]);
+}
+
+
+/**
+ * Setting category & post relationship is not an ideal solution. Document can contain array and it's searchable.
+ * @deprecated
+ * @param category category
+ * @param postId post
+ */
 export async function setCategoryPostRelation(category: string, postId: string) {
 
     try {

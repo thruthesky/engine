@@ -60,7 +60,6 @@ describe('Category', function () {
     it('Create a category', async () => {
         const route = new Router('category.create');
         const re: WriteResult = await route.run({ id: categoryId, title: 'apple', description: 'yo' });
-        // console.log(categoryId, re);
         assert.equal(typeof re.writeTime.seconds === 'number', true);
     });
 
