@@ -232,17 +232,23 @@ export function returnError(e: any) {
         code: null,
         message: null
     };
+
+    // Is the standard Functions error?
     if (e instanceof functions.https.HttpsError) {
         data.code = details(e).code;
         data.message = details(e).message;
     } else if (e?.errorInfo?.code) {
-        // Firebase Auth Error
+        // If it's  Firebase Auth Error, then convert it into Functions error.
         data.code = e.errorInfo.code;
         data.message = e.errorInfo.message;
-        // console.log('===========> This is FirebaesAuthError', data);
     } else {
-        /// Normal Error thrown by `throw`
+        // Converting Javascript normal Error object into `Functions standard Error` object.
+        // Normal Error thrown by normal `throw`
+        // Firestore Error will be coming here.
+        // Example of errors
+        //  - "9 FAILED_PRECONDITION: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/enginf-856e7/firestore/indexes?create_composite=Cklwcm9qZWN0cy9lbmdpbmYtODU2ZTcvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL3Bvc3QvaW5kZXhlcy9fEAEaDgoKY2F0ZWdvcmllcxgBGgsKB2NyZWF0ZWQQAhoMCghfX25hbWVfXxAC"
         data.code = e.message;
+        data.message = e.message;
     }
     return data;
 }

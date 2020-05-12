@@ -15,6 +15,7 @@
     "test:user": "mocha --require ts-node/register --watch --watch-files src, src/user/user.spec.ts",
     "test:category": "mocha --require ts-node/register --watch --watch-files src, src/category/category.spec.ts",
     "test:post": "mocha --require ts-node/register --watch --watch-files src, src/post/post.spec.ts",
+    "test:post.list": "mocha --require ts-node/register --watch --watch-files src, src/post/post.list.spec.ts",
     "test:test": "mocha --require ts-node/register --watch --watch-files src, src/test/test.spec.ts"
   },
   "engines": {

@@ -59,8 +59,12 @@
 5. `functions/src/settings.ts` 를 열어서, `adminEmails` 배열에 관리자 메일 주소를 추가합니다.
 6.  Clould Functions 를 publish 합니다.
    1. `$ firebase deploy --only functions`
-7. 테스트를 하려면 `## 테스트 항목`을 참고하세요.
+7. (옵션) 테스트를 하려면 `## 테스트 항목`을 참고하세요.
+8. Firestore 인덱스 생성
 
+```
+post collection 의 categories 와 created 필드를 desceding 으로 index 해야 한다.
+```
 
 
 ### Typedoc 설치

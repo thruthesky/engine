@@ -28,7 +28,7 @@ describe('Post', function () {
     };
 
     it('Create permission denied', async () => {
-
+        forceUserLogout();
         const route = new Router('post.create');
         const re = await route.run({});
         assert.equal(re.code, PERMISSION_DEFINED);
@@ -91,10 +91,8 @@ describe('Post', function () {
 
 
         await forceUserLoginByEmail(TestSettings.testUserEmail);
-        // System.auth.email
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id, tempCategory.id + 'another'], });
-        // console.log('re', re);
         assert.equal(typeof post.id === 'string', true);
         assert.equal(typeof post.id === 'string', true);
     });
@@ -140,7 +138,7 @@ describe('Post', function () {
 
 
 
-    it('Get posts with a category', async () => {
+    it('Delete a post', async () => {
         const router = new Router('post.list');
         const re = await router.run({ categories: [tempCategory.id, tempCategory.id + 'another'] });
         assert.equal(typeof re[0]['uid'] === 'string', true);
@@ -154,9 +152,7 @@ describe('Post', function () {
         assert.equal(deleted.content, CONTENT_DELETED);
         assert.equal(deleted.deleted !== void 0, true);
 
-
     });
 
 
-    
 });

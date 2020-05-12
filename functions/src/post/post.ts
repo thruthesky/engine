@@ -105,6 +105,20 @@ export class Post {
      * Returns posts
      * 
      * @attention each post has its push key as id.
+     * 
+     * @note Search options
+     *      data['categories'] - String array of categories.
+     *      data['limit'] - limit
+     *      data['orderBy'] - field name. defuault is 'created'
+     *      data['orderBySort] - Sort options. default is 'desc'.
+     *      
+     * @note to get the 2nd page(batch of posts) of list, the following options are mandatory.
+     *      data['categories'] - categories.
+     *      data['limit'] - limit of posts.
+     *      data['startAfter'] - integer of 'created` field.
+     * 
+     *      data['orderBy'] - must be 'created' or could be omitted.
+     *      data['orderBySort'] - must be 'desc' or could be omitted.
      */
     async list(data?: any): Promise<Array<any>> {
         let snapshots;
@@ -112,16 +126,40 @@ export class Post {
         if (!data) {
             snapshots = await postCol().get();
         } else {
+            // console.log('Post::list() data: ', data);
             const ref = postCol();
             let query: Query = ref; // Save `ref` to `query`
             /// category
             if (data.categories !== void 0) {
                 if (!Array.isArray(data.categories)) throw error(INVALID_INPUT, 'categories');
-                // query where and save result to query
+                // console.log(`query.where('categories', 'array-contains-any', data.categories);`);
                 query = query.where('categories', 'array-contains-any', data.categories);
             }
+            if (data.orderBy !== void 0) {
+                if (data.orderBySort !== void 0) {
+                    // console.log(`query.orderBy(${data.orderBy}, ${data.orderBySort});`);
+                    query = query.orderBy(data.orderBy, data.orderBySort);
+                } else {
+                    // console.log(`query.orderBy(${data.orderBy});`);
+                    query = query.orderBy(data.orderBy);
+                }
+            } else {
+                query = query.orderBy('created', 'desc');
+            }
+
+            if ( data.startAfter !== void 0 ) {
+                query = query.startAfter(data.startAfter);
+            }
+
+            if (data.limit) {
+                // console.log(`query.limit(${data.limit});`);
+                query = query.limit(data.limit);
+            }
+
             snapshots = await query.get();
         }
+
+
 
         const posts: PostData[] = [];
         snapshots.forEach((doc) => {
