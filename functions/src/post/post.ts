@@ -135,7 +135,8 @@ export class Post {
 
     /**
      * It mark as deleted. It does not actually delete the document. It only deletes title & content.
-     * @param id post id to delete
+     * @param id string. post id to delete.
+     * @return PostData
      */
     async delete(id: string): Promise<PostData> {
 
