@@ -34,6 +34,11 @@ export const CATEGORY_NOT_EXISTS = 'engin/category-not-exists';
 
 export const UNDEFINED_FIELD_VALUE = 'engin/undefined-field-value';
 
+
+export const TITLE_DELETED = 'title-deleted';
+export const CONTENT_DELETED = 'content-deleted';
+
+
 export interface UserAuth {
     email: string;
     uid: string;

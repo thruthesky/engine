@@ -1,5 +1,5 @@
 
-import { PERMISSION_DEFINED, INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS } from '../defines';
+import { PERMISSION_DEFINED, INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, TITLE_DELETED, CONTENT_DELETED } from '../defines';
 import { isLoggedIn, postCol, error, postDoc } from '../helpers/global-functions';
 import { System } from '../system/system';
 import { Category } from '../category/category';
@@ -131,6 +131,32 @@ export class Post {
             posts.push(post);
         });
         return posts;
+    }
+
+    /**
+     * It mark as deleted. It does not actually delete the document. It only deletes title & content.
+     * @param id post id to delete
+     */
+    async delete(id: string): Promise<PostData> {
+
+        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!id) throw error(INPUT_IS_EMPTY);
+        if (id === void 0) throw error(MISSING_INPUT, 'id');
+
+        const p = await this.data(id);
+        if (!p) throw error(POST_NOT_EXISTS);
+
+        const data: PostData = {
+            title: TITLE_DELETED,
+            content: CONTENT_DELETED,
+            deleted: (new Date).getTime(),
+        };
+
+        await postDoc(id).update(data);
+
+        return await this.data(id);
+
+
     }
 
 }

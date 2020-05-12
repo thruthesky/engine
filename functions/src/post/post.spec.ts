@@ -2,7 +2,7 @@
 import { Router } from "../router/router";
 import * as assert from 'assert';
 // import { Settings } from "../helper";
-import { PERMISSION_DEFINED, CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT } from "../defines";
+import { PERMISSION_DEFINED, CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, TITLE_DELETED, CONTENT_DELETED } from "../defines";
 import { System } from "../system/system";
 import { TestSettings } from "../settings";
 import { forceUserLoginByEmail, forceUserLogout, setAdminLogin } from "../helpers/global-functions";
@@ -138,4 +138,25 @@ describe('Post', function () {
         assert.equal(re.length === 2, true);
     });
 
+
+
+    it('Get posts with a category', async () => {
+        const router = new Router('post.list');
+        const re = await router.run({ categories: [tempCategory.id, tempCategory.id + 'another'] });
+        assert.equal(typeof re[0]['uid'] === 'string', true);
+
+        const id = re[0]['id'];
+        const routerDel = new Router('post.delete');
+        const deleted: PostData = await routerDel.run(id);
+
+        assert.equal(id, deleted.id);
+        assert.equal(deleted.title, TITLE_DELETED);
+        assert.equal(deleted.content, CONTENT_DELETED);
+        assert.equal(deleted.deleted !== void 0, true);
+
+
+    });
+
+
+    
 });

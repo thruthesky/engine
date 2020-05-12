@@ -9,8 +9,9 @@ export interface PostData {
     uid?: string;
     title?: string;
     content?: string;
-    created?: number;
-    updated?: number;
+    created?: number; // timestamp in millliseconds
+    updated?: number; // timestamp in millliseconds
+    deleted?: number; // timestamp in millliseconds
     ip?: string;
     userAgent?: string;
     view?: number;
