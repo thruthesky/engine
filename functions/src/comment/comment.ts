@@ -1,17 +1,23 @@
 
 import { CommentData } from './comment.interfaces';
-import { PERMISSION_DEFINED, INPUT_IS_EMPTY } from '../defines';
-import { error, isLoggedIn } from '../helpers/global-functions';
+import {
+    PERMISSION_DEFINED, INPUT_IS_EMPTY, MISSING_INPUT, POST_NOT_EXISTS, COMMENT_NOT_EXISTS,
+    COMMENT_CONTENT_DELETED,
+    INVALID_INPUT
+} from '../defines';
+import { error, isLoggedIn, commentCol, commentDoc } from '../helpers/global-functions';
 import { EngineSettings } from '../settings';
+import { Post } from '../post/post';
+import { System } from '../system/system';
 
 
 export class Comment {
 
     /**
-     * Create a post
+     * Create a comment
      * `data` can have more properties to save as user information.
-     * @param data object data to create a post
-     * @return CommentData of the post
+     * @param data object data to create a comment
+     * @return CommentData of the comment
      * @example open `user.spec.ts` to see more examples.
      * @warning Category IDs are saved in an Arrray.
      */
@@ -19,11 +25,102 @@ export class Comment {
 
         if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
         if (!data) throw error(INPUT_IS_EMPTY);
-        // if (data.parentId === void 0) throw error(MISSING_INPUT, 'postId');
+        if (data.postId === void 0) throw error(MISSING_INPUT, 'postId');
+
+        // Check if the post exists.
+        const post = new Post();
+        const p = await post.data(data.postId);
+        if (!p) throw error(POST_NOT_EXISTS);
+
+        // Parent Id
+        if (data.parentId === void 0) {
+            data.parentId = '';
+        }
+
+        data.uid = System.auth.uid;
+        data.createdAt = (new Date).getTime();
+
+        const comment = await commentCol().add(data);
+
+        return await this.data(comment.id);
+    }
+
+    /**
+     * Update a comment
+     * `data` can have more properties to save as user information.
+     * @param data object data to create a comment
+     * @return CommentData of the updated comment
+     * @example open `user.spec.ts` to see more examples.
+     * @warning Category IDs are saved in an Arrray.
+     */
+    async update(data: CommentData): Promise<CommentData> {
+
+        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!data) throw error(INPUT_IS_EMPTY);
+        if (data.id === void 0) throw error(MISSING_INPUT, 'id');
+
+        // Check if the comment exists.
+        const p = await this.data(data.id);
+        if (!p) throw error(COMMENT_NOT_EXISTS);
+
+        data.updatedAt = (new Date).getTime();
+        await commentDoc(data.id).update(data);
+        return await this.data(data.id);
+    }
+
+    /**
+     * Deleting a comment
+     * It mark as deleted. It does not actually delete the document itself. But it erases title & content.
+     * @param id string. comment id to delete.
+     * @return CommentData
+     */
+    async delete(id: string): Promise<CommentData> {
+        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!id) throw error(INPUT_IS_EMPTY);
+        if (typeof id !== 'string') throw error(INVALID_INPUT, 'id');
+        const p = await this.data(id);
+        if (!p) throw error(COMMENT_NOT_EXISTS);
+        const data: CommentData = {
+            content: COMMENT_CONTENT_DELETED,
+            deletedAt: (new Date).getTime(),
+        };
+        await commentDoc(id).update(data);
+        return await this.data(id);
+    }
 
 
-        return null as any;
+    /**
+     * Returns comments sorted in hierachical thread.
+     * @param id post id to get the commetns of
+     */
+    async list(id: string): Promise<CommentData[]> {
+        if (typeof id !== 'string') throw error(INVALID_INPUT, 'id');
+        const snapshots = await commentCol().where('postId', '==', id).get();
 
+        const comments: CommentData[] = [];
+        snapshots.forEach((doc) => {
+            const comment: CommentData = doc.data();
+            comment.id = doc.id;
+            comments.push(comment);
+        });
+
+        const sorted = this.sortComments(comments);
+        return sorted;
+        // return comments;
+
+    }
+    /**
+     * Returns comment data
+     * @param id comment document key
+     * @attention `id` is added to returned comemnt data
+     */
+    async data(id: string): Promise<CommentData> {
+        if (typeof id !== 'string') throw error(INVALID_INPUT, 'id');
+        const snapshot = await commentDoc(id).get();
+        const data: any = snapshot.data();
+        if (!data) return data;
+        data.id = id;
+        return data;
     }
 
 

@@ -1,5 +1,5 @@
 import { admin } from "../init/init.firebase";
-import { EngineSettings } from '../settings';
+import { EngineSettings, TestSettings } from '../settings';
 import { System } from "../system/system";
 // import { UNDEFINED_FIELD_VALUE } from "../defines";
 import * as functions from 'firebase-functions';
@@ -37,6 +37,16 @@ export function postCol() {
 export function postDoc(id: string) {
     return admin().firestore().collection('post').doc(id);
 }
+
+
+export function commentCol() {
+    return admin().firestore().collection('comment');
+}
+
+export function commentDoc(id: string) {
+    return admin().firestore().collection('comment').doc(id);
+}
+
 
 // export function categoryPostRelationDoc(postId: string) {
 //     return admin().firestore().collection('category-post-relation').doc(postId);
@@ -102,6 +112,11 @@ export function forceUserLogout() {
  */
 export function setAuthEmail(email: string) {
     System.auth.email = email;
+}
+
+export function loginAsUser() {
+    System.auth.email = TestSettings.testUserEmail;
+    System.auth.uid = TestSettings.testUserUid;
 }
 
 /**

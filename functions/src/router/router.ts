@@ -5,6 +5,7 @@ import { Category } from '../category/category';
 import { Post } from '../post/post';
 import { error, returnError } from '../helpers/global-functions';
 import { Test } from '../test/test';
+import { Comment } from '../comment/comment';
 
 // import * as functions from 'firebase-functions';
 // import { convertFirebaseErrorIntoJavascriptError } from '../helpers/global-functions';
@@ -25,6 +26,7 @@ export class Router {
         this.classContainer['system'] = new System();
         this.classContainer['category'] = new Category();
         this.classContainer['post'] = new Post();
+        this.classContainer['comment'] = new Comment();
         this.classContainer['test'] = new Test();
         this.route = route ?? '';
     }

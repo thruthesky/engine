@@ -4,7 +4,12 @@
 import * as assert from 'assert';
 import { CommentData } from './comment.interfaces';
 import { Comment } from './comment';
-
+import { forceUserLogout, loginAsUser, setAdminLogin } from '../helpers/global-functions';
+import { Router } from '../router/router';
+import { PERMISSION_DEFINED, MISSING_INPUT, INPUT_IS_EMPTY, POST_NOT_EXISTS, COMMENT_NOT_EXISTS, INVALID_INPUT, COMMENT_CONTENT_DELETED } from '../defines';
+import { CategoryDatas } from '../category/category.interfaces';
+import { PostData } from '../post/post.interfaces';
+import { TestSettings } from '../settings';
 
 describe('Comment', function () {
     this.timeout(10000);
@@ -226,7 +231,7 @@ describe('Comment', function () {
             { id: 'GC', parentId: 'G', createdAt: 525 }
         ];
 
-        var _comments = [ ...comments];
+        var _comments = [...comments];
 
         assert.equal(comments.length, expected.length);
 
@@ -249,24 +254,102 @@ describe('Comment', function () {
     });
 
 
-    // it('Dangling comment test', () => {
-    //     var comments: CommentData[] = [
-    //         { id: 'A', parentId: '', createdAt: 5 },
-    //         { id: 'B', parentId: '', createdAt: 10 },
-    //         { id: 'BA', parentId: 'B', createdAt: 10 },
-    //         { id: 'BAA', parentId: 'BAAA', createdAt: 10 },
-    //         { id: 'BAAA', parentId: 'BAA', createdAt: 10 },
+    it('Input test', async () => {
 
-    //         { id: 'BAB', parentId: 'BA', createdAt: 10 },
-    //         {id: 'BAC', parentId: 'BA', createdAt: 200},
-    //         { id: 'BB', parentId: 'B', createdAt: 10 },
-    //         { id: 'C', parentId: '', createdAt: 20 },
-    //     ];
+        forceUserLogout();
+        const router = new Router('comment.create');
+        let re = await router.run({});
+        assert.equal(re.code, PERMISSION_DEFINED);
 
-    //     const cmt = new Comment();
-    //     const sorted = cmt.sortComments(comments);
+        loginAsUser();
 
-    //     console.log(sorted);
-    // });
+        re = await router.run();
+        assert.equal(re.code, INPUT_IS_EMPTY);
 
+
+        re = await router.run({});
+        assert.equal(re.code, MISSING_INPUT);
+        assert.equal(re.message, 'postId');
+
+        re = await router.run({ postId: 'fake-id' });
+        assert.equal(re.code, POST_NOT_EXISTS);
+
+        const routerUpate = new Router('comment.update');
+        re = await routerUpate.run({});
+        assert.equal(re.code, MISSING_INPUT);
+        assert.equal(re.message, 'id');
+
+
+        re = await routerUpate.run({ id: 'fake-comment-id' });
+        assert.equal(re.code, COMMENT_NOT_EXISTS);
+
+
+        const routerComentDelete = new Router('comment.delete');
+        re = await routerComentDelete.run();
+        assert.equal(re.code, INPUT_IS_EMPTY);
+        re = await routerComentDelete.run({ id: ' id must be a string ' });
+        assert.equal(re.code, INVALID_INPUT);
+        re = await routerComentDelete.run('fake-comment-id');
+        assert.equal(re.code, COMMENT_NOT_EXISTS);
+
+    });
+
+
+    it('Create CRUD', async () => {
+
+        // ===========> Create a category
+        setAdminLogin();
+        const tempCategory = {
+            id: 'temp-category-id-for-comment-' + (new Date).getTime(),
+            title: 'Temp Category',
+        };
+
+        const routerCategory = new Router('category.create');
+        let re: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
+        assert.equal(typeof re.id === 'string', true);
+        assert.equal(re.id, tempCategory.id);
+
+        // ==========> Create a post
+        loginAsUser();
+        const route = new Router('post.create');
+        const post: PostData = await route.run<PostData>({ categories: [tempCategory.id], });
+        assert.equal(typeof post.id === 'string', true);
+
+        // ==========> Create a comment
+
+        const content = 'comment content!';
+        const routerComent = new Router('comment.create');
+        const comment: CommentData = await routerComent.run<CommentData>({
+            postId: post.id,
+            content: content,
+        });
+        // console.log(comment);
+        assert.equal(typeof comment.id === 'string', true);
+        assert.equal(typeof comment.createdAt === 'number', true);
+        assert.equal(comment.uid, TestSettings.testUserUid);
+        assert.equal(comment.content, content);
+
+        // ===========> Update the comment
+        const updatedContent = 'updated --- comment content!';
+        const routerComentUpdate = new Router('comment.update');
+        const updatedComment: CommentData = await routerComentUpdate.run<CommentData>({
+            id: comment.id,
+            content: updatedContent,
+        });
+        // console.log(updatedComment);
+        assert.equal(typeof updatedComment.updatedAt === 'number', true);
+        assert.equal(updatedComment.uid, TestSettings.testUserUid);
+        assert.equal(updatedComment.content, updatedContent);
+
+
+        // ==========> Delete the comment
+        const routerComentDelete = new Router('comment.delete');
+        const deleted: CommentData = await routerComentDelete.run(comment.id);
+
+        // console.log(deleted);
+        assert.equal(typeof deleted.deletedAt === 'number', true);
+        assert.equal(deleted.content, COMMENT_CONTENT_DELETED);
+    });
+
+    
 });

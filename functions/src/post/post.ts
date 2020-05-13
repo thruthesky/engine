@@ -94,6 +94,7 @@ export class Post {
      * @attention `id` is added to returned post data
      */
     async data(id: string) {
+        if (typeof id !== 'string') throw error(INVALID_INPUT, 'id');
         const snapshot = await postDoc(id).get();
         const data: any = snapshot.data();
         if (!data) return data;
@@ -177,25 +178,19 @@ export class Post {
      * @return PostData
      */
     async delete(id: string): Promise<PostData> {
-
         if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
         if (!id) throw error(INPUT_IS_EMPTY);
-        if (id === void 0) throw error(MISSING_INPUT, 'id');
-
+        // if (id === void 0) throw error(MISSING_INPUT, 'id');
+        if (typeof id !== 'string') throw error(INVALID_INPUT, 'id');
         const p = await this.data(id);
         if (!p) throw error(POST_NOT_EXISTS);
-
         const data: PostData = {
             title: TITLE_DELETED,
             content: CONTENT_DELETED,
             deleted: (new Date).getTime(),
         };
-
         await postDoc(id).update(data);
-
         return await this.data(id);
-
-
     }
 
 }

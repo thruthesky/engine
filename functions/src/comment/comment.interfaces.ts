@@ -5,8 +5,12 @@
  */
 export interface CommentData {
 
-    // Comment ID. This is not saved in database.
+    // Comment ID. This is not saved in database but when read, it will be added to the returned data.
     id?: string;
+
+    // All comments are required to have postId and will be saved in docuemnt. So, that it can be searchable by postId.
+    postId?: string;
+
     // Parent comment ID. If the comment is root coment(not a child of another comment), then it must be a empty string.
     parentId?: string;
 

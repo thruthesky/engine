@@ -25,6 +25,12 @@ export const EngineSettings = {
 
 
 
+/**
+ * For test purpose only.
+ * `testUserEmail` must be a real user email.
+ * `testUserUid` could be a fake uid since it does not check authentication.
+ */
 export const TestSettings = {
     testUserEmail: 'user10@gmail.com',
+    testUserUid: 'tempUid',
 };

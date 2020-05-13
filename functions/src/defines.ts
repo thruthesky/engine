@@ -28,6 +28,7 @@ export const TITLE_IS_EMPTY = 'engin/title-is-empty';
 
 export const POST_ID_IS_UNDEFINED = 'engin/post-id-is-undefined';
 export const POST_NOT_EXISTS = 'engin/post-not-exists';
+export const COMMENT_NOT_EXISTS = 'engin/comment-not-exists';
 export const CATEGORY_IS_UNDEFINED = 'engin/category-is-undefined';
 export const CATEGORY_ALREADY_EXISTS = 'engin/category-already-exists';
 export const CATEGORY_NOT_EXISTS = 'engin/category-not-exists';
@@ -37,6 +38,8 @@ export const UNDEFINED_FIELD_VALUE = 'engin/undefined-field-value';
 
 export const TITLE_DELETED = 'title-deleted';
 export const CONTENT_DELETED = 'content-deleted';
+
+export const COMMENT_CONTENT_DELETED = 'comment-content-deleted';
 
 
 export interface UserAuth {
