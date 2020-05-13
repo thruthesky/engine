@@ -32,7 +32,7 @@ export class Post {
             if (!categoryData) throw error(CATEGORY_NOT_EXISTS, id);
         }
         data.uid = System.auth.uid;
-        data.created = (new Date).getTime();
+        data.createdAt = (new Date).getTime();
 
         const post = await postCol().add(data);
         // return { id: post.id };
@@ -76,7 +76,7 @@ export class Post {
         }
         // data.uid = System.auth.uid;
 
-        data.created = (new Date).getTime();
+        data.createdAt = (new Date).getTime();
 
         const id: string = data.id;
         delete data.id;
@@ -145,7 +145,7 @@ export class Post {
                     query = query.orderBy(data.orderBy);
                 }
             } else {
-                query = query.orderBy('created', 'desc');
+                query = query.orderBy('createdAt', 'desc');
             }
 
             if ( data.startAfter !== void 0 ) {
@@ -187,7 +187,7 @@ export class Post {
         const data: PostData = {
             title: TITLE_DELETED,
             content: CONTENT_DELETED,
-            deleted: (new Date).getTime(),
+            deletedAt: (new Date).getTime(),
         };
         await postDoc(id).update(data);
         return await this.data(id);

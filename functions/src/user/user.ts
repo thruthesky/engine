@@ -36,7 +36,7 @@ export class User {
         delete data.phoneNumber;
         delete data.photoURL;
 
-        data.created = (new Date).getTime();
+        data.createdAt = (new Date).getTime();
 
         // console.log('User::register() => await userDoc()');
         await userDoc(created.uid).set(data);
@@ -75,9 +75,9 @@ export class User {
          * If a user is created on Firebase console, the user has no `user` doc in Firestore.
          */
         const u = await this.data(uid);
-        if (u.created === void 0) {
+        if (u.createdAt === void 0) {
             await userDoc(uid).set({
-                created: (new Date).getTime(),
+                createdAt: (new Date).getTime(),
             });
         }
 

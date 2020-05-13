@@ -18,7 +18,7 @@ export class Test {
      */
     async docCreate(data: any) {
 
-        data.created = (new Date).getTime();
+        data.createdAt = (new Date).getTime();
         return await admin().firestore().collection('test').doc(data.key).set(data);
     }
 

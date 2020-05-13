@@ -7,8 +7,8 @@ export interface CategoryData {
     id: string;
     title?: string;
     description?: string;
-    created?: number;
-    updated?: number;
+    createdAt?: number;
+    updatedAt?: number;
 }
 
 export interface CategoryDatas {

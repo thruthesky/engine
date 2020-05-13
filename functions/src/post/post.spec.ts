@@ -5,7 +5,7 @@ import * as assert from 'assert';
 import { PERMISSION_DEFINED, CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, TITLE_DELETED, CONTENT_DELETED } from "../defines";
 import { System } from "../system/system";
 import { TestSettings } from "../settings";
-import { forceUserLoginByEmail, forceUserLogout, setAdminLogin } from "../helpers/global-functions";
+import { forceUserLoginByEmail, forceUserLogout, setAdminLogin, loginAsUser } from "../helpers/global-functions";
 import { CategoryDatas, CategoryData } from "../category/category.interfaces";
 import { PostData } from './post.interfaces';
 
@@ -90,23 +90,27 @@ describe('Post', function () {
         assert.equal(re.id === tempCategory.id + 'another', true);
 
 
-        await forceUserLoginByEmail(TestSettings.testUserEmail);
+        // #1. Create a post
+        loginAsUser();
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id, tempCategory.id + 'another'], });
+        
+        // console.log(post);
         assert.equal(typeof post.id === 'string', true);
-        assert.equal(typeof post.id === 'string', true);
+        assert.equal(typeof post.createdAt === 'number', true);
     });
-
 
 
     it('Update a post', async () => {
 
-        /// create a post
-        await forceUserLoginByEmail(TestSettings.testUserEmail);
+        /// #2. Create a post
+        loginAsUser();
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id], title: 'hi' });
         assert.equal(typeof post.id === 'string', true);
         assert.equal(post.title, 'hi');
+
+        // console.log(post);
 
         const updateRouter = new Router('post.update');
         const updated: PostData = await updateRouter.run<PostData>({ id: post.id, title: 'yo' });
@@ -133,6 +137,7 @@ describe('Post', function () {
     it('Get posts with a category', async () => {
         const router = new Router('post.list');
         const re = await router.run({ categories: [tempCategory.id, tempCategory.id + 'another'] });
+        // console.log(re);
         assert.equal(re.length === 2, true);
     });
 
@@ -150,7 +155,7 @@ describe('Post', function () {
         assert.equal(id, deleted.id);
         assert.equal(deleted.title, TITLE_DELETED);
         assert.equal(deleted.content, CONTENT_DELETED);
-        assert.equal(deleted.deleted !== void 0, true);
+        assert.equal(deleted.deletedAt !== void 0, true);
 
     });
 

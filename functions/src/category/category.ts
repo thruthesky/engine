@@ -37,7 +37,7 @@ export class Category {
         const id = data.id;
         delete data.id;
 
-        data.created = (new Date).getTime();
+        data.createdAt = (new Date).getTime();
 
         await categoryDoc(id).set(data);
         return await this.data(id);
@@ -59,7 +59,7 @@ export class Category {
 
         const id = data.id;
         delete data.id;
-        data.updated = (new Date).getTime();
+        data.updatedAt = (new Date).getTime();
         await categoryDoc(id).update(data);
         return await this.data(id);
 

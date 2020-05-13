@@ -381,7 +381,7 @@ describe('Comment Threading/Nesting Test', function () {
         const sorted: CommentData[] = await routerCommentList.run(post.id);
 
 
-        console.log('===> Afer sort', sorted);
+        // console.log('===> Afer sort', sorted);
 
         assert.equal(sorted.length, expected.length);
         for (let i = 0; i < sorted.length; i++) {

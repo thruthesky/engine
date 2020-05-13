@@ -67,7 +67,7 @@ describe('Post list', function () {
         const routerList = new Router('post.list');
         const posts = await routerList.run({
             categories: [tempCategory.id],
-            orderBy: 'created',
+            orderBy: 'createdAt',
             orderBySort: 'desc',
         });
         if (posts.error !== void 0) {
@@ -79,7 +79,7 @@ describe('Post list', function () {
         // console.log('posts', posts);
         const first3 = await routerList.run({
             categories: [tempCategory.id],
-            orderBy: 'created',
+            orderBy: 'createdAt',
             orderBySort: 'desc',
             limit: 3
         });
