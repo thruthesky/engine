@@ -23,4 +23,8 @@ export interface CommentData {
     userAgent?: string;
     like?: number;
     dislike?: number;
+
+
+    //
+    checked?: boolean;
 }

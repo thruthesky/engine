@@ -6,7 +6,7 @@ import * as assert from 'assert';
 // import { Settings } from "../helper";
 import { PERMISSION_DEFINED, TITLE_IS_EMPTY, INPUT_IS_EMPTY, ID_IS_EMPTY, CATEGORY_ALREADY_EXISTS } from "../defines";
 import { System } from "../system/system";
-import { EnginSettings } from "../settings";
+import { EngineSettings } from "../settings";
 import { CategoryData } from './category.interfaces';
 // import { System } from "../system/system";
 
@@ -25,7 +25,7 @@ describe('Category', function () {
 
     it('Category create without input', async () => {
 
-        System.auth.email = EnginSettings.adminEmails[0];
+        System.auth.email = EngineSettings.adminEmails[0];
         const route = new Router('category.create');
         const re = await route.run();
         assert.equal(re.code, INPUT_IS_EMPTY);
@@ -33,13 +33,13 @@ describe('Category', function () {
 
 
     it('Category create with empty string on id', async () => {
-        System.auth.email = EnginSettings.adminEmails[0];
+        System.auth.email = EngineSettings.adminEmails[0];
         const route = new Router('category.create');
         const re = await route.run({ id: '' });
         assert.equal(re.code, ID_IS_EMPTY);
     });
     it('Category create with empty string on title', async () => {
-        System.auth.email = EnginSettings.adminEmails[0];
+        System.auth.email = EngineSettings.adminEmails[0];
         const route = new Router('category.create');
         const re = await route.run({ id: 'aa', title: '' });
         assert.equal(re.code, TITLE_IS_EMPTY);

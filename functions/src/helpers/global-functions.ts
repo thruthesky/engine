@@ -1,12 +1,12 @@
 import { admin } from "../init/init.firebase";
-import { EnginSettings } from '../settings';
+import { EngineSettings } from '../settings';
 import { System } from "../system/system";
 // import { UNDEFINED_FIELD_VALUE } from "../defines";
 import * as functions from 'firebase-functions';
 import { FunctionsErrorCode } from "firebase-functions/lib/providers/https";
 
 
-export const Settings = EnginSettings;
+export const Settings = EngineSettings;
 
 
 
@@ -47,12 +47,12 @@ export function postDoc(id: string) {
  * Returns true if the user is one of the admins.
  * @note for test, `System.auth.email` must be set before calling this method.
  * @example
- *      System.auth.email = EnginSettings.adminEmails[0]; //
+ *      System.auth.email = EngineSettings.adminEmails[0]; //
  *      System.auth.email = 'admin@email.com'; // or
  *      assert.equal(isAdmin(), true);
  */
 export function isAdmin(): boolean {
-    return EnginSettings.adminEmails.includes(System.auth.email);
+    return EngineSettings.adminEmails.includes(System.auth.email);
 }
 
 export function isLoggedIn(): boolean {
@@ -109,7 +109,7 @@ export function setAuthEmail(email: string) {
  * @arning This must be used on unit testing only.
  */
 export function setAdminLogin() {
-    setAuthEmail(EnginSettings.adminEmails[0]);
+    setAuthEmail(EngineSettings.adminEmails[0]);
 }
 
 

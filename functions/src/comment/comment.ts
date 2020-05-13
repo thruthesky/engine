@@ -2,6 +2,8 @@
 import { CommentData } from './comment.interfaces';
 import { PERMISSION_DEFINED, INPUT_IS_EMPTY } from '../defines';
 import { error, isLoggedIn } from '../helpers/global-functions';
+import { EngineSettings } from '../settings';
+
 
 export class Comment {
 
@@ -27,18 +29,58 @@ export class Comment {
 
 
 
+    /**
+     * Limit of max depth in the comment tree. 100 is more than good enough.
+     */
+    maxDepth = EngineSettings.maxDepth;
+
+    /**
+     * Limit of max recursive call to sort the comment tree.
+     * For each comment, it needs to call `recursive()` method to check if it has children.
+     * So, One(1) recursive call is equavalant to one coment.
+     * `100,000 maxRecursiveCall` means, it only support `100,100` comments.
+     * This prevents unexpected behaviour like
+     *  - a hacker may do comment creation attack.
+     * 
+     */
+    recursiveCall = 0;
+    maxRecursiveCall = EngineSettings.maxComments;
+
+    /**
+     * Sorting variables.
+     */
+
+
     sorted: CommentData[] = [];
     rest: CommentData[] = [];
+    foundCount = 0;
+    notFoundCount = 0;
 
+    /**
+     * 
+     * without `filtered` proprty, it calls the recursive method too much.
+     * @param parentId 
+     * @param depth 
+     */
     recursive(parentId: string, depth = 0) {
+        if (depth > this.maxDepth) return;
+
+        this.recursiveCall++;
+        // console.log('maxRecursion: ', this.recursiveCall);
+        if (this.recursiveCall > this.maxRecursiveCall) return;
+
         var temp = [];
         var found = [];
         for (var comment of this.rest) {
             if (comment.parentId === parentId) {
                 comment.depth = depth;
                 found.push(comment);
+                ++this.foundCount
+                // console.log('===> found: ', this.foundCount);
             } else {
                 temp.push(comment);
+                ++this.notFoundCount;
+                // console.log('---> not found: ', this.notFoundCount, comment);
             }
         }
         found.sort((a, b) => a.createdAt! - b.createdAt!);
@@ -47,15 +89,24 @@ export class Comment {
 
         this.rest = temp;
 
-        this.sorted.splice(pos+1, 0, ...found);
+        // console.log('----------> rest count: !', this.rest.length);
 
+        this.sorted.splice(pos + 1, 0, ...found);
 
-        this.sorted.filter((c) => c.depth === depth).forEach(c => this.recursive(c.id!, depth+1));
-        
+        var filtered = this.sorted.filter((c) => {
+            if (c.checked) return false;
+            return c.depth === depth;
+        });
 
-
+        for (var f of filtered) {
+            // console.log('f: ', f.id);
+            f.checked = true;
+            this.recursive(f.id!, depth + 1);
+        }
     }
 
+
+    //// 여기부터 threaed 코멘트가 제대로 되는지 증명 할 것.
     sortComments(comments: CommentData[]) {
 
 
@@ -63,129 +114,18 @@ export class Comment {
 
         this.recursive('');
 
+        // console.log(`
+        // found: ${this.foundCount}
+        // not found: ${this.notFoundCount}
+        // recursiveCall: ${this.recursiveCall}
+        // maxRecursiveCall: ${this.maxRecursiveCall}
+
+        // `)
+
 
 
         return this.sorted;
 
-
-
-
-        // let sorted: CommentData[] = [];
-        // const roots: CommentData[] = [];
-        // let rest: CommentData[] = [];
-
-        // // comments.sort((a, b) => a.createdAt! - b.createdAt!);
-
-
-        // // console.log('=============> After sort comments', comments);
-
-        // /// look for empty string parent Id.
-
-        // for (var comment of comments) {
-        //     if (comment.parentId === '') {
-        //         comment.depth = 0;
-        //         roots.push(comment);
-        //     } else {
-        //         rest.push(comment);
-        //     }
-        // }
-
-
-
-
-        // roots.sort((a, b) => a.createdAt! - b.createdAt!);
-
-        // sorted = roots;
-
-
-        // let maxDepth = 0;
-
-        // let loopCount = 1;
-
-
-
-
-
-        // /**
-        //  * Support only 100 depth loops.
-        //  * If there is a (dangling) comment that lost its parent, it may do inifite loop.
-        //  *  - And `100 dpeth loop` is for preventing infite loop for this case.
-        //  *  - It's not limited to 100 comments. it's more 100 dpeth loops.
-        //  */
-        // while (rest.length && loopCount < 4) {
-
-        //     console.log('==> loop: ', loopCount);
-        //     const temp: CommentData[] = [];
-        //     // const founds: CommentData[] = [];
-        //     for (var comment of rest) {
-
-        //         const found = sorted.findIndex((parent) => {
-        //             // console.log(`parent.id: ${parent.id} = ${comment.parentId} :comment.parentId`)
-        //             return parent.id === comment.parentId;
-        //         });
-
-
-        //         if (found != -1) {
-        //             comment.depth = sorted[found].depth === void 0 ? 1 : sorted[found].depth! + 1;
-        //             if (maxDepth < comment.depth) {
-        //                 maxDepth = comment.depth;
-        //             }
-        //             // founds.push(comment);
-        //             sorted.splice(found + 1, 0, comment);
-        //         } else {
-        //             temp.push(comment);
-        //         }
-
-
-        //     }
-
-        //     rest = temp;
-
-        //     console.log('rest.length', rest.length, temp);
-
-        //     loopCount++;
-        // }
-
-
-        // /**
-        //  * 
-        //  */
-        // // sorted.sort((a, b) => {
-        // //     if (a.parentId === b.parentId) {
-        // //         return a.createdAt! - b.createdAt!;
-        // //     } else {
-        // //         return 0;
-        // //     }
-        // // });
-
-
-        // console.log('---> maxDepth: ', maxDepth);
-
-
-        // // var rev = sorted.reverse();
-
-        // // for (let depth = maxDepth; depth >= 0; depth--) {
-
-        // //     let startedAt = 0;
-        // //     let rowCount = 0;
-        // //     for (let k = 0; k < sorted.length; k++) {
-        // //         var c = sorted[k];
-        // //         if (c.depth == depth) {
-        // //             startedAt = depth;
-        // //             rowCount ++;
-
-        // //             console.log(`${k}: ${depth}: `, c);
-        // //         } else {
-        // //             if ( startedAt > 0 ) {
-
-        // //             }
-        // //         }
-        // //     }
-
-
-        // // }
-
-        // return sorted;
 
 
     }

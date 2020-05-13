@@ -147,7 +147,7 @@ samples, guidance on mobile development, and a full API reference.
 ## 개발자 가이드
 
 * 모든 router 는 반드시 Promise 를 리턴해야 한다.
-* 소스코드에서는 `Enginf` 보다는 그냥 `Engin`이라는 용어를 쓴다. 예) EnginfSettings 대신 EnginSettings 라고 쓴다.
+* 소스코드에서는 `Enginf` 보다는 그냥 `Engin`이라는 용어를 쓴다. 예) EnginfSettings 대신 EngineSettings 라고 쓴다.
 
 * `router.run()` 에서 입력 값이 없어도 되고, 문자열이어도 되고, 객체이어도 된다. 실제 라우터에서 필요로 하는 값을 전달하면 된다.
 
@@ -264,7 +264,7 @@ auth/phone-number-already-exists | 전화번호가 이미 등록되어져 있는
 예제) settings.ts 설정 예
 
 ```
-export const EnginSettings = {
+export const EngineSettings = {
     adminEmails: ['admin@gmail.com', '...'],
 };
 export const TestSettings = {

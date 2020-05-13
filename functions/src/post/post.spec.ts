@@ -11,7 +11,7 @@ import { PostData } from './post.interfaces';
 
 // import { WriteResult } from "@google-cloud/firestore";
 // import { System } from "../system/system";
-// import { EnginSettings } from "../settings";
+// import { EngineSettings } from "../settings";
 // import { System } from "../system/system";
 
 
