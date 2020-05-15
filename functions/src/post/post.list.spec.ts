@@ -32,17 +32,14 @@ describe('Post list', function () {
 
     it(`Post pagination by creating ${noOfPosts} posts.`, async () => {
 
-
         // ===========> Create a category
         setAdminLogin();
         const routerCategory = new Router('category.create');
-        let category: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
+        const category: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
 
         // console.log('category', category);
         assert.equal(typeof category.id === 'string', true);
         assert.equal(category.id, tempCategory.id);
-
-
 
         // Create posts
         await forceUserLoginByEmail(TestSettings.testUserEmail);
@@ -59,7 +56,6 @@ describe('Post list', function () {
             // console.log(post);
             assert.equal(typeof post.id === 'string', true);
             assert.equal(typeof post.id === 'string', true);
-
         }
 
         // Get posts
@@ -76,7 +72,13 @@ describe('Post list', function () {
 
         assert.equal(posts.length === noOfPosts, true);
 
-        // console.log('posts', posts);
+        // console.log('=====> posts', posts);
+
+
+        /**
+         * Get first 3 and compre.
+         * title 5, title 4, title 3
+         */
         const first3 = await routerList.run({
             categories: [tempCategory.id],
             orderBy: 'createdAt',
@@ -84,28 +86,29 @@ describe('Post list', function () {
             limit: 3
         });
 
+        // console.log('=========> first3: ', first3);
         assert.equal(first3.length === 3, true);
-
-        // console.log('first3: ', first3);
-
         for (let j = 0; j < first3.length; j++) {
-            assert.equal(posts[j].created, first3[j].created);
+            assert.equal(posts[j].createdAt, first3[j].createdAt);
         }
 
 
-        // console.log('posts', posts);
-        const second3 = await routerList.run({
+        /**
+         * Get next 3 and compare
+         * title 2, title 1, title 0.
+         */
+        const next3: PostData[] = await routerList.run({
             categories: [tempCategory.id],
-            startAfter: first3[first3.length - 1].created,
+            startAfter: first3[first3.length - 1].createdAt,
             limit: 3
         });
 
-        assert.equal(first3.length === 3, true);
+        // console.log('=====> next3 ', next3);
 
-        // console.log('first3: ', first3);
+        assert.equal(next3.length, 3);
 
-        for (let j = 0; j < first3.length; j++) {
-            assert.equal(posts[j + 3].created, second3[j].created);
+        for (let j = 0; j < next3.length; j++) {
+            assert.equal(posts[j + 3].createdAt, next3[j].createdAt);
         }
 
     });

@@ -9,6 +9,7 @@ import { error, isLoggedIn, commentCol, commentDoc } from '../helpers/global-fun
 import { EngineSettings } from '../settings';
 import { Post } from '../post/post';
 import { System } from '../system/system';
+import { DependencyInjections } from '../helpers/dependency-injections';
 
 
 export class Comment {
@@ -89,8 +90,21 @@ export class Comment {
     }
 
 
+    async addUrl(data: any) {
+        return (new DependencyInjections).addUrl(commentDoc(data.id), data.url);
+    }
+
+    async removeUrl(data: any) {
+        return (new DependencyInjections).removeUrl(commentDoc(data.id), data.url);
+    }
+
+
+
     /**
-     * Returns comments sorted in hierachical thread.
+     * Gets the comments of the post
+     *  - And sort the comment in hierachical thread.
+     *  - And return it in array.
+     *
      * @param id post id to get the commetns of
      */
     async list(id: string): Promise<CommentData[]> {
@@ -113,6 +127,7 @@ export class Comment {
      * Returns comment data
      * @param id comment document key
      * @attention `id` is added to returned comemnt data
+     * @attention `depth` is set to 0. `depth` is not saved in Firestore. It is automatically computed when hierachical tree sorting.
      */
     async data(id: string): Promise<CommentData> {
         if (typeof id !== 'string') throw error(INVALID_INPUT, 'id');
@@ -120,6 +135,7 @@ export class Comment {
         const data: any = snapshot.data();
         if (!data) return data;
         data.id = id;
+        if (data.depth === void 0) data.depth = 0;
         return data;
     }
 
@@ -166,9 +182,9 @@ export class Comment {
         // console.log('maxRecursion: ', this.recursiveCall);
         if (this.recursiveCall > this.maxRecursiveCall) return;
 
-        var temp = [];
-        var found = [];
-        for (var comment of this.rest) {
+        const temp = [];
+        const found = [];
+        for (const comment of this.rest) {
             if (comment.parentId === parentId) {
                 comment.depth = depth;
                 found.push(comment);
@@ -190,12 +206,12 @@ export class Comment {
 
         this.sorted.splice(pos + 1, 0, ...found);
 
-        var filtered = this.sorted.filter((c) => {
+        const filtered = this.sorted.filter((c) => {
             if (c.checked) return false;
             return c.depth === depth;
         });
 
-        for (var f of filtered) {
+        for (const f of filtered) {
             // console.log('f: ', f.id);
             f.checked = true;
             this.recursive(f.id!, depth + 1);
@@ -219,6 +235,9 @@ export class Comment {
 
         // `)
 
+        this.sorted.forEach(c => {
+            delete c.checked;
+        });
 
 
         return this.sorted;

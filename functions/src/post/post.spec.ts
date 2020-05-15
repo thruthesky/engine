@@ -122,6 +122,7 @@ describe('Post', function () {
     it('Get posts', async () => {
         const router = new Router('post.list');
         const re = await router.run();
+        // console.log(re);
         assert.equal(re.length > 0, true);
     });
 

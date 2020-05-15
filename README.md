@@ -101,6 +101,12 @@ typedoc --out docs src
 router({route: 'user.version'})
 ```
 
+### 인덱싱
+
+기본적으로 `post` collection 에 categories 와 createdAt 이 인덱싱되어져 있다. 다른 방식으로 검색을 할 수 있는데, 이때 인덱싱을 수동으로 추가해 주어야 한다.
+예를 들어, createdAt 을 asc 로 검색 하고 싶다면, 클라이언트에서 옵션을 주면 되는데, 인덱싱을 해 주어야 에러가 안난다.
+
+
 ## 클라이언트엔드
 
 * 명칭: ClientF
@@ -291,3 +297,18 @@ $ npm run test
 * 글 하나에 여러개의 카테고리를 지정 할 수 있다.
 * 검색을 할 때, 여러 카테고리를 주어서 검색 할 수 있다.
 
+
+
+## Dependency Injections
+
+* 공통적으로 사용되는 루틴을 입력 값에 따라 여러가지 colection 에 적용한다.
+  * 예를 들면, `addUrl()`, `removeUrls())` 은 collection 에 상관없이, document reference 가 주어지면, 해당 document 에 값을 저장하거나 뺀다.
+
+
+### addUrl() & removeUrls()
+
+* `user`, `category`, `post`, `comment` 컬렉션 아래에 있는 도큐먼트에 `urls` 필드에 문자 배열로 URL을 저장한다.
+  * 이것은 클리이언트에서 Firebase Storage 나 기타 다른 서비스에서 파일을 업로드하고, 그 URL 을 기록 해당 도큐먼트에 추가 할 때 쓸 수 있다.
+  * `user` 컬렉션의 사용자 도큐먼트에 URL 을 추가하는 것은 첨부 파일을 어딘가(Firestore 나 기타 저장소)에 저장하고 그 URL 을 추가 또는 뺄 수 있는데, 이는 회원 프로필 사진이 될 수 있다.
+  * `post`, `comment` 컬렉션의 글/코멘트 도큐먼트에 URL 을 추가하는 것은 해당 글/코멘트에 첨부 파일을 어딘가(Firestore 나 기타 저장소)에 저장하고 그 URL 을 추가하거나 뺄 수 있다.
+  * `category` 에도 추가하거나 뺄 수 있다.

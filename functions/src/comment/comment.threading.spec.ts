@@ -3,26 +3,12 @@
 
 import * as assert from 'assert';
 import { CommentData } from './comment.interfaces';
-import { loginAsUser, setAdminLogin } from '../helpers/global-functions';
+import { loginAsUser, setAdminLogin, createComment } from '../helpers/global-functions';
 import { Router } from '../router/router';
 import { CategoryDatas } from '../category/category.interfaces';
 import { PostData } from '../post/post.interfaces';
 
 
-async function createComment(postId: string, content: string, parentId?: string) {
-
-    const routerComent = new Router('comment.create');
-    const comment: CommentData = await routerComent.run<CommentData>({
-        postId: postId,
-        content: content,
-        parentId: parentId,
-    });
-    // console.log(comment);
-    // assert.equal(typeof comment.createdAt === 'number', true);
-
-    return comment;
-
-}
 describe('Comment Threading/Nesting Test', function () {
     this.timeout(100000);
 
@@ -266,7 +252,7 @@ describe('Comment Threading/Nesting Test', function () {
     // });
 
 
-    it('Create some comments & sort & test', async () => {
+    it('Create some comments & sort & test with a post', async () => {
 
         // ===========> Create a category
         setAdminLogin();
@@ -276,7 +262,7 @@ describe('Comment Threading/Nesting Test', function () {
         };
 
         const routerCategory = new Router('category.create');
-        let re: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
+        const re: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
         assert.equal(typeof re.id === 'string', true);
         assert.equal(re.id, tempCategory.id);
 
@@ -377,11 +363,12 @@ describe('Comment Threading/Nesting Test', function () {
             'FB',
         ];
 
+        /// Read comment directly
+        /**
+         * @see `post.coment.spect.ts` For reading comments by getting post llist.
+         */
         const routerCommentList = new Router('comment.list');
         const sorted: CommentData[] = await routerCommentList.run(post.id);
-
-
-        // console.log('===> Afer sort', sorted);
 
         assert.equal(sorted.length, expected.length);
         for (let i = 0; i < sorted.length; i++) {

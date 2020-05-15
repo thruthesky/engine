@@ -1,6 +1,7 @@
 import { admin } from "../init/init.firebase";
 import { EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED } from "../defines";
 import { userDoc, error } from "../helpers/global-functions";
+import { DependencyInjections } from "../helpers/dependency-injections";
 
 
 export class User {
@@ -50,9 +51,9 @@ export class User {
      * 
      * @param data
      * 
-     * @todo - user verification.
-     * @todo - input validation. no password. no disabled option.
-     * @todo Only admin can get other user's uid. Normal users can get only their own information. Normal users don't need to pass UID.
+     * @todo user verification.
+     * @todo input validation. no password. no disabled option.
+     * @todo Let admin update user data only. Normal users can get only their own information. Normal users don't need to pass UID.
      * 
      */
     async update(data: any) {
@@ -147,4 +148,15 @@ export class User {
         newData.version = '0.1';
         return newData;
     }
+
+
+    async addUrl(data: any) {
+        return (new DependencyInjections).addUrl(userDoc(data.id), data.url);
+    }
+
+    async removeUrl(data: any) {
+        return (new DependencyInjections).removeUrl(userDoc(data.id), data.url);
+    }
+
+
 }

@@ -4,6 +4,8 @@ import { System } from "../system/system";
 // import { UNDEFINED_FIELD_VALUE } from "../defines";
 import * as functions from 'firebase-functions';
 import { FunctionsErrorCode } from "firebase-functions/lib/providers/https";
+import { Router } from "../router/router";
+import { CommentData } from "../comment/comment.interfaces";
 
 
 export const Settings = EngineSettings;
@@ -266,4 +268,20 @@ export function returnError(e: any) {
         data.message = e.message;
     }
     return data;
+}
+
+
+export async function createComment(postId: string, content: string, parentId?: string) {
+
+    const routerComent = new Router('comment.create');
+    const comment: CommentData = await routerComent.run<CommentData>({
+        postId: postId,
+        content: content,
+        parentId: parentId,
+    });
+    // console.log(comment);
+    // assert.equal(typeof comment.createdAt === 'number', true);
+
+    return comment;
+
 }

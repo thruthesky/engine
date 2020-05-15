@@ -186,7 +186,7 @@ describe('Comment', function () {
         ];
 
         /// Comment thread expedted
-        var expected: CommentData[] = [
+        const expected: CommentData[] = [
             { id: 'A', parentId: '', createdAt: 5 },
             { id: 'AA', parentId: 'A', createdAt: 10 },
             { id: 'AAA', parentId: 'AA', createdAt: 20 },
@@ -231,7 +231,7 @@ describe('Comment', function () {
             { id: 'GC', parentId: 'G', createdAt: 525 }
         ];
 
-        var _comments = [...comments];
+        const _comments = [...comments];
 
         assert.equal(comments.length, expected.length);
 
@@ -305,7 +305,7 @@ describe('Comment', function () {
         };
 
         const routerCategory = new Router('category.create');
-        let re: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
+        const re: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
         assert.equal(typeof re.id === 'string', true);
         assert.equal(re.id, tempCategory.id);
 
@@ -351,5 +351,5 @@ describe('Comment', function () {
         assert.equal(deleted.content, COMMENT_CONTENT_DELETED);
     });
 
-    
+
 });

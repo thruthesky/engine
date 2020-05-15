@@ -5,6 +5,7 @@ import { WriteResult } from '@google-cloud/firestore';
 import { PERMISSION_DEFINED, TITLE_IS_EMPTY, INPUT_IS_EMPTY, ID_IS_EMPTY, CATEGORY_ALREADY_EXISTS } from '../defines';
 import { isAdmin, categoryDoc, error, categoryCol } from '../helpers/global-functions';
 import { CategoryData, CategoryDatas } from './category.interfaces';
+import { DependencyInjections } from '../helpers/dependency-injections';
 
 
 /**
@@ -106,5 +107,16 @@ export class Category {
 
         return categories;
     }
+
+
+    async addUrl(data: any) {
+        return (new DependencyInjections).addUrl(categoryDoc(data.id), data.url);
+    }
+
+    async removeUrl(data: any) {
+        return (new DependencyInjections).removeUrl(categoryDoc(data.id), data.url);
+    }
+
+
 }
 

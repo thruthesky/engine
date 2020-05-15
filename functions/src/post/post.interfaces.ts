@@ -1,3 +1,4 @@
+import { CommentData } from "../comment/comment.interfaces";
 
 
 /**
@@ -17,4 +18,7 @@ export interface PostData {
     view?: number;
     like?: number;
     dislike?: number;
+
+    // This is set when the search option has 'includeComments' to true.
+    comments?: CommentData[];
 }
