@@ -42,7 +42,7 @@ describe('Post list', function () {
         assert.equal(category.id, tempCategory.id);
 
         // Create posts
-        await forceUserLoginByEmail(TestSettings.testUserEmail);
+        await forceUserLoginByEmail(TestSettings.emails[0]);
         const route = new Router('post.create');
 
         for (let i = 0; i < noOfPosts; i++) {

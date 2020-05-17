@@ -23,6 +23,8 @@ export const EMAIL_NOT_PROVIDED = 'engine/email-is-not-provided';
 export const PASSWORD_NOT_PROVIDED = 'engine/password-is-not-provided';
 
 export const PERMISSION_DEFINED = 'engine/permission-denied';
+export const LOGIN_FIRST = 'engine/login-first';
+
 
 
 export const INPUT_IS_EMPTY = 'engine/input-is-empty';

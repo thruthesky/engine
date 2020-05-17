@@ -116,9 +116,9 @@ export function setAuthEmail(email: string) {
     System.auth.email = email;
 }
 
-export function loginAsUser() {
-    System.auth.email = TestSettings.testUserEmail;
-    System.auth.uid = TestSettings.testUserUid;
+export function loginAsUser(n = 0) {
+    System.auth.email = TestSettings.emails[n];
+    System.auth.uid = TestSettings.uids[n];
 }
 
 /**
@@ -128,65 +128,6 @@ export function loginAsUser() {
 export function setAdminLogin() {
     setAuthEmail(EngineSettings.adminEmails[0]);
 }
-
-
-/**
- * Setting category & post relationship is not an ideal solution. Document can contain array and it's searchable.
- * @deprecated
- * @param category category
- * @param postId post
- */
-// export async function setCategoryPostRelation(category: string, postId: string) {
-
-//     try {
-//         if (postId === void 0) throw error(POST_ID_IS_UNDEFINED);
-//         if (category === void 0) throw error(CATEGORY_IS_UNDEFINED);
-//         await categoryPostRelationDoc(postId).set({ category: category });
-//     } catch (e) {
-//         throw e;
-//     }
-// }
-
-/**
- * Returns 
- * @param e error object
- */
-// export function isFirebaseAuthError(e: any): boolean {
-//     if (!e) return false;
-//     if (e.code !== void 0 && typeof e.code === 'string') {
-//         return e.code.indexOf('auth/') === 0; // Admin SDK Auth Error
-//     }
-//     return false;
-// }
-
-
-/**
- * @deprecated
- * This converts Firebase error into javascript error.
- * @param e Error object
- */
-// export function convertFirebaseErrorIntoJavascriptError(e: any) {
-//     if (e instanceof Error) {
-
-
-
-//         /// auth/...
-//         if (isFirebaseAuthError(e)) {
-//             return new Error((e as any).code);
-//         }
-
-//         /// If it is firebase error(mostly Firestore error), the message is very long.
-//         /// Make long error string into short error code if it's firebase error.
-//         let code = '';
-//         if (e.message.indexOf(`Cannot use "undefined" as a Firestore value`) > -1) code = UNDEFINED_FIELD_VALUE;
-//         if (code !== '') return new Error(code);
-
-//         /// If it's not firebase error, just return.
-//         return e;
-//     }
-//     return e;
-// }
-
 
 /**
  * Returns the standard error object of Cloud Functions.

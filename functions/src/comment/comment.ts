@@ -1,9 +1,11 @@
 
 import { CommentData } from './comment.interfaces';
 import {
-    PERMISSION_DEFINED, INPUT_IS_EMPTY, MISSING_INPUT, POST_NOT_EXISTS, COMMENT_NOT_EXISTS,
+    INPUT_IS_EMPTY, MISSING_INPUT, POST_NOT_EXISTS, COMMENT_NOT_EXISTS,
     COMMENT_CONTENT_DELETED,
-    INVALID_INPUT
+    INVALID_INPUT,
+    LOGIN_FIRST,
+    PERMISSION_DEFINED
 } from '../defines';
 import { error, isLoggedIn, commentCol, commentDoc } from '../helpers/global-functions';
 import { EngineSettings } from '../settings';
@@ -24,7 +26,7 @@ export class Comment {
      */
     async create(data: CommentData): Promise<CommentData> {
 
-        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!isLoggedIn()) throw error(LOGIN_FIRST);
         if (!data) throw error(INPUT_IS_EMPTY);
         if (data.postId === void 0) throw error(MISSING_INPUT, 'postId');
 
@@ -56,13 +58,14 @@ export class Comment {
      */
     async update(data: CommentData): Promise<CommentData> {
 
-        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!isLoggedIn()) throw error(LOGIN_FIRST);
         if (!data) throw error(INPUT_IS_EMPTY);
         if (data.id === void 0) throw error(MISSING_INPUT, 'id');
 
         // Check if the comment exists.
         const p = await this.data(data.id);
         if (!p) throw error(COMMENT_NOT_EXISTS);
+        if (p.uid !== System.auth.uid) throw error(PERMISSION_DEFINED);
 
         data.updatedAt = (new Date).getTime();
         await commentDoc(data.id).update(data);
@@ -76,11 +79,13 @@ export class Comment {
      * @return CommentData
      */
     async delete(id: string): Promise<CommentData> {
-        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!isLoggedIn()) throw error(LOGIN_FIRST);
         if (!id) throw error(INPUT_IS_EMPTY);
         if (typeof id !== 'string') throw error(INVALID_INPUT, 'id');
         const p = await this.data(id);
         if (!p) throw error(COMMENT_NOT_EXISTS);
+
+        if (p.uid !== System.auth.uid) throw error(PERMISSION_DEFINED);
         const data: CommentData = {
             content: COMMENT_CONTENT_DELETED,
             deletedAt: (new Date).getTime(),

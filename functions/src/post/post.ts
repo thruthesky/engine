@@ -1,5 +1,6 @@
 
-import { PERMISSION_DEFINED, INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, TITLE_DELETED, CONTENT_DELETED } from '../defines';
+import {  INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS,
+    LOGIN_FIRST, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, TITLE_DELETED, CONTENT_DELETED, PERMISSION_DEFINED } from '../defines';
 import { isLoggedIn, postCol, error, postDoc } from '../helpers/global-functions';
 import { System } from '../system/system';
 import { Category } from '../category/category';
@@ -20,7 +21,7 @@ export class Post {
      */
     async create(data: PostData): Promise<PostData> {
 
-        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!isLoggedIn()) throw error(LOGIN_FIRST);
         if (!data) throw error(INPUT_IS_EMPTY);
         if (data.categories === void 0) throw error(MISSING_INPUT, 'categories');
 
@@ -56,12 +57,13 @@ export class Post {
      */
     async update(data: PostData): Promise<PostData> {
 
-        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!isLoggedIn()) throw error(LOGIN_FIRST);
         if (!data) throw error(INPUT_IS_EMPTY);
         if (data.id === void 0) throw error(MISSING_INPUT, 'id');
 
         const p = await this.data(data.id);
         if (!p) throw error(POST_NOT_EXISTS);
+        if (p.uid !== System.auth.uid) throw error(PERMISSION_DEFINED);
 
         if (data.categories !== void 0) {
             if (!Array.isArray(data.categories)) {
@@ -180,12 +182,13 @@ export class Post {
      * @return PostData
      */
     async delete(id: string): Promise<PostData> {
-        if (!isLoggedIn()) throw error(PERMISSION_DEFINED);
+        if (!isLoggedIn()) throw error(LOGIN_FIRST);
         if (!id) throw error(INPUT_IS_EMPTY);
         // if (id === void 0) throw error(MISSING_INPUT, 'id');
         if (typeof id !== 'string') throw error(INVALID_INPUT, 'id');
         const p = await this.data(id);
         if (!p) throw error(POST_NOT_EXISTS);
+        if (p.uid !== System.auth.uid) throw error(PERMISSION_DEFINED);
         const data: PostData = {
             title: TITLE_DELETED,
             content: CONTENT_DELETED,

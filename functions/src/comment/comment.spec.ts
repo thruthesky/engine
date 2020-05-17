@@ -6,7 +6,7 @@ import { CommentData } from './comment.interfaces';
 import { Comment } from './comment';
 import { forceUserLogout, loginAsUser, setAdminLogin } from '../helpers/global-functions';
 import { Router } from '../router/router';
-import { PERMISSION_DEFINED, MISSING_INPUT, INPUT_IS_EMPTY, POST_NOT_EXISTS, COMMENT_NOT_EXISTS, INVALID_INPUT, COMMENT_CONTENT_DELETED } from '../defines';
+import {  MISSING_INPUT, INPUT_IS_EMPTY, POST_NOT_EXISTS, COMMENT_NOT_EXISTS, INVALID_INPUT, COMMENT_CONTENT_DELETED, LOGIN_FIRST } from '../defines';
 import { CategoryDatas } from '../category/category.interfaces';
 import { PostData } from '../post/post.interfaces';
 import { TestSettings } from '../settings';
@@ -259,7 +259,7 @@ describe('Comment', function () {
         forceUserLogout();
         const router = new Router('comment.create');
         let re = await router.run({});
-        assert.equal(re.code, PERMISSION_DEFINED);
+        assert.equal(re.code, LOGIN_FIRST);
 
         loginAsUser();
 
@@ -326,7 +326,7 @@ describe('Comment', function () {
         // console.log(comment);
         assert.equal(typeof comment.id === 'string', true);
         assert.equal(typeof comment.createdAt === 'number', true);
-        assert.equal(comment.uid, TestSettings.testUserUid);
+        assert.equal(comment.uid, TestSettings.uids[0]);
         assert.equal(comment.content, content);
 
         // ===========> Update the comment
@@ -338,7 +338,7 @@ describe('Comment', function () {
         });
         // console.log(updatedComment);
         assert.equal(typeof updatedComment.updatedAt === 'number', true);
-        assert.equal(updatedComment.uid, TestSettings.testUserUid);
+        assert.equal(updatedComment.uid, TestSettings.uids[0]);
         assert.equal(updatedComment.content, updatedContent);
 
 
