@@ -16,11 +16,11 @@ export class DependencyInjections {
     async addUrl(doc: DocumentReference, url: string) {
 
 
-        var snapshot = await doc.get();
+        const snapshot = await doc.get();
 
         if (!snapshot.exists) throw error(DOCUMENT_NOT_EXISTS);
 
-        var data = snapshot.data();
+        const data = snapshot.data();
 
         let urls;
         if (data?.urls === void 0) urls = [];
@@ -41,11 +41,11 @@ export class DependencyInjections {
 
     async removeUrl(doc: DocumentReference, url: string) {
 
-        var snapshot = await doc.get();
+        const snapshot = await doc.get();
 
         if (!snapshot.exists) throw error(DOCUMENT_NOT_EXISTS);
 
-        var data = snapshot.data();
+        const data = snapshot.data();
 
         if (data?.urls === void 0) throw error(PROPERTY_NOT_EXISTS);
 

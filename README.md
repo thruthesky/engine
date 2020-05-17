@@ -307,8 +307,26 @@ $ npm run test
 
 ### addUrl() & removeUrls()
 
-* `user`, `category`, `post`, `comment` 컬렉션 아래에 있는 도큐먼트에 `urls` 필드에 문자 배열로 URL을 저장한다.
+* 이 함수를 사용하지 않는다.
+
+* 문제: addUrl() 과 removeUrl() 은 그 유용성이 애매하다.
+  * 원래는 첨부 파일을 다른 곳에 저장하고, 그 URL 을 넣고 빼고하여 해당 첨부 파일을 불러 올 수 있게하려는 것이었는데,
+    * 문제는 글/코멘트/사용자/카테고리 등에서 작성 화면에서 사진 부터 먼저 등록하게되는데, 그렇게 되면, Firestore 에 document 자체가 존재하지 않기 때문에, 사실상 쓸모 없다.
+  * Engine 에서 필드의 배열에 값이 존재하는지 안하는지 검사를 하기 때문에 편하기는 지만, 위의 문제점이 있다.
+
+
+* 설명: `user`, `category`, `post`, `comment` 컬렉션 아래에 있는 도큐먼트에 `urls` 필드에 문자 배열로 URL을 저장한다.
   * 이것은 클리이언트에서 Firebase Storage 나 기타 다른 서비스에서 파일을 업로드하고, 그 URL 을 기록 해당 도큐먼트에 추가 할 때 쓸 수 있다.
   * `user` 컬렉션의 사용자 도큐먼트에 URL 을 추가하는 것은 첨부 파일을 어딘가(Firestore 나 기타 저장소)에 저장하고 그 URL 을 추가 또는 뺄 수 있는데, 이는 회원 프로필 사진이 될 수 있다.
   * `post`, `comment` 컬렉션의 글/코멘트 도큐먼트에 URL 을 추가하는 것은 해당 글/코멘트에 첨부 파일을 어딘가(Firestore 나 기타 저장소)에 저장하고 그 URL 을 추가하거나 뺄 수 있다.
   * `category` 에도 추가하거나 뺄 수 있다.
+
+* 참고: `dependency-injections.spec.ts` 에 예제가 있다.
+
+
+* 개선 해야 할 점
+  * user, category, post. comment 외의 collection 에서는 addUrl(), deleteUrl() 을 사용 할 수 없는데, 범용적으로 사용하기 위해서,
+  * 서버에서 `addProperty({'collection-key': 'user', 'document-key': 'user-id', 'property': 'files', 'value': [ .... ]);` 또는 `removeProperty({'....'})` 와 같이 하고,
+  * 클라이언트에서는 `addUrl()`, `removeUrl()`과 같이 한 다음, 그 안에서 서버의 `addProperty()` 와 `removeProperty()` 를 호출 할 수 있도록 한다.
+
+
