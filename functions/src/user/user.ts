@@ -66,6 +66,7 @@ export class User {
         delete data.photoURL;
 
         const userData = await this.updateUserDoc(uid, data);
+        data.uid = uid;
         return userData;
     }
 
