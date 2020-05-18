@@ -37,12 +37,8 @@ export class User {
         delete data.phoneNumber;
         delete data.photoURL;
 
-        data.createdAt = (new Date).getTime();
-
-        // console.log('User::register() => await userDoc()');
-        await userDoc(created.uid).set(data);
-        data.uid = created.uid;
-        return data;
+        const userData = await this.setUserDoc(created.uid, data);
+        return userData;
     }
 
     /**
@@ -69,12 +65,28 @@ export class User {
         delete data.phoneNumber;
         delete data.photoURL;
 
+        const userData = await this.updateUserDoc(uid, data);
+        return userData;
+    }
 
+    /**
+     * If a user is created on Firebase console, the user has no `user` doc in Firestore.
+     */
+    async setUserDoc(uid: any, data: any) {
+        data.createdAt = (new Date).getTime();
+        
+        // console.log('User::register() => await userDoc()');
+        await userDoc(uid).set(data);
+        data.uid = uid;
+        return data;
+    }
+
+    /**
+     * If a user is created on Firebase console, the user has no `user` doc in Firestore.
+     */
+    async updateUserDoc(uid: any, data: any) {
         data.updated = (new Date).getTime();
-
-        /**
-         * If a user is created on Firebase console, the user has no `user` doc in Firestore.
-         */
+        
         const u = await this.data(uid);
         if (u.createdAt === void 0) {
             await userDoc(uid).set({
@@ -84,7 +96,7 @@ export class User {
 
         await userDoc(uid).update(data);
         const userData = await this.data(uid);
-        userData.uid = data.uid;
+        userData.uid = uid;
         return userData;
     }
 
@@ -134,7 +146,6 @@ export class User {
         data.photoURL = gotUser.photoURL;
 
         return data;
-
     }
 
     /**
