@@ -18,9 +18,11 @@
     "test:post": "mocha --require ts-node/register --watch --watch-files src, src/post/post.spec.ts",
     "test:post.list": "mocha --require ts-node/register --watch --watch-files src, src/post/post.list.spec.ts",
     "test:post.comment": "mocha --require ts-node/register --watch --watch-files src, src/post/post.comment.spec.ts",
+    "test:post.permission": "mocha --require ts-node/register --watch --watch-files src, src/post/post.permission.spec.ts",
     "test:test": "mocha --require ts-node/register --watch --watch-files src, src/test/test.spec.ts",
     "test:comment": "mocha --require ts-node/register --watch --watch-files src, src/comment/comment.spec.ts",
-    "test:comment.threading": "mocha --require ts-node/register --watch --watch-files src, src/comment/comment.threading.spec.ts"
+    "test:comment.threading": "mocha --require ts-node/register --watch --watch-files src, src/comment/comment.threading.spec.ts",
+    "test:comment.permission": "mocha --require ts-node/register --watch --watch-files src, src/comment/comment.permission.spec.ts"
   },
   "engines": {
     "node": "8"

@@ -2,7 +2,7 @@
 import { Router } from "../router/router";
 import * as assert from 'assert';
 // import { Settings } from "../helper";
-import { PERMISSION_DEFINED, CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, TITLE_DELETED, CONTENT_DELETED } from "../defines";
+import {  CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, TITLE_DELETED, CONTENT_DELETED, LOGIN_FIRST } from "../defines";
 import { System } from "../system/system";
 import { TestSettings } from "../settings";
 import { forceUserLoginByEmail, forceUserLogout, setAdminLogin, loginAsUser } from "../helpers/global-functions";
@@ -31,12 +31,12 @@ describe('Post', function () {
         forceUserLogout();
         const route = new Router('post.create');
         const re = await route.run({});
-        assert.equal(re.code, PERMISSION_DEFINED);
+        assert.equal(re.code, LOGIN_FIRST);
 
     });
 
     it('Create with empty category', async () => {
-        await forceUserLoginByEmail(TestSettings.testUserEmail);
+        await forceUserLoginByEmail(TestSettings.emails[0]);
         System.auth.email
         const route = new Router('post.create');
         const re = await route.run({});
@@ -44,7 +44,7 @@ describe('Post', function () {
         assert.equal(re.message, 'categories');
     });
     it('Create with string category', async () => {
-        await forceUserLoginByEmail(TestSettings.testUserEmail);
+        await forceUserLoginByEmail(TestSettings.emails[0]);
         System.auth.email
         const route = new Router('post.create');
         const re = await route.run({ categories: 'wrong-category-name' });
@@ -53,7 +53,7 @@ describe('Post', function () {
     });
 
     it('Create with wrong category', async () => {
-        await forceUserLoginByEmail(TestSettings.testUserEmail);
+        await forceUserLoginByEmail(TestSettings.emails[0]);
         System.auth.email
         const route = new Router('post.create');
         const re = await route.run({ categories: ['wrong-category-name'] });
@@ -70,7 +70,7 @@ describe('Post', function () {
         assert.equal(re.id, tempCategory.id);
 
 
-        await forceUserLoginByEmail(TestSettings.testUserEmail);
+        await forceUserLoginByEmail(TestSettings.emails[0]);
         System.auth.email
         const route = new Router('post.create');
         re = await route.run({ categories: [tempCategory.id, 'non-existing-category-id-xx'] });

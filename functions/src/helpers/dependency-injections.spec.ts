@@ -158,7 +158,7 @@ describe('Dependency Injection Functions', function () {
         // console.log(comment);
         assert.equal(typeof comment.id === 'string', true);
         assert.equal(typeof comment.createdAt === 'number', true);
-        assert.equal(comment.uid, TestSettings.testUserUid);
+        assert.equal(comment.uid, TestSettings.uids[0]);
         assert.equal(comment.content, content);
 
 
