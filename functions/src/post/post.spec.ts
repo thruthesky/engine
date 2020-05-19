@@ -2,7 +2,7 @@
 import { Router } from "../router/router";
 import * as assert from 'assert';
 // import { Settings } from "../helper";
-import {  CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, TITLE_DELETED, CONTENT_DELETED, LOGIN_FIRST } from "../defines";
+import {  CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, POST_TITLE_DELETED, POST_CONTENT_DELETED, LOGIN_FIRST } from "../defines";
 import { System } from "../system/system";
 import { TestSettings } from "../settings";
 import { forceUserLoginByEmail, forceUserLogout, setAdminLogin, loginAsUser } from "../helpers/global-functions";
@@ -154,8 +154,8 @@ describe('Post', function () {
         const deleted: PostData = await routerDel.run(id);
 
         assert.equal(id, deleted.id);
-        assert.equal(deleted.title, TITLE_DELETED);
-        assert.equal(deleted.content, CONTENT_DELETED);
+        assert.equal(deleted.title, POST_TITLE_DELETED);
+        assert.equal(deleted.content, POST_CONTENT_DELETED);
         assert.equal(deleted.deletedAt !== void 0, true);
 
     });

@@ -41,10 +41,10 @@ export const CATEGORY_NOT_EXISTS = 'engine/category-not-exists';
 export const UNDEFINED_FIELD_VALUE = 'engine/undefined-field-value';
 
 
-export const TITLE_DELETED = 'post-title-deleted';
-export const CONTENT_DELETED = 'post-content-deleted';
+export const POST_TITLE_DELETED = 'post-title-deleted';
+export const POST_CONTENT_DELETED = 'post-content-deleted';
 
-export const COMMENT_CONTENT_DELETED = 'comment-content-deleted';
+export const COMMENT_POST_CONTENT_DELETED = 'comment-content-deleted';
 
 
 export interface UserAuth {

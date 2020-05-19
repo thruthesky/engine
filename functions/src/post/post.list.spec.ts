@@ -2,7 +2,7 @@
 import { Router } from "../router/router";
 import * as assert from 'assert';
 // import { Settings } from "../helper";
-// import { PERMISSION_DEFINED, CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, TITLE_DELETED, CONTENT_DELETED } from "../defines";
+// import { PERMISSION_DEFINED, CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, POST_TITLE_DELETED, POST_CONTENT_DELETED } from "../defines";
 import { System } from "../system/system";
 import { TestSettings } from "../settings";
 import { forceUserLoginByEmail, forceUserLogout, setAdminLogin } from "../helpers/global-functions";

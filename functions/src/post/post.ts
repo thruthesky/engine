@@ -1,6 +1,6 @@
 
 import {  INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS,
-    LOGIN_FIRST, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, TITLE_DELETED, CONTENT_DELETED, PERMISSION_DEFINED } from '../defines';
+    LOGIN_FIRST, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, POST_TITLE_DELETED, POST_CONTENT_DELETED, PERMISSION_DEFINED } from '../defines';
 import { isLoggedIn, postCol, error, postDoc } from '../helpers/global-functions';
 import { System } from '../system/system';
 import { Category } from '../category/category';
@@ -190,8 +190,8 @@ export class Post {
         if (!p) throw error(POST_NOT_EXISTS);
         if (p.uid !== System.auth.uid) throw error(PERMISSION_DEFINED);
         const data: PostData = {
-            title: TITLE_DELETED,
-            content: CONTENT_DELETED,
+            title: POST_TITLE_DELETED,
+            content: POST_CONTENT_DELETED,
             deletedAt: (new Date).getTime(),
         };
         await postDoc(id).update(data);

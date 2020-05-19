@@ -2,7 +2,7 @@
 import { CommentData } from './comment.interfaces';
 import {
     INPUT_IS_EMPTY, MISSING_INPUT, POST_NOT_EXISTS, COMMENT_NOT_EXISTS,
-    COMMENT_CONTENT_DELETED,
+    COMMENT_POST_CONTENT_DELETED,
     INVALID_INPUT,
     LOGIN_FIRST,
     PERMISSION_DEFINED
@@ -87,7 +87,7 @@ export class Comment {
 
         if (p.uid !== System.auth.uid) throw error(PERMISSION_DEFINED);
         const data: CommentData = {
-            content: COMMENT_CONTENT_DELETED,
+            content: COMMENT_POST_CONTENT_DELETED,
             deletedAt: (new Date).getTime(),
         };
         await commentDoc(id).update(data);

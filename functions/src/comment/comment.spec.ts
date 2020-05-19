@@ -6,7 +6,7 @@ import { CommentData } from './comment.interfaces';
 import { Comment } from './comment';
 import { forceUserLogout, loginAsUser, setAdminLogin } from '../helpers/global-functions';
 import { Router } from '../router/router';
-import {  MISSING_INPUT, INPUT_IS_EMPTY, POST_NOT_EXISTS, COMMENT_NOT_EXISTS, INVALID_INPUT, COMMENT_CONTENT_DELETED, LOGIN_FIRST } from '../defines';
+import {  MISSING_INPUT, INPUT_IS_EMPTY, POST_NOT_EXISTS, COMMENT_NOT_EXISTS, INVALID_INPUT, COMMENT_POST_CONTENT_DELETED, LOGIN_FIRST } from '../defines';
 import { CategoryDatas } from '../category/category.interfaces';
 import { PostData } from '../post/post.interfaces';
 import { TestSettings } from '../settings';
@@ -348,7 +348,7 @@ describe('Comment', function () {
 
         // console.log(deleted);
         assert.equal(typeof deleted.deletedAt === 'number', true);
-        assert.equal(deleted.content, COMMENT_CONTENT_DELETED);
+        assert.equal(deleted.content, COMMENT_POST_CONTENT_DELETED);
     });
 
 
