@@ -40,9 +40,19 @@ You will need to
 
 ### Details of Installation
 
-1. Create Firebase Project(or you may use exising project).
-   1. Create `Firebase Clould Firestore`
-      1. And see the rules like below
+* Git fork (or clone) `Engine`
+   1. `$ git clone https://github.com/thruthesky/engine`
+   2. `$ cd enginf/functions`
+   3. `$ npm i`
+
+
+* Create Firebase Project(or you may use exising project).
+* Go to settings > Service account.
+  * Generate new private key.
+  * Download & save the private key file as `functions/etc/admin-sdk-key.json`. If a file with same name exists, then replace it.
+  
+1. Create `Firebase Clould Firestore`
+   And see the rules like below
 ```
 rules_version = '2';
 service cloud.firestore {
