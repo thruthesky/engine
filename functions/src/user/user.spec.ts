@@ -77,7 +77,7 @@ describe('User', function () {
             birthday: '1973-10-16'
         };
         const updatedUser = await router.run(req);
-        // console.log(`User create success. UID: ${updatedUser.uid}`);
+        // console.log('User update: ', updatedUser);
         assert.equal(updatedUser.uid, uid);
         assert.equal(updatedUser.name, req.name);
 

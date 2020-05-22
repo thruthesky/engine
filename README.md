@@ -51,8 +51,9 @@ You will need to
   * Generate new private key.
   * Download & save the private key file as `functions/etc/admin-sdk-key.json`. If a file with same name exists, then replace it.
   
-1. Create `Firebase Clould Firestore`
-   And see the rules like below
+* Create `Firebase Clould Firestore`
+  * Be careful to choose right location where the majority of your users are for the network speed. See [Firebase production locations](https://firebase.google.com/docs/projects/locations?authuser=0)
+  * And set the rules like below
 ```
 rules_version = '2';
 service cloud.firestore {
@@ -64,28 +65,32 @@ service cloud.firestore {
   }
 }
 ```
-   2. Under `Authentication > Sign-in Method`
-      1. Enable `Email/Password`
-      2. Enable `Anonymous`
-      3. Enable `Google`
-2. Install `firebase-tools` and login
-   1. `# npm install -g firebase-tools`
-   2. `$ firebase login`
-3. Clone or fork `Engine`
-   1. `$ git clone https://github.com/thruthesky/enginf`
-   2. `$ cd enginf/functions`
-   3. `$ npm i`
-4. Open `.firebase.rc` and edit `projects` > `default` with your Firebase project id.
-5. Open `functions/src/settings.ts` and edit `adminEmails`. You may remove existing emails and add your own email to become the admin.
-6.  Publish `Clould Functions`
-   1. `$ firebase deploy --only functions`
-7. (Optional) You can run test. @see `Tests`
-8. Create `Firestore Indexes`
+* Create `Firestore Indexes`
    
 Collection ID | Field Indexed | Query scope
 ------------- | ------------- | -----------
 post | categories Arrays createdAt Descending | Collection
 
+
+* Under `Authentication > Sign-in Method`
+  * Enable `Email/Password`
+  * Enable `Anonymous`
+  * Enable `Google`
+
+* (Optional) You may run test. @see `Test` section
+
+* Install `firebase-tools` and login
+  * `# npm install -g firebase-tools`
+  * `$ firebase login`
+
+* Open `.firebase.rc` and edit `projects` > `default` with your Firebase project id.
+* Open `functions/src/settings.ts` and edit `adminEmails`. You may remove existing emails and add your own email to become the admin.
+
+* Publish `Clould Functions`
+  * `$ firebase deploy --only functions`
+
+* Now, you can proceed to develop your own Application using `Engine`.
+  * See the sample Apps.
 
 
 ### Examples
@@ -270,7 +275,18 @@ auth/phone-number-already-exists | 전화번호가 이미 등록되어져 있는
 
 
 
-## 테스트
+## Test
+
+* Before testing,
+  * make sure you have created indexes on Firestore. @see Installation
+  * make sure you have created an admin account and two test user accounts and set them properly on `functions/src/settings.json`.
+* Run testing by
+  * `npm run test`
+
+* You may run test indivisually
+  * `npm run test:user`
+  * `npm run test:comment`
+  * See `package.json` to learn more about it.
 
 * 테스트를 위해서는 관리자 아이디를 설정하는 것에 추가로 임시 사용자를 Auth 가입하고 `TestSettings.testUserEmail`에 기록해야 한다.
 

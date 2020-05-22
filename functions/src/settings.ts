@@ -2,7 +2,7 @@ export const EngineSettings = {
     /**
      * Admin email address.
      */
-    adminEmails: ['thruthesky@gmail.com', 'admin@engin.com'],
+    adminEmails: ['thruthesky@gmail.com'],
     /**
      * Max number of comments that a post can have.
      * 10,000 is good for a small business.
