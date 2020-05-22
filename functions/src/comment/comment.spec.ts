@@ -4,7 +4,7 @@
 import * as assert from 'assert';
 import { CommentData } from './comment.interfaces';
 import { Comment } from './comment';
-import { forceUserLogout, loginAsUser, setAdminLogin } from '../helpers/global-functions';
+import { forceUserLogout, loginAsUser, loginAsAdmin } from '../helpers/global-functions';
 import { Router } from '../router/router';
 import {  MISSING_INPUT, INPUT_IS_EMPTY, POST_NOT_EXISTS, COMMENT_NOT_EXISTS, INVALID_INPUT, COMMENT_POST_CONTENT_DELETED, LOGIN_FIRST } from '../defines';
 import { CategoryDatas } from '../category/category.interfaces';
@@ -261,7 +261,7 @@ describe('Comment', function () {
         let re = await router.run({});
         assert.equal(re.code, LOGIN_FIRST);
 
-        loginAsUser();
+        await loginAsUser();
 
         re = await router.run();
         assert.equal(re.code, INPUT_IS_EMPTY);
@@ -298,7 +298,7 @@ describe('Comment', function () {
     it('Create CRUD', async () => {
 
         // ===========> Create a category
-        setAdminLogin();
+        await loginAsAdmin();
         const tempCategory = {
             id: 'temp-category-id-for-comment-' + (new Date).getTime(),
             title: 'Temp Category',
@@ -310,7 +310,7 @@ describe('Comment', function () {
         assert.equal(re.id, tempCategory.id);
 
         // ==========> Create a post
-        loginAsUser();
+        await loginAsUser();
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id], });
         assert.equal(typeof post.id === 'string', true);

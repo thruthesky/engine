@@ -3,7 +3,7 @@
 
 import * as assert from 'assert';
 import { CommentData } from './comment.interfaces';
-import { loginAsUser, setAdminLogin, createComment } from '../helpers/global-functions';
+import { loginAsUser, loginAsAdmin, createComment } from '../helpers/global-functions';
 import { Router } from '../router/router';
 import { CategoryDatas } from '../category/category.interfaces';
 import { PostData } from '../post/post.interfaces';
@@ -255,7 +255,7 @@ describe('Comment Threading/Nesting Test', function () {
     it('Create some comments & sort & test with a post', async () => {
 
         // ===========> Create a category
-        setAdminLogin();
+        await loginAsAdmin();
         const tempCategory = {
             id: 'temp-category-id-for-comment-' + (new Date).getTime(),
             title: 'Temp Category',
@@ -267,7 +267,7 @@ describe('Comment Threading/Nesting Test', function () {
         assert.equal(re.id, tempCategory.id);
 
         // ==========> Create a post
-        loginAsUser();
+        await loginAsUser();
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id] });
         assert.equal(typeof post.id === 'string', true);

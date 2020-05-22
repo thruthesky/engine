@@ -5,7 +5,7 @@ import * as assert from 'assert';
 // import { PERMISSION_DEFINED, CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, POST_TITLE_DELETED, POST_CONTENT_DELETED } from "../defines";
 import { System } from "../system/system";
 import { TestSettings } from "../settings";
-import { forceUserLoginByEmail, forceUserLogout, setAdminLogin } from "../helpers/global-functions";
+import { forceUserLoginByEmail, forceUserLogout, loginAsAdmin } from "../helpers/global-functions";
 import { CategoryDatas } from "../category/category.interfaces";
 import { PostData } from './post.interfaces';
 
@@ -33,7 +33,7 @@ describe('Post list', function () {
     it(`Post pagination by creating ${noOfPosts} posts.`, async () => {
 
         // ===========> Create a category
-        setAdminLogin();
+        await loginAsAdmin();
         const routerCategory = new Router('category.create');
         const category: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
 

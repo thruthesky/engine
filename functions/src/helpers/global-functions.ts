@@ -116,17 +116,36 @@ export function setAuthEmail(email: string) {
     System.auth.email = email;
 }
 
-export function loginAsUser(n = 0) {
-    System.auth.email = TestSettings.emails[n];
-    System.auth.uid = TestSettings.uids[n];
+
+/**
+ * Login as user.
+ * This will set fake `UID` by default.
+ * @param n no of user in Test Settings.
+ * @param auth - if it is set to true, it gets real UID from `Firebase Auth`.
+ * 
+ * @code
+ *  loginAsUser(0, true);
+ * @endcode
+ */
+export async function loginAsUser(n: number = 0, auth: boolean = false) {
+    if (auth) await forceUserLoginByEmail(TestSettings.emails[n]);
+    else {
+
+        System.auth.email = TestSettings.emails[n];
+        System.auth.uid = TestSettings.uids[n];
+    }
 }
 
 /**
- * Admin logs in.
+ * Logs in as admin.
  * @arning This must be used on unit testing only.
+ * 
+ * @param auth - if it is set to true, then it will login with `Firebase Auth` meaning, it will have proper UID.
+ *              This is needed to update admin profile and other works.
  */
-export function setAdminLogin() {
-    setAuthEmail(EngineSettings.adminEmails[0]);
+export async function loginAsAdmin(auth: boolean = false) {
+    if (auth) await forceUserLoginByEmail(EngineSettings.adminEmails[0]);
+    else setAuthEmail(EngineSettings.adminEmails[0]);
 }
 
 /**

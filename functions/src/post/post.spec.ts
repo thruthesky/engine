@@ -5,7 +5,7 @@ import * as assert from 'assert';
 import {  CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, POST_TITLE_DELETED, POST_CONTENT_DELETED, LOGIN_FIRST } from "../defines";
 import { System } from "../system/system";
 import { TestSettings } from "../settings";
-import { forceUserLoginByEmail, forceUserLogout, setAdminLogin, loginAsUser } from "../helpers/global-functions";
+import { forceUserLoginByEmail, forceUserLogout, loginAsAdmin, loginAsUser } from "../helpers/global-functions";
 import { CategoryDatas, CategoryData } from "../category/category.interfaces";
 import { PostData } from './post.interfaces';
 
@@ -63,7 +63,7 @@ describe('Post', function () {
     it('Create with two category. One exists, one non-exists.', async () => {
 
         // ===========> Create a category
-        setAdminLogin();
+        await loginAsAdmin();
         const routerCategory = new Router('category.create');
         let re: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
         assert.equal(typeof re.id === 'string', true);
@@ -83,7 +83,7 @@ describe('Post', function () {
     it('Create a post', async () => {
 
         // ===========> Create another category
-        setAdminLogin();
+        await loginAsAdmin();
         const routerCategory = new Router('category.create');
         const re: CategoryData = await routerCategory.run({ id: tempCategory.id + 'another', title: tempCategory.title });
         assert.equal(typeof re.id === 'string', true);
@@ -91,7 +91,7 @@ describe('Post', function () {
 
 
         // #1. Create a post
-        loginAsUser();
+        await loginAsUser();
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id, tempCategory.id + 'another'], });
         
@@ -104,7 +104,7 @@ describe('Post', function () {
     it('Update a post', async () => {
 
         /// #2. Create a post
-        loginAsUser();
+        await loginAsUser();
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id], title: 'hi' });
         assert.equal(typeof post.id === 'string', true);

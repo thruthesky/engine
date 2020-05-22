@@ -1,4 +1,4 @@
-import { setAdminLogin, loginAsUser, forceUserLogout } from "../helpers/global-functions";
+import { loginAsAdmin, loginAsUser, forceUserLogout } from "../helpers/global-functions";
 import { Router } from "../router/router";
 import { CategoryDatas } from "../category/category.interfaces";
 import * as assert from 'assert';
@@ -13,7 +13,7 @@ describe('Post permission test', function () {
 
 
         // ===========> Create a category
-        setAdminLogin();
+        await loginAsAdmin();
         const tempCategory = {
             id: 'temp-category-id-for-comment-' + (new Date).getTime(),
             title: 'Temp Category',
@@ -38,11 +38,11 @@ describe('Post permission test', function () {
     it('Create a post as test user 1 and update as user 2', async () => {
 
         // ==========> Create a post
-        loginAsUser();
+        await loginAsUser();
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [categoryId], });
         assert.equal(typeof post.id === 'string', true);
-        loginAsUser(1);
+        await loginAsUser(1);
         const routeUpdate = new Router('post.update');
         const re = await routeUpdate.run<PostData>({ id: post.id, });
         assert.equal(re.code, PERMISSION_DEFINED);

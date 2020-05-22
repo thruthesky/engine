@@ -1,6 +1,6 @@
 import { admin } from "../init/init.firebase";
 import { EMAIL_NOT_PROVIDED, PASSWORD_NOT_PROVIDED, INPUT_NOT_PROVIDED } from "../defines";
-import { userDoc, error } from "../helpers/global-functions";
+import { userDoc, error, isAdmin } from "../helpers/global-functions";
 import { DependencyInjections } from "../helpers/dependency-injections";
 
 
@@ -84,7 +84,15 @@ export class User {
 
         await userDoc(uid).update(data);
         const userData = await this.data(uid);
-        userData.uid = data.uid;
+
+        /**
+         * Claim if admin
+         */
+        // if (isAdmin()) {
+        //     await admin().auth().setCustomUserClaims(uid, {
+        //         admin: true
+        //     });
+        // }
         return userData;
     }
 
@@ -132,6 +140,8 @@ export class User {
         data.displayName = gotUser.displayName;
         data.phoneNumber = gotUser.phoneNumber;
         data.photoURL = gotUser.photoURL;
+
+        if ( isAdmin() ) data.admin = true;
 
         return data;
 

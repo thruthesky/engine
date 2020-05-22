@@ -1,4 +1,4 @@
-import { setAdminLogin, loginAsUser, forceUserLogout } from "../helpers/global-functions";
+import { loginAsAdmin, loginAsUser, forceUserLogout } from "../helpers/global-functions";
 import { Router } from "../router/router";
 import { CategoryDatas } from "../category/category.interfaces";
 import * as assert from 'assert';
@@ -16,7 +16,7 @@ describe('Comment permission test', function () {
 
 
         // ===========> Create a category
-        setAdminLogin();
+        await loginAsAdmin();
         const tempCategory = {
             id: 'temp-category-id-for-comment-' + (new Date).getTime(),
             title: 'Temp Category',
@@ -26,7 +26,7 @@ describe('Comment permission test', function () {
         assert.equal(re.id, tempCategory.id);
 
         // ==========> Create a post
-        loginAsUser();
+        await loginAsUser();
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id], });
         assert.equal(typeof post.id === 'string', true);
@@ -48,7 +48,7 @@ describe('Comment permission test', function () {
 
 
     it('Create a comment as test user 1 and try to update as test user 2', async () => {
-        loginAsUser(0);
+        await loginAsUser(0);
         const content = 'comment content!';
         const routerComent = new Router('comment.create');
         let re = await routerComent.run<CommentData>({
@@ -57,7 +57,7 @@ describe('Comment permission test', function () {
         });
         assert.equal(re.uid, TestSettings.uids[0]);
 
-        loginAsUser(1);
+        await loginAsUser(1);
 
         const routerComentUpdate = new Router('comment.update');
         re = await routerComentUpdate.run<CommentData>({

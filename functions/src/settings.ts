@@ -28,7 +28,8 @@ export const EngineSettings = {
 /**
  * For test purpose only.
  * @attention `email` must be a real user email. if these are not exists, you need to create them on `Firestore Auth`.
- * @note `uid` could be a fake uid since it does not check authentication.
+ * @note `uid` could be a fake uid on `post` related jobs but to update user profile, it needs real one.
+ *  Use `forceLoginByEmail` to get real UID.
  * 
  */
 export const TestSettings = {

@@ -110,6 +110,7 @@ export class Post {
      * Returns posts
      * 
      * 프로토콜 문서 참고
+     * 
      */
     async list(data?: any): Promise<Array<any>> {
         let snapshots;

@@ -1,7 +1,7 @@
 
 import * as assert from 'assert';
 import {
-    setAdminLogin, loginAsUser,
+    loginAsAdmin, loginAsUser,
 } from "./global-functions";
 import { Router } from '../router/router';
 import { CategoryDatas } from '../category/category.interfaces';
@@ -22,7 +22,7 @@ describe('Dependency Injection Functions', function () {
     it('Category.addUrl & Category.removeUrl', async () => {
 
         // ===========> Create a category & test
-        setAdminLogin();
+        await loginAsAdmin();
         const tempCategory = {
             id: 'temp-category-id-for-comment-' + (new Date).getTime(),
             title: 'Temp Category',
@@ -112,7 +112,7 @@ describe('Dependency Injection Functions', function () {
 
     it('Post.addUrl & Post.removeUrl', async () => {
 
-        loginAsUser();
+        await loginAsUser();
         // ==========> Create a post
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [categoryId], });
@@ -145,7 +145,7 @@ describe('Dependency Injection Functions', function () {
     it('Comment.addUrl & Comment.removeUrl', async () => {
 
 
-        loginAsUser();
+        await loginAsUser();
 
         // ==========> Create a comment
 

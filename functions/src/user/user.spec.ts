@@ -78,7 +78,7 @@ describe('User', function () {
         };
         const updatedUser = await router.run(req);
         // console.log(`User create success. UID: ${updatedUser.uid}`);
-        assert.equal(updatedUser.uid, req.uid);
+        assert.equal(updatedUser.uid, uid);
         assert.equal(updatedUser.name, req.name);
 
     });

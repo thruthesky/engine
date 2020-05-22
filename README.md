@@ -1,179 +1,148 @@
-# 플러터 온라인 스터디
+# Engine
 
-본 Git Repo 는 온라인 스터디를 위한 것입니다. 스터디 참여 방법과 한글로 된 강좌 및 자료를 정리해 놓았습니다.
+* Project name: `Engine`
+* License: MIT LICENSE
+* Author: JaeHo Song thruthesky@gmail.com
 
-* 프로젝트 명: EngineF
-* Git Repo: [EnginF Github repository](https://github.com/thruthesky/enginf)
-* 프로젝트 설명: 
-  * 플러터 공개 프로젝트입니다.
-  * Firebase 를 기반으로 하는 완전한 회원 정보 관리 및 게시판 관리(게시판 CRUD, 글 CRUD, 코멘트 CRUD, 파일 업로드 CRUD, 검색) 기능을 만드는 것입니다. 이러한 기능을 완료하면 사실상 Firebase 에서 못할 것이 없다는 증명을 하는 것입니다.
+* `Engine` is a headless Firebase backend. With this project you can easily build an app that requires
+  * Member registration, profile update and login, logout.
+    * And it supports additional functionalities.
+      * User profile photo upload
+      * Google sign-in.
+  * Complete frorum funtionality
+    * Post create, update, delete
+    * Comment create, update, delete
+    * Image uploads
+    * And much more.
 
-## 프로젝트 인원 모집
+* `Engine` is designed for building Web apps like PWA or SPA and Mobile apps.
 
-아래의 부분에 참여 할 수 있는 분을 모집합니다.
-
-* 문서 전문 작업. 모든 개발자가 자신의 코딩에 대한 설명 문서를 작성해야합니다. 이러한 문서들을 보기 좋게 다듬어 줄 분을 모십니다.
-* 세미나 후기 작업. 세미나를 듣고 후기를 작성 하실 분을 모십니다.
-* 백엔드 개발자
-* 프론트엔드 개발
-  * Logic 개발자
-  * UI 전문 개발자
-
-## 프로젝트 계획
-
-* Backend 와 Clientend 코드를 완전히 분리하며
-* 최대한 많은 작업을 Backend 에서 합니다.
-  * 이를 통해서, 플러터 뿐만아니라 Angular/Ionic 이나 다른 프론트엔드에서도 쉽게 활용을 할 수 있게 됩니다.
-* Realtime update 가 필요없는 부분은 철저히 Restful Api 로 작업을 합니다.
-  * 사실 전 세계의 모든 홈페이지에서 회원관리 및 게시판 CRUD 를 하고 있지만 Realtime update 는 사용하고 있지 않습니다.
-  * 괜히 Realtime update 로 시도하다가 이도저도 아닌 엉망진창이 됩니다.
-
-* 각 개발자가 세미나를 통해서 자신의 업무를 설명합니다.
-
-## 해야 할 일
-
-* [Git Issues 참고](https://github.com/thruthesky/enginf/issues)
+* Since `Engine` runs on `Firebase`, you no longer need to run a server.
 
 
-## 설치
+## Getting Started
 
-### 요약
+### Overview
 
-1. 파이어베이스 프로젝트를 만들고, (DB 생성, 사용자 추가)
-2. 벡앤드 소스 코드를 clone 한 다음,
-3. Functions 로 Deploy.
+You will need to
+
+1. Create a Firebase project
+   1. And create a firestore database
+   2. Enable Auth signin method
+      1. Enable Email/Password
+      2. Enable Google Sign-in
+      3. Enable Anonymously login
+2. Clone or fork `Engine` repository
+3. Update `Service Admin SDK Key`
+4. Update admin emails on `functions/src/settings.json`
+5. Delploy `Functions`
 
 
-### 설치
+### Details of Installation
 
-1. Firebase 에서 프로젝트를 생성합니다.
-   1. Firebase Clould Firestore 데이터베이스를 생성합니다.
-   2. Authentication > Sign-in Method 에서
-      1. Email/Password 를 Enable 합니다.
-      2. Anonymous 를 Enable 합니다.
-      3. Google 을 Enable 합니다.
-2. `firebase-tools` 를 설치하고, firebase 에 로그인을 합니다.
+1. Create Firebase Project(or you may use exising project).
+   1. Create `Firebase Clould Firestore`
+      1. And see the rules like below
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
+```
+   2. Under `Authentication > Sign-in Method`
+      1. Enable `Email/Password`
+      2. Enable `Anonymous`
+      3. Enable `Google`
+2. Install `firebase-tools` and login
    1. `# npm install -g firebase-tools`
-3. Git 에서 Enginf 를 clone 합니다.
+   2. `$ firebase login`
+3. Clone or fork `Engine`
    1. `$ git clone https://github.com/thruthesky/enginf`
    2. `$ cd enginf/functions`
    3. `$ npm i`
-4. `.firebase.rc` 를 열어서 `projects` > `default` 에 본인의 파이어베이스 프로젝트 아이디를 수정(또는 입력)합니다.
-5. `functions/src/settings.ts` 를 열어서, `adminEmails` 배열에 관리자 메일 주소를 추가합니다.
-6.  Clould Functions 를 publish 합니다.
+4. Open `.firebase.rc` and edit `projects` > `default` with your Firebase project id.
+5. Open `functions/src/settings.ts` and edit `adminEmails`. You may remove existing emails and add your own email to become the admin.
+6.  Publish `Clould Functions`
    1. `$ firebase deploy --only functions`
-7. (옵션) 테스트를 하려면 `## 테스트 항목`을 참고하세요.
-8. Firestore 인덱스 생성
-
-```
-post collection 의 categories 와 created 필드를 desceding 으로 index 해야 한다.
-```
-
-
-### Typedoc 설치
-
-npm install --global typedoc
-npm i -g typescript
-typedoc --out docs src
+7. (Optional) You can run test. @see `Tests`
+8. Create `Firestore Indexes`
+   
+Collection ID | Field Indexed | Query scope
+------------- | ------------- | -----------
+post | categories Arrays createdAt Descending | Collection
 
 
 
-## 백엔드
+### Examples
+
+* [Flutter sample client app](https://github.com/thruthesky/clientf) - It is recommended to copy from the sample source code and paste it into your project.
+
+* Coming. Ionic sample client app.
+
+## Support
+
+* `Engine` is an open source. Any one can use it for any purpose.
+
+* If you are having difficulty to run `Engine` or you need an extra functionality that you cannot do it by yourself, please contact thruthesky@gmail.com
 
 
-### Firebsae Cloud Functions
+## Contributing
 
-* Firebase Cloud Funtions 를 통해서 작업하므로, 그에 대한 설정이 필요하다.
-* 먼저 Firebase 프로젝트를 생성한다.
-  * 그러면 어떻게 시작하는지 문서를 자연스럽게 찾을 수 있다. [참고: Firestore Guideline](https://firebase.google.com/docs/functions/?authuser=0#implementation_paths)
+If you want to contribute to a project and make it better, your help is very welcome. Contributing is also a great way to learn more about social coding on Github, new technologies and its ecosystems.
 
-* 앱에서 Functions 를 실행하기 위해서는 Callbale 함수를 호출하는 것과 HTTP Restful API 접속 방법 두 가지가 있어 보인다.
-  * 본 프로젝트에서는 callable 함수를 바로 사용한다.
-  * [참고: Firebase Cloud Functions - Callbale](https://firebase.google.com/docs/functions/callable)
-  * Callable 함수를 작성하기 위한 functions.https Backnd Api [참고: functions.https 문서] https://firebase.google.com/docs/reference/functions/providers_https_?authuser=0
-
-* 공부자료
-  * [처음 시작하는 방법](https://firebase.google.com/docs/functions/get-started). 이 문서를 보고 설정을 하면 됩니다.
+* You can create a fork from this Git repo.
+* Clone the fork onto your local machine.
+* Add original repo(this Git repo) as a remote called `upstream`.
+* Be sure to pull `upstream` changes into your local repository from time to time.
+* Create a branch to work.
+* And your have fixed the code, make a pull request.
 
 
-### 백엔드 테스트하기
+## Project Concerns
 
-* Emulator 를 실행하고 Shell 로 들어가서 아래와 같이 코딩하면 된다.
+* `Engine` does as much as it can for client apps. So, client apps will have minimal code and it's good for converting one App platform into another.
+  * For instance, if you are building a Fluter app and you want to use Ionic to build PWA, then having minimal code on client apps will reduce a lot of extra works.
 
-```
-router({route: 'user.version'})
-```
-
-### 인덱싱
-
-기본적으로 `post` collection 에 categories 와 createdAt 이 인덱싱되어져 있다. 다른 방식으로 검색을 할 수 있는데, 이때 인덱싱을 수동으로 추가해 주어야 한다.
-예를 들어, createdAt 을 asc 로 검색 하고 싶다면, 클라이언트에서 옵션을 주면 되는데, 인덱싱을 해 주어야 에러가 안난다.
+* When a document accessed, you pay.
+  * For instance, when you get the document of a post, `Engine` needs to read post document and user document to return author name. `Engine` may read more documents to complete necessary data. And it may cause more expense.
+  * We will need to consider about it. But let's not worry until it happens. It may be very small amount for a small business.
+  * To solve this problem, we may need to save all necessary information like Author name, email when the document is being saved.
 
 
-## 클라이언트엔드
-
-* 명칭: ClientF
-* Repository: [ClientF Github repository](https://github.com/thruthesky/enginf)
-* 플러터로 작업을 한다.
-
-## 해야 할 일
-
-* Git issues 를 참고합니다.
+* @see [Git Issues](https://github.com/thruthesky/enginf/issues)
 
 
 
-## 플러터 스터디 참여 방법
 
-* [카카오톡 채팅 단체톡방](https://open.kakao.com/o/g20m41Mb)
+## Reference
 
-## Github 작업 참여 방법
+* [Firestore Guideline](https://firebase.google.com/docs/functions/?authuser=0#implementation_paths)
 
-* 먼저, 멤버로 초대 요청을 해 주세요.
-* 멤버로 초대되면, 자신의 branch 를 만들고, 그 branch 에서 작업을 해 주세요. master branch 에서 작업하지 마세요.
-* 자신의 업무가 끝나면 프로젝트 관리자에게 merge 요청을 해 주세요. 즉, 자신이 한 작업을 관리자 허가없이 master merge 하지 말아주세요.
+* [Firebase Cloud Functions - Callbale](https://firebase.google.com/docs/functions/callable)
+* [functions.https Backnd Api](https://firebase.google.com/docs/reference/functions/providers_https_?authuser=0)
 
-## 파이어베이스 Function 코딩 정보
+* [Clould functions getting started](https://firebase.google.com/docs/functions/get-started)
 
-* [https://firebase.google.com/docs/functions?hl=ko](https://firebase.google.com/docs/functions) 모든 정보는 이곳에서 확인 가능
-* [파이어베이스 Functions 공식 예제(영문)](https://github.com/firebase/functions-samples)
-* [한글: Functions](https://mrbinggrae.tistory.com/8)
-* [한글: Functions](https://developer-jp.tistory.com/25)
-
-## Flutter 영문 기본 자료
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+* [https://firebase.google.com/docs/functions](https://firebase.google.com/docs/functions) 
+* [Functions Examples](https://github.com/firebase/functions-samples)
 
 ## 개발자 가이드
 
-* 모든 router 는 반드시 Promise 를 리턴해야 한다.
-* 소스코드에서는 `Enginf` 보다는 그냥 `Engin`이라는 용어를 쓴다. 예) EnginfSettings 대신 EngineSettings 라고 쓴다.
+* Every router must return a Promise
 
-* `router.run()` 에서 입력 값이 없어도 되고, 문자열이어도 되고, 객체이어도 된다. 실제 라우터에서 필요로 하는 값을 전달하면 된다.
+* `router.run()` could have no prameters and it can be a Stirng, int, list or map.
 
-* 에러메시지에서 'engin/...' 으로 시작하는 것은 EngineF 에서 자체적으로 발생하는 에러 메시지이다. 'auth/...' 로 시작하는 에러는 Firebase Admin SDK 의 Auth 에서 발생하는 에러이다.
+* `Engine` error code begins with `engine/...` while `Firebase Auth` error code begins with `auth/...` 
 
-* 카테고리, 게시 글, 코멘트 등 게시판과 관련 된 라우터는 
+* When you need a type to call `Router.run`, use Generic Type.
 
-* `Router.run` 의 data 파라메타 변수에 Generic Type 을 사용한다. 적절하게 사용하면 된다. 다만, 리턴 타입은 Generic 으로 하지 않는다.
-  * 리턴 값의 경우 리턴 값을 저장하는 변수에 타입 적용을 하면 된다.
 
-### 도큐먼트를 읽을 때 마다 비용 지불
-
-* 예를 들어, 게시판에 글을 저장 할 때, 사용자 UID 만 기록하고,
-  * 글 목록을 할 때, 글을 먼저 가져오고, 글의 UID 르 보고 사용자 도큐먼트를 읽어야 한다면, 글 도큐먼트 하나 읽고, 사용자 도큐먼트 하나를 읽게 되는 것이다.
-    * 따라서, 비용을 절감하는 부분에 대해서 생각을 해 봐야 한다.
-
-### 에러 핸들링
+## 에러 핸들링
 
 * 에러 핸들링이 쉽지 않다.
 * Cloud Functions 는 `functions.https.HttpError` 클래스를 사용하고, Firebase Admin SDK Auth 에서는 `FirebaseuAuthError` 클래스를 사용한다. 그리고 일반적인 자바스크립트는 `Error` 클래스를 사용한다. 다른 기능 (Firestore 등) 에서는 또 다른 에러 클래스를 사용 할 수 있다.
@@ -205,6 +174,26 @@ samples, guidance on mobile development, and a full API reference.
 var re = await ....functions.cal();
 if ( re.error ) throw re;
 ```
+
+
+## 관리자 지정
+
+* 클라이언트에서 로그인은 `Engine`을 거치지 않고 `Firebase Auth`로 바로 한다. 이 때, 관리자인지 알 수 있는 방은 Custom Claim 을 보고 알 수 있다.
+
+### 슈퍼 관리자 지정
+
+* 가장 막강한 권한을 가진 관리자는 아래와 같이 하면 된다.
+
+1. `funtions/src/settings.ts`의 `EngineSettings.adminEmails` 에 관리자 메일 주소를 지정한다.
+2. `firebase deploy --only functions`를 한다.
+
+### 클라이언트에서 관리자인지 아닌지를 확인하기 위해서는
+
+* `user.doc` Function call 을 한 번 해야 한다.
+  * 해당 사용자가 관리자이면 `admin: true` 가 된다.
+
+* 관리자 화면을 앱에서 구성한다면, 앱 부팅 초기에 `user.doc`을 한번 업데이트 할 수도 있다.
+
 
 ### 에러코드
 
@@ -291,11 +280,6 @@ export const TestSettings = {
 $ cd functions
 $ npm run test
 ```
-
-
-## 함수 설명
-
-* docs 폴더를 참고한다.
 
 
 ## 게시판
