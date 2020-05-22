@@ -1,5 +1,5 @@
 import firebaseAdmin = require('firebase-admin');
-const serviceAccount = "./etc/enginf-admin-key.json";
+const serviceAccount = "./etc/admin-sdk-key.json";
 
 /**
  * admin() 이 처음 호출 될 때 초기화를 하고 바로 사용한다.
