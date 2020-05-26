@@ -7,7 +7,7 @@ import {
     LOGIN_FIRST,
     PERMISSION_DEFINED
 } from '../defines';
-import { error, isLoggedIn, commentCol, commentDoc } from '../helpers/global-functions';
+import { error, isLoggedIn, commentCol, commentDoc, addUserData } from '../helpers/global-functions';
 import { EngineSettings } from '../settings';
 import { Post } from '../post/post';
 import { System } from '../system/system';
@@ -120,6 +120,7 @@ export class Comment {
         snapshots.forEach((doc) => {
             const comment: CommentData = doc.data();
             comment.id = doc.id;
+            addUserData(comment);
             comments.push(comment);
         });
 
@@ -141,7 +142,7 @@ export class Comment {
         if (!data) return data;
         data.id = id;
         if (data.depth === void 0) data.depth = 0;
-        return data;
+        return addUserData(data);
     }
 
 

@@ -66,5 +66,6 @@ export class DependencyInjections {
         };
 
     }
+
 }
 

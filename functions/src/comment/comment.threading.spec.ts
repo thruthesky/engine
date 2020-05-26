@@ -3,7 +3,7 @@
 
 import * as assert from 'assert';
 import { CommentData } from './comment.interfaces';
-import { loginAsUser, loginAsAdmin, createComment } from '../helpers/global-functions';
+import { loginAsUser, loginAsAdmin, testCreateComment } from '../helpers/global-functions';
 import { Router } from '../router/router';
 import { CategoryDatas } from '../category/category.interfaces';
 import { PostData } from '../post/post.interfaces';
@@ -273,58 +273,58 @@ describe('Comment Threading/Nesting Test', function () {
         assert.equal(typeof post.id === 'string', true);
 
         // 
-        const a = await createComment(post.id!, 'A');
-        const b = await createComment(post.id!, 'B');
-        const c = await createComment(post.id!, 'C');
-        const aa = await createComment(post.id!, 'AA', a.id);
-        const ba = await createComment(post.id!, 'BA', b.id);
-        const ca = await createComment(post.id!, 'CA', c.id);
-        const baa = await createComment(post.id!, 'BAA', ba.id);
-        const bb = await createComment(post.id!, 'BB', b.id);
-        const bab = await createComment(post.id!, 'BAB', ba.id);
+        const a = await testCreateComment(post.id!, 'A');
+        const b = await testCreateComment(post.id!, 'B');
+        const c = await testCreateComment(post.id!, 'C');
+        const aa = await testCreateComment(post.id!, 'AA', a.id);
+        const ba = await testCreateComment(post.id!, 'BA', b.id);
+        const ca = await testCreateComment(post.id!, 'CA', c.id);
+        const baa = await testCreateComment(post.id!, 'BAA', ba.id);
+        const bb = await testCreateComment(post.id!, 'BB', b.id);
+        const bab = await testCreateComment(post.id!, 'BAB', ba.id);
 
-        const d = await createComment(post.id!, 'D');
+        const d = await testCreateComment(post.id!, 'D');
 
-        const e = await createComment(post.id!, 'E');
-        const f = await createComment(post.id!, 'F');
-
-
-        const da = await createComment(post.id!, 'DA', d.id);
+        const e = await testCreateComment(post.id!, 'E');
+        const f = await testCreateComment(post.id!, 'F');
 
 
-        const daa = await createComment(post.id!, 'DAA', da.id);
-        const daaa = await createComment(post.id!, 'DAAA', daa.id);
-
-        const fa = await createComment(post.id!, 'FA', f.id);
+        const da = await testCreateComment(post.id!, 'DA', d.id);
 
 
-        const daaaa = await createComment(post.id!, 'DAAAA', daaa.id);
-        const fb = await createComment(post.id!, 'FB', f.id);
-        const faa = await createComment(post.id!, 'FAA', fa.id);
+        const daa = await testCreateComment(post.id!, 'DAA', da.id);
+        const daaa = await testCreateComment(post.id!, 'DAAA', daa.id);
+
+        const fa = await testCreateComment(post.id!, 'FA', f.id);
+
+
+        const daaaa = await testCreateComment(post.id!, 'DAAAA', daaa.id);
+        const fb = await testCreateComment(post.id!, 'FB', f.id);
+        const faa = await testCreateComment(post.id!, 'FAA', fa.id);
 
 
 
-        const daaaaa = await createComment(post.id!, 'DAAAAA', daaaa.id);
-        const daaaaaa = await createComment(post.id!, 'DAAAAAA', daaaaa.id);
-        const daaaaaaa = await createComment(post.id!, 'DAAAAAAA', daaaaaa.id);
+        const daaaaa = await testCreateComment(post.id!, 'DAAAAA', daaaa.id);
+        const daaaaaa = await testCreateComment(post.id!, 'DAAAAAA', daaaaa.id);
+        const daaaaaaa = await testCreateComment(post.id!, 'DAAAAAAA', daaaaaa.id);
 
 
-        const aaa = await createComment(post.id!, 'AAA', aa.id);
-        const bba = await createComment(post.id!, 'BBA', bb.id);
+        const aaa = await testCreateComment(post.id!, 'AAA', aa.id);
+        const bba = await testCreateComment(post.id!, 'BBA', bb.id);
 
 
-        const daaaaaaaa = await createComment(post.id!, 'DAAAAAAAA', daaaaaaa.id);
-        const daaaaaaaaa = await createComment(post.id!, 'DAAAAAAAAA', daaaaaaaa.id);
-        const daaaaaaaaaa = await createComment(post.id!, 'DAAAAAAAAAA', daaaaaaaaa.id);
-        const daaaaaaaaaaa = await createComment(post.id!, 'DAAAAAAAAAAA', daaaaaaaaaa.id);
+        const daaaaaaaa = await testCreateComment(post.id!, 'DAAAAAAAA', daaaaaaa.id);
+        const daaaaaaaaa = await testCreateComment(post.id!, 'DAAAAAAAAA', daaaaaaaa.id);
+        const daaaaaaaaaa = await testCreateComment(post.id!, 'DAAAAAAAAAA', daaaaaaaaa.id);
+        const daaaaaaaaaaa = await testCreateComment(post.id!, 'DAAAAAAAAAAA', daaaaaaaaaa.id);
 
-        const fab = await createComment(post.id!, 'FAB', fa.id);
-
-
-        const daaaaaaaaaab = await createComment(post.id!, 'DAAAAAAAAAAB', daaaaaaaaaa.id);
+        const fab = await testCreateComment(post.id!, 'FAB', fa.id);
 
 
-        const dab = await createComment(post.id!, 'DAB', da.id);
+        const daaaaaaaaaab = await testCreateComment(post.id!, 'DAAAAAAAAAAB', daaaaaaaaaa.id);
+
+
+        const dab = await testCreateComment(post.id!, 'DAB', da.id);
 
         aa; ba; ca; baa; bb; bab; d; e; f; da; daaa; fa; daaaa; fb; faa; daaaaa; daaaaaa; daaaaaaa;
         aaa; bba; daaaaaaaaaaa; fab; daaaaaaaaaab; dab;

@@ -6,6 +6,9 @@ import * as functions from 'firebase-functions';
 import { FunctionsErrorCode } from "firebase-functions/lib/providers/https";
 import { Router } from "../router/router";
 import { CommentData } from "../comment/comment.interfaces";
+import { firestore } from "firebase-admin";
+import { PostData } from "../post/post.interfaces";
+import { CategoryData } from "../category/category.interfaces";
 
 
 export const Settings = EngineSettings;
@@ -38,6 +41,10 @@ export function postCol() {
 
 export function postDoc(id: string) {
     return admin().firestore().collection('post').doc(id);
+}
+
+export function likeDoc(id: string) {
+    return admin().firestore().collection('like').doc(id);
 }
 
 
@@ -231,7 +238,80 @@ export function returnError(e: any) {
 }
 
 
-export async function createComment(postId: string, content: string, parentId?: string) {
+/**
+ * Creates a user. This is test purpose only.
+ * @param data user data
+ */
+export async function testCreateUser(data: any): Promise<any> {
+    const router = new Router('user.register');
+    const displayName = 'name' + (new Date).getTime();
+    const email = displayName + '@gmail.com';
+    const photoURL = 'https://photourl.com/' + displayName + '.jpg';
+    const req = {
+        email: email,
+        password: '12345a',
+        displayName: displayName,
+        photoURL: photoURL,
+        phoneNumber: '+82-10-' + getRandomInt(1000, 9999) + '-' + getRandomInt(1000, 9999),
+        name: displayName
+    };
+    return await router.run(req);
+}
+
+/**
+ * Updates a user.
+ * @attenton Test purpose only.
+ * @param data user data
+ *  - `data.uid`, which is madatory.
+ */
+export async function testUpdateUser(data: any): Promise<any> {
+    const newRouter = new Router('user.update');
+    return await newRouter.run(data);
+}
+
+
+/**
+ * Creates a temporary category as admin.
+ * @note this automatically logs in as admin.
+ * @attention this is for test purpose only
+ */
+export async function testCreateCategory(): Promise<CategoryData> {
+    await loginAsAdmin();
+    const tempCategory = {
+        id: 'temp-category-id-for-comment-' + (new Date).getTime(),
+        title: 'Temp Category',
+    };
+    const routerCategory = new Router('category.create');
+    const re: CategoryData = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
+    return re;
+}
+
+/**
+ * Creates a post with the given categories.
+ * @note you may login into a user before creating a post.
+ * @warning it needs `auth uid`. Meaning, it needs to login by `forceUserLoginByEmail`.
+ * @attention this is for test purpose only.
+ */
+export async function testCreatePost(authorEmail: string, categories: string[]): Promise<PostData> {
+    await forceUserLoginByEmail(authorEmail);
+    const route = new Router('post.create');
+    const data = { uid: System.auth.uid, categories: categories, };
+    console.log('System.auth: ', System.auth);
+    // console.log('data: ', data);
+    const post: PostData = await route.run<PostData>(data);
+    return post;
+}
+
+/**
+ * Creates a commnet.
+ * @note this is for test only.
+ * @param postId post id
+ * @param content content of comment
+ * @param parentId parent comment id
+ * @code
+ * const aa = await testCreateComment(post.id!, 'AA', a.id);
+ */
+export async function testCreateComment(postId: string, content: string, parentId?: string): Promise<CommentData> {
 
     const routerComent = new Router('comment.create');
     const comment: CommentData = await routerComent.run<CommentData>({
@@ -239,9 +319,58 @@ export async function createComment(postId: string, content: string, parentId?: 
         content: content,
         parentId: parentId,
     });
-    // console.log(comment);
-    // assert.equal(typeof comment.createdAt === 'number', true);
-
     return comment;
-
 }
+
+
+
+
+/**
+ * ///여기서 부터. README 데이터구조 참고.
+ * post.ts 나 comment.ts 에서 해당 도큐먼트 ref 와 like, dislike 로 주고 호출한다.
+ * 
+ * @param obj 글 또는 코멘트 레퍼런스 일 수 있다.
+ *  - Dependency Injection 방식으로 처리를 한다.
+ * @throw 에러가 있으면 throw 한다.
+ *  - 도큐먼트가 존재하지 않는 등의 에러
+ * @logic
+ *  - like 했는데, dislike 하면,
+ *      - 에러를 내지 않고, like 를 dislike 로 변경한다
+ *  - 동일한 vote 를 두번하면, 무료 처리 한다.
+ *      - 예를 들어, dislike 를 했는데 또 dislike 를 하면 dislike 를 없앤다.=
+ * - vote 할 때마다 해당 글/코멘트 도큐먼트에 likes 와 dislikes 카운트를 조정한다.
+ * @example
+ *  like(postRef, 'like');
+ *  like(commentRef, 'dislike');
+ * 
+ */
+export async function like(obj: firestore.DocumentReference, vote: 'like' | 'dislike') {
+    // const key: string = obj.id + System.auth.uid;
+    //likeDoc();
+
+    return '';
+}
+
+
+/**
+ * This does pre-processing(sanitizing) before delivering data to client.
+ * @note it adds author's `displayName` & `photoUrl`
+ * @note obj - which is either a post or a comment.
+ * @return the object which was added user data.
+ *  - The prameter is called-by-refernce.
+ */
+export async function addUserData(obj: PostData | CommentData): Promise<PostData | CommentData> {
+    console.log('obj', obj);
+
+    if (obj === null) return obj;
+    if (obj.uid === void 0) return obj;
+    
+    const user = await admin().auth().getUser(obj.uid);
+
+    obj.displayName = user.displayName;
+    obj.photoUrl = user.photoURL;
+
+    return obj;
+}
+
+

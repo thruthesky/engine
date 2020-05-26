@@ -1,7 +1,9 @@
 
-import {  INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS,
-    LOGIN_FIRST, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, POST_TITLE_DELETED, POST_CONTENT_DELETED, PERMISSION_DEFINED } from '../defines';
-import { isLoggedIn, postCol, error, postDoc } from '../helpers/global-functions';
+import {
+    INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS,
+    LOGIN_FIRST, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, POST_TITLE_DELETED, POST_CONTENT_DELETED, PERMISSION_DEFINED
+} from '../defines';
+import { isLoggedIn, postCol, error, postDoc, addUserData } from '../helpers/global-functions';
 import { System } from '../system/system';
 import { Category } from '../category/category';
 import { Query } from '@google-cloud/firestore';
@@ -38,7 +40,8 @@ export class Post {
         data.createdAt = (new Date).getTime();
 
         const post = await postCol().add(data);
-        // return { id: post.id };
+        
+        console.log('post: ', post);
         return await this.data(post.id);
     }
 
@@ -97,14 +100,15 @@ export class Post {
      * @param id post document key
      * @attention `id` is added to returned post data
      */
-    async data(id: string) {
+    async data(id: string): Promise<PostData> {
         if (typeof id !== 'string') throw error(INVALID_INPUT, 'id');
         const snapshot = await postDoc(id).get();
         const data: any = snapshot.data();
         if (!data) return data;
         data.id = id;
-        return data;
+        return addUserData(data);
     }
+
 
     /**
      * Returns posts
@@ -163,6 +167,7 @@ export class Post {
         snapshots.forEach((doc) => {
             const post: PostData = doc.data();
             post.id = doc.id;
+            addUserData(post);
             posts.push(post);
         });
 

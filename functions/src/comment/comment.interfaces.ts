@@ -29,6 +29,13 @@ export interface CommentData {
     dislike?: number;
 
 
-    //
+    /// This is for comment threading(hierachical tree) purpose.
+    /// This does not exist in database.
     checked?: boolean;
+
+
+    /// User display name from auth. This does not exist in database.
+    displayName?: string;
+    /// User photo url from auth. This does not exist in database.
+    photoUrl?: string;
 }

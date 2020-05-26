@@ -350,3 +350,23 @@ $ npm run test
   * 클라이언트에서는 `addUrl()`, `removeUrl()`과 같이 한 다음, 그 안에서 서버의 `addProperty()` 와 `removeProperty()` 를 호출 할 수 있도록 한다.
 
 
+
+
+
+## Likes & Dislikes 구조
+
+* Sub collection 을 쓰지 않는다. 구조가 복잡해 지는 것을 방지
+* likes 폴더에 like 와 dislike 를 같이 넣는다.
+* 구조는 아래와 같이 해서 `글ID+사용자ID` 또는 `코멘트ID+사용자ID`로 Document ID 를 만든다.
+  * 즉, 글 하나에 중복으로 투표되는 것을 미연에 방지한다.
+
+    likes/[post_or_comment_id]_[user_id]/
+      { id: post_or_comment_id, uid: user_id, vote: [like|dislike] }
+
+* 도큐먼트 속성에는
+  * id 를 기록해서 글/코멘트 삭제시 같이 삭제 할 수 있도록 한다.
+  * user_id 를 두어서, 사용자 별 like 한 정보를 추출 할 수 있도록 한다.
+  * vote 속성에는 추천인지 비추천인지 알 수 있도록 한다.
+
+* Likes 를 할 때마다 해당 글/코멘트 도큐먼트의 likes, dislikes 속성에 카운트를 한다.
+  * 참고로 1QPS (도큐먼트당 1초에 한번만 업데이트)가 있는데, 어느 정도는 큐를 통해서 처리를 해 준다.

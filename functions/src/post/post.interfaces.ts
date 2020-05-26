@@ -21,4 +21,10 @@ export interface PostData {
 
     // This is set when the search option has 'includeComments' to true.
     comments?: CommentData[];
+
+
+    /// User display name from auth. This does not exist in database.
+    displayName?: string;
+    /// User photo url from auth. This does not exist in database.
+    photoUrl?: string;
 }

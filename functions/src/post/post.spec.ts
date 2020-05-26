@@ -32,7 +32,6 @@ describe('Post', function () {
         const route = new Router('post.create');
         const re = await route.run({});
         assert.equal(re.code, LOGIN_FIRST);
-
     });
 
     it('Create with empty category', async () => {
@@ -43,6 +42,7 @@ describe('Post', function () {
         assert.equal(re.code, MISSING_INPUT);
         assert.equal(re.message, 'categories');
     });
+    
     it('Create with string category', async () => {
         await forceUserLoginByEmail(TestSettings.emails[0]);
         System.auth.email

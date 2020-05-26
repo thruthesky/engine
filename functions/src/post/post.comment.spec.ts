@@ -1,4 +1,4 @@
-import { loginAsAdmin, loginAsUser, createComment } from "../helpers/global-functions";
+import { loginAsAdmin, loginAsUser, testCreateComment } from "../helpers/global-functions";
 import { Router } from "../router/router";
 import { CategoryDatas } from "../category/category.interfaces";
 import * as assert from 'assert';
@@ -28,15 +28,15 @@ describe('Get comments by listing posts', function () {
         assert.equal(typeof post.id === 'string', true);
 
         // 
-        const a = await createComment(post.id!, 'A');
-        const b = await createComment(post.id!, 'B');
-        const c = await createComment(post.id!, 'C');
-        const aa = await createComment(post.id!, 'AA', a.id);
-        const ba = await createComment(post.id!, 'BA', b.id);
-        const ca = await createComment(post.id!, 'CA', c.id);
-        const baa = await createComment(post.id!, 'BAA', ba.id);
-        const bb = await createComment(post.id!, 'BB', b.id);
-        const bab = await createComment(post.id!, 'BAB', ba.id);
+        const a = await testCreateComment(post.id!, 'A');
+        const b = await testCreateComment(post.id!, 'B');
+        const c = await testCreateComment(post.id!, 'C');
+        const aa = await testCreateComment(post.id!, 'AA', a.id);
+        const ba = await testCreateComment(post.id!, 'BA', b.id);
+        const ca = await testCreateComment(post.id!, 'CA', c.id);
+        const baa = await testCreateComment(post.id!, 'BAA', ba.id);
+        const bb = await testCreateComment(post.id!, 'BB', b.id);
+        const bab = await testCreateComment(post.id!, 'BAB', ba.id);
 
         aa; ba; ca; baa; bb; bab;
 
