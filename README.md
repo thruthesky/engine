@@ -89,6 +89,8 @@ post | categories Arrays createdAt Descending | Collection
 * Publish `Clould Functions`
   * `$ firebase deploy --only functions`
 
+* Create `Storage` Firebase console
+
 * Now, you can proceed to develop your own Application using `Engine`.
   * See the sample Apps.
 
