@@ -437,15 +437,19 @@ export async function vote(doc: firestore.DocumentReference, voteFor: 'like' | '
 /// @warning `글 읽기 -> 회원 정보 수정 -> 글 읽기` 와 같이 하는 경우, container 로 인해 수정된 회원 정보가 반영되지 않는다.
 /// 이와 같은 경우, container 를 리셋하면 된다.
 /// 특히 테스트를 하는 경우, 자주 회원 정보를 변경 할 수 있으니 유의한다.
-let userDataContainer: any = {};
-export function resetUserContainerData() {
-    userDataContainer = {};
-}
+
 export async function addUserData(obj: PostData | CommentData): Promise<PostData | CommentData> {
     return obj;
 }
 
 // 아래의 함수가 성능이 매우 느려지는지 확인하기 위해서 코멘트 아웃 처리.
+
+let userDataContainer: any = {};
+export function resetUserContainerData() {
+    userDataContainer = {};
+    return userDataContainer; /// @thruthesky returning this value has nothing.  
+}
+
 // export async function addUserData(obj: PostData | CommentData): Promise<PostData | CommentData> {
 
 //     if (obj === null) return obj;
