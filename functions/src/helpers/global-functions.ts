@@ -437,7 +437,7 @@ export async function vote(doc: firestore.DocumentReference, voteFor: 'like' | '
 export function sanitizeVotes(docData: any) {
     /// Somehow, `NaN` is saved in document.
     if (docData.likes === void 0 || isNaN(docData.likes)) docData.likes = 0;
-    if (docData.dislikes === void 0 || isNaN(docData.likes)) docData.dislikes = 0;
+    if (docData.dislikes === void 0 || isNaN(docData.dislikes)) docData.dislikes = 0;
 
     return docData;
 }

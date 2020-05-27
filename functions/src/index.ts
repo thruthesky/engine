@@ -14,7 +14,13 @@ exports.router = functions.https.onCall(async (params, context) => {
 
     /// This is for debugging purpose only.
     /// Comment out for production mode.
-    console.info('params:', params, 'result: ', result);
+    // console.info('params:', params);
+
+    // for (const p of result) {
+    //     for (const c of p['comments']) {
+    //         console.log('commnet: ', c);
+    //     }
+    // }
 
     return result;
 
