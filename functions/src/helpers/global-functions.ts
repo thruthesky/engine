@@ -367,8 +367,11 @@ export async function vote(doc: firestore.DocumentReference, voteFor: 'like' | '
     if (!docData) throw error(DOCUMENT_NOT_EXISTS);
     const snapshot = await likeDoc(key).get(); /// Like doc
 
+    sanitizeVotes(docData);
     let result: 'cancelled' | 'voted';
-    if (snapshot.exists) { /// Like exists
+    if (snapshot.exists) { /// Did I already voted?
+
+
         // console.log('like exists');
         const likeData = snapshot.data(); /// Get like data
         if (likeData?.vote === voteFor) { /// Same vote again? then, cancel
@@ -397,6 +400,7 @@ export async function vote(doc: firestore.DocumentReference, voteFor: 'like' | '
             result = 'voted';
         }
     } else {
+        /// If I vote for the first time for this post.
         /// create like
         const data = {
             id: doc.id,
@@ -405,8 +409,7 @@ export async function vote(doc: firestore.DocumentReference, voteFor: 'like' | '
         };
         await likeDoc(key).set(data);
 
-        if (docData.likes === void 0) docData.likes = 0;
-        if (docData.dislikes === void 0) docData.dislikes = 0;
+
         if (voteFor === 'like') docData.likes++;
         else docData.dislikes++;
 
@@ -424,6 +427,21 @@ export async function vote(doc: firestore.DocumentReference, voteFor: 'like' | '
     };
     return ret;
 }
+
+/**
+ * This gives intial values for `likes` and `dislikes`.
+ *  - And somehow (by mistake as a but), `NaN` happens and saved in `Firestore` that causes `JSON NaN` uncaught error and causes `Functions call failure`.
+ *  - This takes care of those things.
+ * @param docData post or comment document
+ */
+export function sanitizeVotes(docData: any) {
+    /// Somehow, `NaN` is saved in document.
+    if (docData.likes === void 0 || isNaN(docData.likes)) docData.likes = 0;
+    if (docData.dislikes === void 0 || isNaN(docData.likes)) docData.dislikes = 0;
+
+    return docData;
+}
+
 
 
 /**

@@ -3,7 +3,7 @@ import {
     INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS,
     LOGIN_FIRST, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, POST_TITLE_DELETED, POST_CONTENT_DELETED, PERMISSION_DEFINED, LikeRequest, LikeResponse
 } from '../defines';
-import { isLoggedIn, postCol, error, postDoc, addUserData, vote, attachUserData } from '../helpers/global-functions';
+import { isLoggedIn, postCol, error, postDoc, addUserData, vote, attachUserData, sanitizeVotes } from '../helpers/global-functions';
 import { System } from '../system/system';
 import { Category } from '../category/category';
 import { Query, QuerySnapshot } from '@google-cloud/firestore';
@@ -109,7 +109,7 @@ export class Post {
         const data: any = snapshot.data();
         if (!data) return data;
         data.id = id;
-        return await addUserData(data);
+        return sanitizeVotes(await addUserData(data));
     }
 
 
@@ -181,6 +181,7 @@ export class Post {
         /// TODO: 성능 향상의 위해서 Promise.All 로 처리 해 볼 것.
         for (const p of posts) {
             await addUserData(p);
+            sanitizeVotes(p);
         }
 
         /// Get comments

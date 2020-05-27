@@ -9,11 +9,15 @@ import {
     LikeRequest,
     LikeResponse
 } from '../defines';
-import { error, isLoggedIn, commentCol, commentDoc, addUserData, vote, attachUserData } from '../helpers/global-functions';
+import {
+    error, isLoggedIn, commentCol, commentDoc, addUserData, vote, attachUserData,
+    sanitizeVotes,
+} from '../helpers/global-functions';
 import { EngineSettings } from '../settings';
 import { Post } from '../post/post';
 import { System } from '../system/system';
 import { DependencyInjections } from '../helpers/dependency-injections';
+
 
 
 export class Comment {
@@ -129,6 +133,7 @@ export class Comment {
 
         for (const c of comments) {
             await addUserData(c);
+            sanitizeVotes(c);
         }
 
         const sorted = this.sortComments(comments);
@@ -149,7 +154,7 @@ export class Comment {
         if (!data) return data;
         data.id = id;
         if (data.depth === void 0) data.depth = 0;
-        return await addUserData(data);
+        return sanitizeVotes(await addUserData(data));
     }
 
 
