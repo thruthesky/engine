@@ -9,7 +9,8 @@ import { CommentData } from "../comment/comment.interfaces";
 import { firestore } from "firebase-admin";
 import { PostData } from "../post/post.interfaces";
 import { CategoryData } from "../category/category.interfaces";
-
+import { UserRequestData } from "../user/user.interfaces";
+import { LikeResponse, DOCUMENT_NOT_EXISTS } from "../defines";
 
 export const Settings = EngineSettings;
 
@@ -76,6 +77,14 @@ export function isAdmin(): boolean {
 
 export function isLoggedIn(): boolean {
     return !!System.auth.uid;
+}
+
+/**
+ * 로그인한 사용자의 UID 를 리턴한다.
+ */
+export function getLoggedInUserId(): string | null {
+    if (isLoggedIn()) return System.auth.uid;
+    else return null;
 }
 
 export function trace(msg: any, extra?: any) {
@@ -264,7 +273,7 @@ export async function testCreateUser(data: any): Promise<any> {
  * @param data user data
  *  - `data.uid`, which is madatory.
  */
-export async function testUpdateUser(data: any): Promise<any> {
+export async function testUpdateUser(data: UserRequestData): Promise<any> {
     const newRouter = new Router('user.update');
     return await newRouter.run(data);
 }
@@ -296,7 +305,7 @@ export async function testCreatePost(authorEmail: string, categories: string[]):
     await forceUserLoginByEmail(authorEmail);
     const route = new Router('post.create');
     const data = { uid: System.auth.uid, categories: categories, };
-    console.log('System.auth: ', System.auth);
+    // console.log('System.auth: ', System.auth);
     // console.log('data: ', data);
     const post: PostData = await route.run<PostData>(data);
     return post;
@@ -326,7 +335,9 @@ export async function testCreateComment(postId: string, content: string, parentI
 
 
 /**
- * ///여기서 부터. README 데이터구조 참고.
+ * 
+ * like 또는 dislike 투표를 한다.
+ * 
  * post.ts 나 comment.ts 에서 해당 도큐먼트 ref 와 like, dislike 로 주고 호출한다.
  * 
  * @param obj 글 또는 코멘트 레퍼런스 일 수 있다.
@@ -344,11 +355,71 @@ export async function testCreateComment(postId: string, content: string, parentI
  *  like(commentRef, 'dislike');
  * 
  */
-export async function like(obj: firestore.DocumentReference, vote: 'like' | 'dislike') {
-    // const key: string = obj.id + System.auth.uid;
-    //likeDoc();
+export async function vote(doc: firestore.DocumentReference, vote: 'like' | 'dislike'): Promise<LikeResponse> {
 
-    return '';
+
+    const key: string = doc.id + getLoggedInUserId();
+
+    const docData = (await doc.get()).data(); /// Get doc data.
+    if (docData == null) throw error(DOCUMENT_NOT_EXISTS);
+    const snapshot = await likeDoc(key).get(); /// Like doc
+
+    let result: 'cancelled' | 'voted';
+    if (snapshot.exists) { /// Like exists
+        // console.log('like exists');
+        const likeData = snapshot.data(); /// Get like data
+        if (likeData?.vote == vote) { /// Same vote again? then, cancel
+            // console.log('same vote. cancel');
+            /// cancel
+            await snapshot.ref.delete(); /// Delete the like
+            // console.log('delete like');
+            /// decrease the vote
+            if (vote === 'like') {
+                docData.likes--;
+            } else {
+                docData.dislikes--;
+            }
+            result = 'cancelled';
+        } else {
+            /// update the vote in like collection
+            await snapshot.ref.update({ vote: vote });
+            /// update the doc
+            if (vote === 'like') {
+                docData.likes++;
+                docData.dislikes--;
+            } else {
+                docData.likes--;
+                docData.dislikes++;
+            }
+            result = 'voted';
+        }
+    } else {
+        /// create like
+        const data = {
+            id: doc.id,
+            uid: getLoggedInUserId(),
+            vote: vote,
+        };
+        await likeDoc(key).set(data);
+
+        if (docData.likes === void 0) docData.likes = 0;
+        if (docData.dislikes === void 0) docData.dislikes = 0;
+        if (vote == 'like') docData.likes++;
+        else docData.dislikes++;
+
+        result = 'voted';
+    }
+
+    /// update doc's vote.
+    await doc.update({ likes: docData.likes, dislikes: docData.dislikes })
+    const ret: LikeResponse = {
+        id: doc.id,
+        vote: vote,
+        result: result,
+        likes: docData.likes,
+        dislikes: docData.dislikes,
+    };
+    return ret;
 }
 
 
@@ -360,11 +431,11 @@ export async function like(obj: firestore.DocumentReference, vote: 'like' | 'dis
  *  - The prameter is called-by-refernce.
  */
 export async function addUserData(obj: PostData | CommentData): Promise<PostData | CommentData> {
-    console.log('obj', obj);
+    // console.log('obj', obj);
 
     if (obj === null) return obj;
     if (obj.uid === void 0) return obj;
-    
+
     const user = await admin().auth().getUser(obj.uid);
 
     obj.displayName = user.displayName;

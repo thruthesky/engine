@@ -360,7 +360,7 @@ $ npm run test
 * 구조는 아래와 같이 해서 `글ID+사용자ID` 또는 `코멘트ID+사용자ID`로 Document ID 를 만든다.
   * 즉, 글 하나에 중복으로 투표되는 것을 미연에 방지한다.
 
-    likes/[post_or_comment_id]_[user_id]/
+    likes/`[post_or_comment_id][user_id]`/
       { id: post_or_comment_id, uid: user_id, vote: [like|dislike] }
 
 * 도큐먼트 속성에는

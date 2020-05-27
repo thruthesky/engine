@@ -1,9 +1,9 @@
 
 import {
     INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS,
-    LOGIN_FIRST, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, POST_TITLE_DELETED, POST_CONTENT_DELETED, PERMISSION_DEFINED
+    LOGIN_FIRST, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, POST_TITLE_DELETED, POST_CONTENT_DELETED, PERMISSION_DEFINED, LikeRequest, LikeResponse
 } from '../defines';
-import { isLoggedIn, postCol, error, postDoc, addUserData } from '../helpers/global-functions';
+import { isLoggedIn, postCol, error, postDoc, addUserData, vote } from '../helpers/global-functions';
 import { System } from '../system/system';
 import { Category } from '../category/category';
 import { Query } from '@google-cloud/firestore';
@@ -40,8 +40,8 @@ export class Post {
         data.createdAt = (new Date).getTime();
 
         const post = await postCol().add(data);
-        
-        console.log('post: ', post);
+
+        // console.log('post: ', post);
         return await this.data(post.id);
     }
 
@@ -205,12 +205,27 @@ export class Post {
     }
 
 
+    /**
+     * @deprecated remove this by Jun 2020.
+     */
     async addUrl(data: any) {
         return (new DependencyInjections).addUrl(postDoc(data.id), data.url);
     }
 
+    /**
+     * @deprecated remove this by Jun 2020.
+     */
     async removeUrl(data: any) {
         return (new DependencyInjections).removeUrl(postDoc(data.id), data.url);
+    }
+
+
+    /**
+     * Votes for godo and bad. or like & dislike.
+     * @param data data to vote
+     */
+    async like(data: LikeRequest): Promise<LikeResponse> {
+        return vote(postDoc(data.id), data.vote);
     }
 
 

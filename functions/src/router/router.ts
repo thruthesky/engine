@@ -43,6 +43,8 @@ export class Router {
      *  We do not follow the standard of [Cloud Functions Error Handling](https://firebase.google.com/docs/functions/callable#handle_errors)
      *  Since the error handling is dirty.
      *  On VSCode, the `.call()` always caught with `Break on Uncaught Excpetions` option even if it handles properlty.
+     * 
+     * @note It can be called directly by test code. User login is needed before calling this in test code.
      */
     async run<T>(data?: T): Promise<any> {
 

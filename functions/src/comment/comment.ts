@@ -5,9 +5,11 @@ import {
     COMMENT_POST_CONTENT_DELETED,
     INVALID_INPUT,
     LOGIN_FIRST,
-    PERMISSION_DEFINED
+    PERMISSION_DEFINED,
+    LikeRequest,
+    LikeResponse
 } from '../defines';
-import { error, isLoggedIn, commentCol, commentDoc, addUserData } from '../helpers/global-functions';
+import { error, isLoggedIn, commentCol, commentDoc, addUserData, vote } from '../helpers/global-functions';
 import { EngineSettings } from '../settings';
 import { Post } from '../post/post';
 import { System } from '../system/system';
@@ -251,4 +253,14 @@ export class Comment {
 
 
     }
+
+
+    /**
+     * Votes for godo and bad. or like & dislike.
+     * @param data data to vote
+     */
+    async like(data: LikeRequest): Promise<LikeResponse> {
+        return vote(commentDoc(data.id), data.vote);
+    }
+
 }

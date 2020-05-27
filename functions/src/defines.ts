@@ -51,3 +51,21 @@ export interface UserAuth {
     email: string;
     uid: string;
 };
+
+export interface LikeRequest {
+    id: string;
+    vote: 'like' | 'dislike';
+}
+
+export interface LikeResponse {
+    /// 글 또는 코멘트 Document ID
+    id: string;
+    /// 찬성을 했는지 또는 반대를 했는지 표시를 리턴
+    vote: 'like' | 'dislike';
+    /// 결과를 리턴. 찬성 또는 반대가 되었으면 'voted', 이미 찬성을 했는데 또 찬성을 하면 'cancelled' 가 된다.
+    result: 'voted' | 'cancelled';
+    /// 총 찬성 수
+    likes: number;
+    /// 총 반대 수
+    dislikes: number;
+}
