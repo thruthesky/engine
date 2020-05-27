@@ -438,9 +438,9 @@ export async function vote(doc: firestore.DocumentReference, voteFor: 'like' | '
 /// 이와 같은 경우, container 를 리셋하면 된다.
 /// 특히 테스트를 하는 경우, 자주 회원 정보를 변경 할 수 있으니 유의한다.
 
-export async function addUserData(obj: PostData | CommentData): Promise<PostData | CommentData> {
-    return obj;
-}
+// export async function addUserData(obj: PostData | CommentData): Promise<PostData | CommentData> {
+//     return obj;
+// }
 
 // 아래의 함수가 성능이 매우 느려지는지 확인하기 위해서 코멘트 아웃 처리.
 
@@ -450,39 +450,39 @@ export function resetUserContainerData() {
     return userDataContainer; /// @thruthesky returning this value has nothing.  
 }
 
-// export async function addUserData(obj: PostData | CommentData): Promise<PostData | CommentData> {
+export async function addUserData(obj: PostData | CommentData): Promise<PostData | CommentData> {
 
-//     if (obj === null) return obj;
-//     if (obj.uid === void 0) return obj;
-//     if (userDataContainer[obj.uid] !== void 0) {
-//         obj.displayName = userDataContainer[obj.uid]['displayName'];
-//         obj.photoUrl = userDataContainer[obj.uid]['photoUrl'];
-//     } else {
-//         let user;
-//         try {
-//             user = await admin().auth().getUser(obj.uid);
+    if (obj === null) return obj;
+    if (obj.uid === void 0) return obj;
+    if (userDataContainer[obj.uid] !== void 0) {
+        obj.displayName = userDataContainer[obj.uid]['displayName'];
+        obj.photoUrl = userDataContainer[obj.uid]['photoUrl'];
+    } else {
+        let user;
+        try {
+            user = await admin().auth().getUser(obj.uid);
 
-//             if (user.displayName) {
-//                 obj.displayName = user.displayName;
-//             }
-//             else obj.displayName = '';
+            if (user.displayName) {
+                obj.displayName = user.displayName;
+            }
+            else obj.displayName = '';
 
-//             if (user.photoURL) {
-//                 obj.photoUrl = user.photoURL;
-//             } else {
-//                 obj.photoUrl = '';
-//             }
+            if (user.photoURL) {
+                obj.photoUrl = user.photoURL;
+            } else {
+                obj.photoUrl = '';
+            }
 
-//         } catch (e) {
-//             obj.displayName = '';
-//             obj.photoUrl = '';
-//         }
-//         userDataContainer[obj.uid] = {
-//             displayName: obj.displayName,
-//             photoUrl: obj.photoUrl,
-//         };
-//     }
-//     return obj;
-// }
+        } catch (e) {
+            obj.displayName = '';
+            obj.photoUrl = '';
+        }
+        userDataContainer[obj.uid] = {
+            displayName: obj.displayName,
+            photoUrl: obj.photoUrl,
+        };
+    }
+    return obj;
+}
 
 
