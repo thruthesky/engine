@@ -125,7 +125,7 @@ export class Comment {
             comments.push(comment);
         });
 
-        for (var c of comments) {
+        for (const c of comments) {
             await addUserData(c);
         }
 

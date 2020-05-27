@@ -357,26 +357,26 @@ export async function testCreateComment(postId: string, content: string, parentI
  *  like(commentRef, 'dislike');
  * 
  */
-export async function vote(doc: firestore.DocumentReference, vote: 'like' | 'dislike'): Promise<LikeResponse> {
+export async function vote(doc: firestore.DocumentReference, voteFor: 'like' | 'dislike'): Promise<LikeResponse> {
 
 
     const key: string = doc.id + getLoggedInUserId();
 
     const docData = (await doc.get()).data(); /// Get doc data.
-    if (docData == null) throw error(DOCUMENT_NOT_EXISTS);
+    if (!docData) throw error(DOCUMENT_NOT_EXISTS);
     const snapshot = await likeDoc(key).get(); /// Like doc
 
     let result: 'cancelled' | 'voted';
     if (snapshot.exists) { /// Like exists
         // console.log('like exists');
         const likeData = snapshot.data(); /// Get like data
-        if (likeData?.vote == vote) { /// Same vote again? then, cancel
+        if (likeData?.vote === voteFor) { /// Same vote again? then, cancel
             // console.log('same vote. cancel');
             /// cancel
             await snapshot.ref.delete(); /// Delete the like
             // console.log('delete like');
             /// decrease the vote
-            if (vote === 'like') {
+            if (voteFor === 'like') {
                 docData.likes--;
             } else {
                 docData.dislikes--;
@@ -384,9 +384,9 @@ export async function vote(doc: firestore.DocumentReference, vote: 'like' | 'dis
             result = 'cancelled';
         } else {
             /// update the vote in like collection
-            await snapshot.ref.update({ vote: vote });
+            await snapshot.ref.update({ vote: voteFor });
             /// update the doc
-            if (vote === 'like') {
+            if (voteFor === 'like') {
                 docData.likes++;
                 docData.dislikes--;
             } else {
@@ -400,13 +400,13 @@ export async function vote(doc: firestore.DocumentReference, vote: 'like' | 'dis
         const data = {
             id: doc.id,
             uid: getLoggedInUserId(),
-            vote: vote,
+            vote: voteFor,
         };
         await likeDoc(key).set(data);
 
         if (docData.likes === void 0) docData.likes = 0;
         if (docData.dislikes === void 0) docData.dislikes = 0;
-        if (vote == 'like') docData.likes++;
+        if (voteFor === 'like') docData.likes++;
         else docData.dislikes++;
 
         result = 'voted';
@@ -416,7 +416,7 @@ export async function vote(doc: firestore.DocumentReference, vote: 'like' | 'dis
     await doc.update({ likes: docData.likes, dislikes: docData.dislikes })
     const ret: LikeResponse = {
         id: doc.id,
-        vote: vote,
+        vote: voteFor,
         result: result,
         likes: docData.likes,
         dislikes: docData.dislikes,

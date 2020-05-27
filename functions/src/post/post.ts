@@ -116,7 +116,7 @@ export class Post {
      * 프로토콜 문서 참고
      * 
      */
-    async list(data?: any): Promise<Array<any>> {
+    async list(data: any = {}): Promise<Array<any>> {
         let snapshots: QuerySnapshot;
 
 
@@ -124,7 +124,7 @@ export class Post {
         const ref = postCol();
         let query: Query = ref; // Save `ref` to `query`
 
-        if (!data) data = {};
+        // if (!data) data = {};
 
         // console.log('data: ', data);
 
@@ -174,7 +174,7 @@ export class Post {
             posts.push(post);
         });
 
-        for (var p of posts) {
+        for (const p of posts) {
             await addUserData(p);
         }
 
