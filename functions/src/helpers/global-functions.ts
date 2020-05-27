@@ -273,9 +273,10 @@ export async function testCreateUser(data: any): Promise<any> {
  * Updates a user.
  * @attenton Test purpose only.
  * @param data user data
- *  - `data.uid`, which is madatory.
+ *  - `data.uid`, which is madatory so, it is set automatically with the logged in user's uid.
  */
 export async function testUpdateUser(data: UserRequestData): Promise<any> {
+    data.uid = System.auth.uid;
     const newRouter = new Router('user.update');
     return await newRouter.run(data);
 }

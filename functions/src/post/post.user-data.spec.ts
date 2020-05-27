@@ -1,4 +1,4 @@
-import { testCreateCategory, testCreatePost, testUpdateUser, getRandomInt, testCreateComment, resetUserContainerData } from "../helpers/global-functions";
+import { testCreateCategory, testCreatePost, testUpdateUser, getRandomInt, testCreateComment, resetUserContainerData, forceUserLoginByEmail } from "../helpers/global-functions";
 
 import * as assert from 'assert';
 import { admin } from "../init/init.firebase";
@@ -24,8 +24,18 @@ let url: string;
 describe('Adding user data to post & comment', function () {
     this.timeout(20000);
     it('Create a post  And test user data.', async () => {
-        category = await testCreateCategory(); /// This loggs in as admin
-        post = await testCreatePost(TestSettings.emails[0], [category.id]); /// Create post as user
+        
+        category = await testCreateCategory(); /// This automatically let user login as admin
+        testUpdateUser({ displayName: 'admin' });
+
+
+        forceUserLoginByEmail(TestSettings.emails[0]);
+
+        /// reset user data cache before creating a post.
+        testUpdateUser({ displayName: 'user1' });
+        resetUserContainerData();
+        /// Create post as user. This automatically let user login as a user.
+        post = await testCreatePost(TestSettings.emails[0], [category.id]);
         // console.log('post 1: ', post);
         testUser = await admin().auth().getUserByEmail(TestSettings.emails[0]); // Get user data
         adminUser = await admin().auth().getUserByEmail(EngineSettings.adminEmails[0]);
