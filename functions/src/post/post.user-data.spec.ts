@@ -26,13 +26,13 @@ describe('Adding user data to post & comment', function () {
     it('Create a post  And test user data.', async () => {
         
         category = await testCreateCategory(); /// This automatically let user login as admin
-        testUpdateUser({ displayName: 'admin' });
+        await testUpdateUser({ displayName: 'admin' });
 
 
         forceUserLoginByEmail(TestSettings.emails[0]);
 
         /// reset user data cache before creating a post.
-        testUpdateUser({ displayName: 'user1' });
+        await testUpdateUser({ displayName: 'user1' });
         resetUserContainerData();
         /// Create post as user. This automatically let user login as a user.
         post = await testCreatePost(TestSettings.emails[0], [category.id]);
