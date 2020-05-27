@@ -60,7 +60,7 @@ describe('Get comments by listing posts', function () {
         });
 
         if ((posts as any).error === true && (posts as any).code.indexOf('FAILED_PRECONDITION') > 0 ) {
-            console.log(posts);
+            // console.log(posts);
         }
         assert.equal(posts.length, 1);
         const comments = posts[0].comments;

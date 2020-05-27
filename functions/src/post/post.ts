@@ -6,7 +6,7 @@ import {
 import { isLoggedIn, postCol, error, postDoc, addUserData, vote } from '../helpers/global-functions';
 import { System } from '../system/system';
 import { Category } from '../category/category';
-import { Query } from '@google-cloud/firestore';
+import { Query, QuerySnapshot } from '@google-cloud/firestore';
 import { PostData } from './post.interfaces';
 import { Comment } from '../comment/comment';
 import { DependencyInjections } from '../helpers/dependency-injections';
@@ -106,7 +106,7 @@ export class Post {
         const data: any = snapshot.data();
         if (!data) return data;
         data.id = id;
-        return addUserData(data);
+        return await addUserData(data);
     }
 
 
@@ -117,59 +117,66 @@ export class Post {
      * 
      */
     async list(data?: any): Promise<Array<any>> {
-        let snapshots;
+        let snapshots: QuerySnapshot;
 
-        if (!data) {
-            snapshots = await postCol().get();
-        } else {
-            if (data.limit === void 0) {
-                data.limit = 20;
-            }
-            if (data.orderBy === void 0) {
-                data.orderBy = 'createdAt';
-            }
-            if (data.orderBySort === void 0) {
-                data.orderBySort = 'desc';
-            }
-            if (data.includeComments === void 0) {
-                data.includeComments = false;
-            }
 
-            // console.log('Post::list() data: ', data);
-            const ref = postCol();
-            let query: Query = ref; // Save `ref` to `query`
-            /// category
-            if (data.categories !== void 0) {
-                if (!Array.isArray(data.categories)) throw error(INVALID_INPUT, 'categories');
-                // console.log(`query.where('categories', 'array-contains-any', data.categories);`);
-                query = query.where('categories', 'array-contains-any', data.categories);
-            }
+        // console.log('Post::list() data: ', data);
+        const ref = postCol();
+        let query: Query = ref; // Save `ref` to `query`
 
-            // console.log(`query.orderBy(${data.orderBy}, ${data.orderBySort});`);
-            query = query.orderBy(data.orderBy, data.orderBySort);
+        if (!data) data = {};
 
-            if (data.startAfter !== void 0) {
-                query = query.startAfter(data.startAfter);
-            }
+        // console.log('data: ', data);
 
-            if (data.limit) {
-                // console.log(`query.limit(${data.limit});`);
-                query = query.limit(data.limit);
-            }
-
-            snapshots = await query.get();
+        if (data.orderBy === void 0) {
+            data.orderBy = 'createdAt';
         }
+        if (data.orderBySort === void 0) {
+            data.orderBySort = 'desc';
+        }
+        if (data.includeComments === void 0) {
+            data.includeComments = false;
+        }
+
+        /// category
+        if (data.categories !== void 0) {
+            if (!Array.isArray(data.categories)) throw error(INVALID_INPUT, 'categories');
+            // console.log(`query.where('categories', 'array-contains-any', data.categories);`);
+            query = query.where('categories', 'array-contains-any', data.categories);
+        }
+
+        // console.log(`query.orderBy(${data.orderBy}, ${data.orderBySort});`);
+        query = query.orderBy(data.orderBy, data.orderBySort);
+
+        if (data.startAfter !== void 0) {
+            query = query.startAfter(data.startAfter);
+        }
+
+
+
+        if (data.limit === void 0) {
+            data.limit = 20;
+        }
+        query = query.limit(data.limit);
+
+
+
+        snapshots = await query.get();
 
 
 
         /// Get posts
         const posts: PostData[] = [];
+
         snapshots.forEach((doc) => {
             const post: PostData = doc.data();
             post.id = doc.id;
-            addUserData(post);
             posts.push(post);
         });
+
+        for (var p of posts) {
+            await addUserData(p);
+        }
 
         /// Get comments
         if (data?.includeComments) {

@@ -122,9 +122,12 @@ export class Comment {
         snapshots.forEach((doc) => {
             const comment: CommentData = doc.data();
             comment.id = doc.id;
-            addUserData(comment);
             comments.push(comment);
         });
+
+        for (var c of comments) {
+            await addUserData(c);
+        }
 
         const sorted = this.sortComments(comments);
         return sorted;
@@ -144,7 +147,7 @@ export class Comment {
         if (!data) return data;
         data.id = id;
         if (data.depth === void 0) data.depth = 0;
-        return addUserData(data);
+        return await addUserData(data);
     }
 
 

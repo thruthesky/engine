@@ -5,7 +5,6 @@ import * as assert from 'assert';
 import { PostData } from "../post/post.interfaces";
 import { CommentData } from "./comment.interfaces";
 import { LOGIN_FIRST, PERMISSION_DEFINED } from "../defines";
-import { TestSettings } from "../settings";
 
 
 let postId = '';
@@ -23,12 +22,14 @@ describe('Comment permission test', function () {
         };
         const routerCategory = new Router('category.create');
         const re: CategoryDatas = await routerCategory.run({ id: tempCategory.id, title: tempCategory.title });
+        // console.log(re);
         assert.equal(re.id, tempCategory.id);
 
         // ==========> Create a post
-        await loginAsUser();
+        await loginAsUser(0, true);
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id], });
+        // console.log(post);
         assert.equal(typeof post.id === 'string', true);
 
         postId = post.id!;
@@ -55,15 +56,18 @@ describe('Comment permission test', function () {
             postId: postId,
             content: content,
         });
-        assert.equal(re.uid, TestSettings.uids[0]);
+        // console.log(re);
+        assert.equal(re.postId, postId);
 
-        await loginAsUser(1);
+        await loginAsUser(1, true);
 
         const routerComentUpdate = new Router('comment.update');
         re = await routerComentUpdate.run<CommentData>({
             id: re.id,
             content: content,
         });
+        // console.log('re: ---')
+        // console.log(re);
         assert.equal(re.code, PERMISSION_DEFINED);
     });
 

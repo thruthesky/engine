@@ -142,11 +142,13 @@ export function setAuthEmail(email: string) {
  * @code
  *  loginAsUser(0, true);
  * @endcode
+ * 
+ * TODO: 사용자 Email 주소만 기록하고, 항상 UID 를 Auth 에서 가져온다. 즉, UID 를 설정에서 지정하지 않도록 한다.
+ * 이로 인해서 사용자 UID 를 설정의 것과 비교 할 수 없다.
  */
-export async function loginAsUser(n: number = 0, auth: boolean = false) {
+export async function loginAsUser(n: number = 0, auth: boolean = true) {
     if (auth) await forceUserLoginByEmail(TestSettings.emails[n]);
     else {
-
         System.auth.email = TestSettings.emails[n];
         System.auth.uid = TestSettings.uids[n];
     }
@@ -430,16 +432,49 @@ export async function vote(doc: firestore.DocumentReference, vote: 'like' | 'dis
  * @return the object which was added user data.
  *  - The prameter is called-by-refernce.
  */
+/// 한번 가져온 사용자 정보를 컨테이너에 보관해서, 두 번 가져 오지 않도록 한다. 이를 통해서 쿼리 성능 향상을 꽤한다.
+/// @warning `글 읽기 -> 회원 정보 수정 -> 글 읽기` 와 같이 하는 경우, container 로 인해 수정된 회원 정보가 반영되지 않는다.
+/// 이와 같은 경우, container 를 리셋하면 된다.
+/// 특히 테스트를 하는 경우, 자주 회원 정보를 변경 할 수 있으니 유의한다.
+let userDataContainer: any = {};
+export function resetUserContainerData() {
+    userDataContainer = {};
+}
 export async function addUserData(obj: PostData | CommentData): Promise<PostData | CommentData> {
     // console.log('obj', obj);
 
     if (obj === null) return obj;
     if (obj.uid === void 0) return obj;
+    if (userDataContainer[obj.uid] !== void 0) {
+        obj.displayName = userDataContainer[obj.uid]['displayName'];
+        obj.photoUrl = userDataContainer[obj.uid]['photoUrl'];
+    } else {
+        let user;
+        try {
+            user = await admin().auth().getUser(obj.uid);
 
-    const user = await admin().auth().getUser(obj.uid);
+            if (user.displayName) {
+                obj.displayName = user.displayName;
+            }
+            else obj.displayName = '';
 
-    obj.displayName = user.displayName;
-    obj.photoUrl = user.photoURL;
+            if (user.photoURL) {
+                obj.photoUrl = user.photoURL;
+            } else {
+                obj.photoUrl = '';
+            }
+
+        } catch (e) {
+            obj.displayName = '';
+            obj.photoUrl = '';
+        }
+        userDataContainer[obj.uid] = {
+            displayName: obj.displayName,
+            photoUrl: obj.photoUrl,
+        };
+    }
+
+    // console.log(`displayName: ${obj.displayName}, photoUrl: ${obj.photoUrl}`);
 
     return obj;
 }

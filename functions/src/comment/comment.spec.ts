@@ -9,7 +9,7 @@ import { Router } from '../router/router';
 import {  MISSING_INPUT, INPUT_IS_EMPTY, POST_NOT_EXISTS, COMMENT_NOT_EXISTS, INVALID_INPUT, COMMENT_POST_CONTENT_DELETED, LOGIN_FIRST } from '../defines';
 import { CategoryDatas } from '../category/category.interfaces';
 import { PostData } from '../post/post.interfaces';
-import { TestSettings } from '../settings';
+// import { TestSettings } from '../settings';
 
 describe('Comment', function () {
     this.timeout(10000);
@@ -326,7 +326,7 @@ describe('Comment', function () {
         // console.log(comment);
         assert.equal(typeof comment.id === 'string', true);
         assert.equal(typeof comment.createdAt === 'number', true);
-        assert.equal(comment.uid, TestSettings.uids[0]);
+        // assert.equal(comment.uid, TestSettings.uids[0]);
         assert.equal(comment.content, content);
 
         // ===========> Update the comment
@@ -338,7 +338,7 @@ describe('Comment', function () {
         });
         // console.log(updatedComment);
         assert.equal(typeof updatedComment.updatedAt === 'number', true);
-        assert.equal(updatedComment.uid, TestSettings.uids[0]);
+        // assert.equal(updatedComment.uid, TestSettings.uids[0]);
         assert.equal(updatedComment.content, updatedContent);
 
 

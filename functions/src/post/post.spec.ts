@@ -2,7 +2,9 @@
 import { Router } from "../router/router";
 import * as assert from 'assert';
 // import { Settings } from "../helper";
-import {  CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT, POST_TITLE_DELETED, POST_CONTENT_DELETED, LOGIN_FIRST } from "../defines";
+import {  CATEGORY_NOT_EXISTS, MISSING_INPUT, INVALID_INPUT,
+     POST_TITLE_DELETED, POST_CONTENT_DELETED,
+      LOGIN_FIRST } from "../defines";
 import { System } from "../system/system";
 import { TestSettings } from "../settings";
 import { forceUserLoginByEmail, forceUserLogout, loginAsAdmin, loginAsUser } from "../helpers/global-functions";
@@ -17,7 +19,7 @@ import { PostData } from './post.interfaces';
 
 
 describe('Post', function () {
-    this.timeout(10000);
+    this.timeout(100000);
 
     forceUserLogout();
     System.debug = true;
@@ -95,7 +97,7 @@ describe('Post', function () {
         const route = new Router('post.create');
         const post: PostData = await route.run<PostData>({ categories: [tempCategory.id, tempCategory.id + 'another'], });
         
-        // console.log(post);
+        // console.log(post);k
         assert.equal(typeof post.id === 'string', true);
         assert.equal(typeof post.createdAt === 'number', true);
     });
@@ -137,7 +139,7 @@ describe('Post', function () {
 
     it('Get posts with a category', async () => {
         const router = new Router('post.list');
-        const re = await router.run({ categories: [tempCategory.id, tempCategory.id + 'another'] });
+        const re = await router.run({ categories: [tempCategory.id, tempCategory.id + 'another'], limit: 10000 });
         // console.log(re);
         assert.equal(re.length === 2, true);
     });
