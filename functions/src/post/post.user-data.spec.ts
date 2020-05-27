@@ -29,7 +29,7 @@ describe('Adding user data to post & comment', function () {
         await testUpdateUser({ displayName: 'admin' });
 
 
-        forceUserLoginByEmail(TestSettings.emails[0]);
+        await forceUserLoginByEmail(TestSettings.emails[0]);
 
         /// reset user data cache before creating a post.
         await testUpdateUser({ displayName: 'user1' });
