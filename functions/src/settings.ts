@@ -18,6 +18,12 @@ export const EngineSettings = {
     * 100 is good enough for most case.
     */
     maxDepth: 100,
+
+    /**
+     * Add user's displayName & photoUrl from `Firebase Auth`, instead of using it from the post or comment document.
+     * Setting this to true may cause performance issue since it takes extra access to `Firebase Auth`.
+     */
+    addForumUserDataFromAuth: false,
 };
 
 

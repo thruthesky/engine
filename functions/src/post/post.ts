@@ -3,7 +3,7 @@ import {
     INPUT_IS_EMPTY, CATEGORY_NOT_EXISTS,
     LOGIN_FIRST, INVALID_INPUT, MISSING_INPUT, POST_NOT_EXISTS, POST_TITLE_DELETED, POST_CONTENT_DELETED, PERMISSION_DEFINED, LikeRequest, LikeResponse
 } from '../defines';
-import { isLoggedIn, postCol, error, postDoc, addUserData, vote } from '../helpers/global-functions';
+import { isLoggedIn, postCol, error, postDoc, addUserData, vote, attachUserData } from '../helpers/global-functions';
 import { System } from '../system/system';
 import { Category } from '../category/category';
 import { Query, QuerySnapshot } from '@google-cloud/firestore';
@@ -38,6 +38,8 @@ export class Post {
         }
         data.uid = System.auth.uid;
         data.createdAt = (new Date).getTime();
+
+        await attachUserData(data);
 
         const post = await postCol().add(data);
 
@@ -87,6 +89,7 @@ export class Post {
 
         const id: string = data.id;
         delete data.id;
+        await attachUserData(data);
         await postDoc(id).update(data);
 
         // const post = await postCol().add(data);
@@ -174,11 +177,14 @@ export class Post {
             posts.push(post);
         });
 
+
+        /// TODO: 성능 향상의 위해서 Promise.All 로 처리 해 볼 것.
         for (const p of posts) {
             await addUserData(p);
         }
 
         /// Get comments
+        /// TODO: 성능향샹을 우히ㅐ서 Promse.All 로 처리 해 볼 것.
         if (data?.includeComments) {
             for (const post of posts) {
                 const commentObj = new Comment();

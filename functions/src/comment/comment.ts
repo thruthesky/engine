@@ -9,7 +9,7 @@ import {
     LikeRequest,
     LikeResponse
 } from '../defines';
-import { error, isLoggedIn, commentCol, commentDoc, addUserData, vote } from '../helpers/global-functions';
+import { error, isLoggedIn, commentCol, commentDoc, addUserData, vote, attachUserData } from '../helpers/global-functions';
 import { EngineSettings } from '../settings';
 import { Post } from '../post/post';
 import { System } from '../system/system';
@@ -45,6 +45,7 @@ export class Comment {
         data.uid = System.auth.uid;
         data.createdAt = (new Date).getTime();
 
+        await attachUserData(data);
         const comment = await commentCol().add(data);
 
         return await this.data(comment.id);
@@ -70,6 +71,7 @@ export class Comment {
         if (p.uid !== System.auth.uid) throw error(PERMISSION_DEFINED);
 
         data.updatedAt = (new Date).getTime();
+        await attachUserData(data);
         await commentDoc(data.id).update(data);
         return await this.data(data.id);
     }
